@@ -40,7 +40,7 @@ Jenkins Set Environment Variables you can use for launch deployment description.
     Jenkins Job name.
     For Current project name of this build use jenkins environment variables $JOB_NAME.
     .. note:: This parameter is required when the import flag is on.
-* `--public-net-name`:
+* `--jenkins-build-id`:
     Jenkins build ID.
     For Current build ID use jenkins environment variables $BUILD_ID.
 * `--jenkins-user-name`:
