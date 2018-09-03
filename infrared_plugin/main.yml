@@ -43,11 +43,14 @@
             reportportal_token: "{{ other.token }}"
             reportportal_url: "{{ other.url.address }}:{{ other.port }}"
             project: "{{ other.project.name }}"
+        tags: always
 
       - name: Set tasks variables
         set_fact:
             import_launch: "{{ other.import}}"
             analyze_launch: "{{ other.analyze}}"
+            dashboard2email: "{{ other.dashboard2email}}"
+        tags: always
 
       - name: Set import launch details
         block:
@@ -72,5 +75,9 @@
                 launch_description: "puddle: {{ core_puddle }}, {{ other.launch.description }}"
             when: other.get('jenkins', {}).get('build', {}).id is not defined
         when: import_launch
+
+      - import_tasks: ../tasks/dashboard2email/main.yml
+        when: dashboard2email
+
   roles:
       - reportportal
