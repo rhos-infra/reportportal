@@ -1,0 +1,76 @@
+---
+# This is file and plugin.spec are required by Infrared project
+
+- name: Get puddle version from undercloud
+  hosts: undercloud
+  gather_facts: no
+  become: yes
+  tasks:
+      - name: get core puddle version from environment variables
+        set_fact:
+            core_puddle: "{{ lookup('env', 'CORE_PUDDLE') }}"
+        when: "{{ lookup('env', 'CORE_PUDDLE') != '' }}"
+
+      - block:
+          - stat:
+                path: ~/core_puddle_version
+            become: no
+            register: puddle_file
+
+          - name: get core puddle version from ~/core_puddle_version
+            command:  cat ~/core_puddle_version
+            become: no
+            register: core_puddle_file
+            when: puddle_file.stat.exists
+
+          - name: get core puddle version from repos
+            shell: cat /etc/yum.repos.d/rhos-release-[0-9]*.repo | grep ^baseurl.*/OpenStack/ | grep -v latest | awk -F / '{print $8 }' | tail -n 1
+            register: core_puddle_repos
+            when: puddle_file.stat.exists == False
+
+          - set_fact:
+              core_puddle: "{{ puddle_file.stat.exists|ternary(core_puddle_file.stdout, core_puddle_repos.stdout) | default('N/A') }}"
+        when: core_puddle is not defined
+
+- name: Infrared plugin for ReportPortal
+  hosts: localhost
+  gather_facts: yes
+  vars:
+      core_puddle: "{{ hostvars['undercloud-0']['core_puddle'] }}"
+  pre_tasks:
+      - name: Set ReportPortal system variables
+        set_fact:
+            reportportal_token: "{{ other.token }}"
+            reportportal_url: "{{ other.url.address }}:{{ other.port }}"
+            project: "{{ other.project.name }}"
+
+      - name: Set tasks variables
+        set_fact:
+            import_launch: "{{ other.import}}"
+            analyze_launch: "{{ other.analyze}}"
+
+      - name: Set import launch details
+        block:
+          - name: Set launch information
+            set_fact:
+                tags: "{{ other.launch.tags }} + [ 'puddle:{{ core_puddle }}' ]"
+
+          - name: Set archive xmls variables
+            set_fact:
+                archive_import_path: "{{ other.archive.import.path }}"
+                archive_dest_path: "{{ other.archive.dest.path }}"
+                archive_exclude_path: "{{ other.archive.exclude.path }}"
+                jenkins_job_name: "{{ other.jenkins.job.name }}"
+
+          - name: Set launch description with job URL
+            set_fact:
+                launch_description: "puddle: {{ core_puddle }}, job URL: {{ other.jenkins.domain }}/job/{{ other.jenkins.job.name }}/{{ other.jenkins.build.id }}/ \n {{ other.launch.description }}"
+            when: other.get('jenkins', {}).get('build', {}).id is defined
+
+          - name: Set launch description without job URL
+            set_fact:
+                launch_description: "puddle: {{ core_puddle }}, {{ other.launch.description }}"
+            when: other.get('jenkins', {}).get('build', {}).id is not defined
+        when: import_launch
+  roles:
+      - reportportal

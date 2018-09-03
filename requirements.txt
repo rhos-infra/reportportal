@@ -1,0 +1,5 @@
+reportportal-client
+xmltodict
+junitparser
+PyYAML
+lxml

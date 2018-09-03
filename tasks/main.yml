@@ -1,0 +1,9 @@
+---
+# tasks file for reportportal
+
+- name: Perform validations
+  include: validate/main.yml
+
+- name: Import results to ReportPortal
+  include: import/main.yml
+  when: import_launch

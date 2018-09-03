@@ -1,0 +1,35 @@
+---
+
+- name: import tests to Reportportal
+  reportportal_api:
+    url: "{{ reportportal_url }}"
+    token: "{{ api_token }}"
+    project_name: "{{ project }}"
+    launch_name: "{{ jenkins_job_name }}"
+    launch_tags: "{{ tags }}"
+    launch_description: "{{ launch_description }}"
+    tests_paths: "{{ archive_import_path }}"
+    tests_exclude_paths: "{{ archive_exclude_path }}"
+  ignore_errors: true
+  register: import_results
+
+- debug:
+    var: import_results
+
+- fail:
+    msg: Import tests to Reportportal failed
+  when: import_results.failed
+
+- name: set launch ID
+  set_fact:
+    launchid: "{{ import_results.launch_id }}"
+
+- name: verify upload succeeded
+  uri:
+    url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launchid }}"
+    method: GET
+    status_code: 200
+    headers:
+     Accept: "application/json"
+     Authorization: "{{ authorization_api }}"
+  register: launch_result

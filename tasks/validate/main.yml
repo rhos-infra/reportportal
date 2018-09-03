@@ -1,0 +1,71 @@
+---
+#      - name: "Connnect to ReportPortal"
+#        shell: "curl -X GET http://seal51.qa.lab.tlv.redhat.com:8081/api/v1/project/OSP13 -H 'Accept: application/json' -H 'Authorization: bearer 741b87bf-35fc-455d-90c3-6964d07b79f8' -H 'Cache-Control: no-cache' -H 'content-type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'"
+#        register: status1
+- name: "Get token API"
+  uri:
+     url: "{{ reportportal_url }}/uat/sso/me/apitoken"
+     method: GET
+     status_code: 200
+     headers:
+        Accept: "application/json"
+        Authorization: "bearer {{ reportportal_token }}"
+     timeout: 10
+  register: get_token
+
+- debug:
+     msg: "{{ get_token }}"
+
+- name: set api token
+  set_fact:
+     api_token: "{{ get_token.json.access_token }}"
+     token_type: "{{ get_token.json.token_type }}"
+
+- name: combain authorization details
+  set_fact:
+     authorization_api: "{{ token_type }} {{ api_token }}"
+
+- debug:
+     msg: "{{ authorization_api }}"
+
+- name: "Validate Project exist in ReportPortal"
+  uri:
+      url: "{{ reportportal_url }}/api/v1/project/{{ project }}"
+      method: GET
+      status_code: 200
+      timeout: 10
+      headers:
+        Accept: "application/json"
+        Authorization: "{{ authorization_api }}"
+        Cache-Control: no-cache
+  register: status
+
+#    - name: "Validate User"
+#      fail:
+#          msg: "No API Key"
+#        when:
+#          - ( install.deploy|default('') and install.upgrade|default(''))
+#
+#  - name: "Create user if not exist"
+#      shell: |
+#          curl -X POST '"{{ reportportal_url }}/api/v1/user' \
+#        --header 'Content-Type: application/json' \
+#        --header 'Accept: application/json' \
+#        --header 'Authorization: bearer c18b5571-3c66-4b5c-bc6a-965308e7dc0e' \
+#          -d '{ "accountRole": "USER", "default_project": "OSP13", \
+#          "email": "vgriner%40redhat.com", \
+#        "full_name": "vgriner", \
+#        "login": "vgriner", \
+#          "password": "vgriner", \
+#        "projectRole": "CUSTOMER"}'
+#      register: user-token
+#
+#    - name: set variable for project url path
+#      var: project_path = {{ url-address }}:{{ port }}/api/v1/{{ project-name }}
+#
+#      - name: set variable for all REST headers
+#        var: rest_headers =
+#                -H 'Accept: application/json' \
+#                -H 'Authorization: bearer {{ user-token }}' \
+#                -H 'Cache-Control: no-cache' \
+#                -H 'content-type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW' \
