@@ -3,6 +3,7 @@
 
 - name: Perform validations
   include: validate/main.yml
+  when: not dashboard2email
 
 - name: Import results to ReportPortal
   include: import/main.yml
