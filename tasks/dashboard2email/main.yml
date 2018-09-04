@@ -1,0 +1,140 @@
+---
+#- name: Infrared plugin for ReportPortal
+#  hosts: localhost
+#  gather_facts: yes
+
+- name: prepare and restart reportportal_dashboard2email docker container
+  docker_container:
+    state: started
+    name: reportportal_dashboard2email
+    image: centos
+    network_mode: host
+    command: bash
+    volumes: /var/lib/reportportal_dashboard2email:/var/lib/reportportal_dashboard2email
+    tty: true
+    restart: true
+  # THE SAME task parameters have to be used in "stop reportportal_dashboard2email docker container" task
+
+- name: add reportportal_dashboard2email docker container to Ansible inventory
+  add_host:
+    name: reportportal_dashboard2email
+    ansible_connection: docker
+    ansible_user: root
+  tags: always
+
+- name: setup reportportal_dashboard2email docker container
+  block:
+
+    - name: "cleanup yum state (i.e.: after unfinished package installations)"
+      shell: yum-complete-transaction --cleanup-only
+      tags: rpms
+
+    - name: install Xvfb, vncserver, firefox and other deps
+      yum:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - Xvfb
+        - firefox
+        - tigervnc-server
+        - psmisc # for the likes of 'killall' commands etc.
+      register: install_rpms
+      retries: 3
+      delay: 5
+      timeout: 60
+      until: install_rpms.results.failed == false
+      tags: rpms
+
+    - name: install pip using get-pip.py
+      shell: curl https://bootstrap.pypa.io/get-pip.py | python
+      tags: rpms
+
+    - name: install selenium (via pip)
+      pip:
+        name: selenium
+        state: present
+      tags: rpms
+
+    - name: check is geckodriver installed
+      stat:
+        path: /usr/local/bin/geckodriver
+      register: geckodriver_exist
+      tags: geckodriver
+
+    - name: install geckodriver (Selenium python library is using it to talk to Firefox)
+      unarchive:
+        remote_src: yes
+        src: https://github.com/mozilla/geckodriver/releases/download/v0.21.0/geckodriver-v0.21.0-linux64.tar.gz
+        dest: /usr/local/bin
+      when: geckodriver_exist.stat.exists == false or geckodriver_exist.stat.executable == false
+      tags: geckodriver
+
+    - name: generate and save machine's uuid (required by Firefox)
+      shell: dbus-uuidgen > /etc/machine-id
+      tags: machine_id
+
+    - name: clean /tmp/*
+      shell: |
+        rm -rf /tmp/* /tmp/.* || true
+
+    - name: clean mozilla profiles
+      file:
+        path: ~/.mozilla/
+        state: absent
+
+    - name: clean vnc server settings and passwords
+      file:
+        path: ~/.vnc/
+        state: absent
+      tags: vnc
+
+    - name: setup vnc server password file
+      shell: |
+        mkdir -p ~/.vnc/
+        echo {{ other.vnc_password }} | vncpasswd -f > ~/.vnc/passwd
+        chmod 600 ~/.vnc/passwd
+      no_log: true
+      tags: vnc
+
+    - name: start vncserver in the background (DISPLAY=:10)
+      shell: vncserver :10 -name reportportal_dashboard2email -geometry 1920x1080
+      tags: vnc
+
+    - name: open and grab Dashboard + send it via email
+      dashboard2email:
+        display: ':10'
+        url: "{{ other.url.address }}"
+        user_name: 'dashboard2email'
+        token: "{{ reportportal_token }}"
+        email_server_name: "{{ other.email_server_name }}"
+        email_server_port: "{{ other.email_server_port }}"
+        email_from: "{{ other.email_from }}"
+        email_to: "{{ other.email_to }}"
+        email_subject: "{{ other.email_subject | default(omit) }}"
+        email_body: "{{ other.email_body | default(omit) }}"
+      ignore_errors: true
+      environment:
+        DISPLAY: ':10'
+      register: dashboard2email_grab
+      tags: grab
+
+  delegate_to: reportportal_dashboard2email
+
+- name: stop reportportal_dashboard2email docker container
+  docker_container:
+    state: stopped
+    name: reportportal_dashboard2email
+    image: centos
+    network_mode: host
+    command: bash
+    volumes: /var/lib/reportportal_dashboard2email:/var/lib/reportportal_dashboard2email
+    tty: true
+    restart: true
+
+- name: fail if dashboard2email_grab not successful
+  fail:
+    msg: "dashboard2email_grab: {{ dashboard2email_grab}}"
+  when: dashboard2email_grab.failed == true
+  tags: grab
+  delegate_to: reportportal_dashboard2email
+
