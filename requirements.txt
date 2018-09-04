@@ -3,3 +3,7 @@ xmltodict
 junitparser
 PyYAML
 lxml
+
+# required by dashboard2email
+docker-py
+selenium
