@@ -46,7 +46,10 @@ subparsers:
                       type: Bool
                       help: Anazlyze failures of build (TBD)
                       default: false
-
+                  dashboard2email:
+                      type: Bool
+                      help: Send a Report Portal Dashboard as an email
+                      default: false
             - title: Jenkins Job Metadata
               options:
                   archive-import-path:
@@ -79,3 +82,32 @@ subparsers:
                   jenkins-build-id:
                       type: Value
                       help: Jenkins build ID
+
+            - title: dashboard2email params
+              options:
+                  vnc_password:
+                      type: Value
+                      help: Password VNC server will be protected with
+                      required_when: "dashboard2email == True"
+                  email_server_name:
+                      type: Value
+                      help: Hostname or IP of smtp server
+                      required_when: "dashboard2email == True"
+                  email_server_port:
+                      type: Value
+                      help: Port of smtp server
+                      required_when: "dashboard2email == True"
+                  email_from:
+                      type: Value
+                      help: Email address from which to send dashboard2email
+                      required_when: "dashboard2email == True"
+                  email_to:
+                      type: Value
+                      help: Email address to send dashboard2email to
+                      required_when: "dashboard2email == True"
+                  email_subject:
+                      type: Value
+                      help: Subject of dashboard2email
+                  email_body:
+                      type: Value
+                      help: Body of dashboard2email
