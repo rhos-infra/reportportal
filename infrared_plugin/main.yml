@@ -35,9 +35,20 @@
 - name: Infrared plugin for ReportPortal
   hosts: localhost
   gather_facts: yes
-  vars:
-      core_puddle: "{{ hostvars['undercloud-0']['core_puddle'] }}"
   pre_tasks:
+      - name: Set Core Puddle
+        set_fact:
+          core_puddle: "{{ hostvars['undercloud-0']['core_puddle'] }}"
+        when:
+          - "'undercloud' in groups"
+          - other.launch.core.puddle is not defined
+
+      - name: Set Core Puddle
+        set_fact:
+          core_puddle: "{{ other.launch.get('core', {}).puddle | default('N/A') }}"
+        when:
+          - "'undercloud' not in groups"
+
       - name: Set ReportPortal system variables
         set_fact:
             reportportal_token: "{{ other.token }}"
