@@ -36,6 +36,9 @@ subparsers:
                       type: Value
                       help: Description to be added to a specified launch.
                       default: ''
+                  launch-core-puddle:
+                      type: Value
+                      help: Core Puddle
             - title: tasks
               options:
                   import:
