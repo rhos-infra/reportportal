@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "647e150f_28135f88",
+        "filename": "infrared_plugin/main.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1010634
+      },
+      "writtenOn": "2018-09-13T10:06:38Z",
+      "side": 1,
+      "message": "nit: indentation",
+      "revId": "4e80b60fbe279dbfcfd4ada6cc034e41473ea0e9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1ef97a_1394df2c",
+        "filename": "infrared_plugin/plugin.spec",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1010634
+      },
+      "writtenOn": "2018-09-13T10:06:38Z",
+      "side": 1,
+      "message": "I wonder do we need a condition here, something \u0027required when \u0027undercloud\u0027 not in groups? (I wonder is this information already available when ir parses command line and options passed to it)\n\nif such condition is possible here then let\u0027s use it here\nif not possible, then there needs to be a validation step saying \u0027you need to specify core-puddle because we don\u0027t have underloud to discover it from\u0027 kind of message as one of the pre tasks",
+      "revId": "4e80b60fbe279dbfcfd4ada6cc034e41473ea0e9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
