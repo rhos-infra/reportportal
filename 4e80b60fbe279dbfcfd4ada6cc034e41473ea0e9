@@ -37,6 +37,29 @@
     },
     {
       "key": {
+        "uuid": "0c27e85c_7948cd5c",
+        "filename": "infrared_plugin/main.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1010634
+      },
+      "writtenOn": "2018-09-13T12:52:45Z",
+      "side": 1,
+      "message": "is there a risk that undercloud will not be in groups and other.launch.puddle will _not_ be specified? if yes we should either a) warn about the need of specifying launch.puddle in plugin.spec, b) verify this task will work (i.e.: by a check in plugin.spec or otherwise)\n\nthe last thing we want user to experience a surprise this task failing because he/she didn\u0027t know they have to specify puddle when they didn\u0027t have undercloud (whatever can be verified should be, rather than let user/op decipher reading error messages)",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 40
+      },
+      "revId": "4e80b60fbe279dbfcfd4ada6cc034e41473ea0e9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a1ef97a_1394df2c",
         "filename": "infrared_plugin/plugin.spec",
         "patchSetId": 1
