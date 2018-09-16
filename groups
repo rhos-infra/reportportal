@@ -1,8 +1,10 @@
 # UUID                                  	Group Name
 #
 6bb5f78d4182efb8d965219c5b183ba5d989d89a	rhosqeauto-contrib
+github:rhos-infra                       	github/rhos-infra
 github:rhos-infra/Everyone              	github/rhos-infra/Everyone
 global:Anonymous-Users                  	Anonymous Users
 global:Registered-Users                 	Registered Users
 user:avishaymahluf                      	user/Avishay Mahluf (avishaymahluf)
 user:vgri                               	user/Vadim Griner (vgri)
+user:wznoinsk                           	user/Waldemar Znoinski (wznoinsk)
