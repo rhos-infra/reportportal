@@ -60,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "4ff6c01f_d2d19008",
+        "filename": "infrared_plugin/main.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1012221
+      },
+      "writtenOn": "2018-09-16T07:57:04Z",
+      "side": 1,
+      "message": "There are cases where it is not defined, for example, in our single node jobs (pep8, functional tests) where we don\u0027t have undercloud and the puddle version is not specified in cli.\nHowever, in that case, this task will not fail. The result will be \u0027N/A\u0027 in core_puddle.\n\nI didn\u0027t want to add failure when it is missing because i don\u0027t want to fail jobs that didn\u0027t specify puddle, not all jobs need puddle.",
+      "parentUuid": "0c27e85c_7948cd5c",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 40
+      },
+      "revId": "4e80b60fbe279dbfcfd4ada6cc034e41473ea0e9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a1ef97a_1394df2c",
         "filename": "infrared_plugin/plugin.spec",
         "patchSetId": 1
