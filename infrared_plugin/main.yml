@@ -41,7 +41,7 @@
             core_puddle: "{{ hostvars['undercloud-0']['core_puddle'] }}"
         when:
             - "'undercloud' in groups"
-            - other.launch.core.puddle is not defined
+            - other.launch.get('core', {}).get('puddle', {}) == {}
 
       - name: Set Core Puddle
         set_fact:
