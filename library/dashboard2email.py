@@ -181,7 +181,7 @@ def send_email(params=None, img=None, stats=None):
     email_subject = params['email_subject']
     email_stats = ''
 
-    for s in stats:
+    for s in sorted(stats.keys()):
         _text = re.search('CSIT|TEMPEST', s)
         email_stats += ", %s: %s" % (_text.group(0), stats[s].text)
 
