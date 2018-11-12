@@ -51,7 +51,7 @@
       - name: Set ReportPortal system variables
         set_fact:
             reportportal_token: "{{ other.token }}"
-            reportportal_url: "{{ other.url.address }}:{{ other.port }}"
+            reportportal_url: "{{ other.url.address }}"
             project: "{{ other.project.name }}"
         tags: always
 

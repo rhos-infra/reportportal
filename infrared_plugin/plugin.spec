@@ -14,10 +14,6 @@ subparsers:
                       type: Value
                       help: Path to ReportPortal URL.
                       required: yes
-                  port:
-                      type: Value
-                      help: ReportPortal URL port.
-                      required: yes
                   project-name:
                       type: Value
                       help: Reportportal project name to push results to.
