@@ -52,6 +52,7 @@
         set_fact:
             reportportal_token: "{{ other.token }}"
             reportportal_url: "{{ other.url.address }}"
+            ssl_verify: "{{ other.ssl.verify }}"
             project: "{{ other.project.name }}"
         tags: always
 

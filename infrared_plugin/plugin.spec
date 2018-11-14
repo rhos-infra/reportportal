@@ -14,6 +14,10 @@ subparsers:
                       type: Value
                       help: Path to ReportPortal URL.
                       required: yes
+                  ssl-verify:
+                      type: Bool
+                      help: Reportportal url SSL verify
+                      default: no
                   project-name:
                       type: Value
                       help: Reportportal project name to push results to.

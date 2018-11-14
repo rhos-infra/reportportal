@@ -44,6 +44,11 @@ options:
           - Reportportal API token.
       required: True
       type: str
+    ssl_verify:
+      description:
+          - Ignore ssl verifications
+      default: True
+      type: bool
     project_name:
       description:
           - Reportportal project name to push results to.
@@ -236,6 +241,7 @@ def main():
     module_args = dict(
         url=dict(type='str', required=True),
         token=dict(type='str', required=True),
+        ssl_verify=dict(type='bool', required=False, default=True),
         project_name=dict(type='str', required=True),
         launch_name=dict(type='str', required=True),
         launch_tags=dict(type='list', required=False),
@@ -267,6 +273,7 @@ def main():
             project=module.params.pop('project_name'),
             token=module.params.pop('token'),
         )
+        service.session.verify = module.params.pop('ssl_verify')
 
         # Start Reportportal launch
         service.start_launch(
