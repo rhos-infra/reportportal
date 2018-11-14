@@ -29,6 +29,7 @@
   uri:
     url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launchid }}"
     method: GET
+    validate_certs: "{{ ssl_verify | bool }}"
     status_code: 200
     headers:
      Accept: "application/json"

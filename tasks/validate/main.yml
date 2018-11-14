@@ -6,6 +6,7 @@
   uri:
      url: "{{ reportportal_url }}/uat/sso/me/apitoken"
      method: GET
+     validate_certs: "{{ ssl_verify | bool }}"
      status_code: 200
      headers:
         Accept: "application/json"
@@ -32,6 +33,7 @@
   uri:
       url: "{{ reportportal_url }}/api/v1/project/{{ project }}"
       method: GET
+      validate_certs: "{{ ssl_verify | bool }}"
       status_code: 200
       timeout: 10
       headers:
