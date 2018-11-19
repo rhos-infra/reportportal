@@ -257,6 +257,7 @@ def main():
     try:
         tests_paths = module.params.pop('tests_paths')
         tests_exclude_paths = module.params.pop('tests_exclude_paths')
+        ssl_verify = module.params.pop('ssl_verify')
 
         expanded_paths = get_expanded_paths(tests_paths)
         expanded_exclude_paths = [] if not tests_exclude_paths else \
@@ -273,7 +274,10 @@ def main():
             project=module.params.pop('project_name'),
             token=module.params.pop('token'),
         )
-        service.session.verify = module.params.pop('ssl_verify')
+
+        service.session.verify = ssl_verify
+        if not ssl_verify:
+            os.environ.pop('REQUESTS_CA_BUNDLE', None)
 
         # Start Reportportal launch
         service.start_launch(
