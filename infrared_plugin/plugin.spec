@@ -39,6 +39,10 @@ subparsers:
                   launch-core-puddle:
                       type: Value
                       help: Core Puddle
+                  ignore-skipped-tests:
+                      type: Bool
+                      help: Ignore skipped tests and don't publish them to Reportportal at all
+                      default: false
             - title: tasks
               options:
                   import:

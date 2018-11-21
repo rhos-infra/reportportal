@@ -53,6 +53,7 @@
             reportportal_token: "{{ other.token }}"
             reportportal_url: "{{ other.url.address }}"
             ssl_verify: "{{ other.ssl.verify }}"
+            ignore_skipped_tests: "{{ other.ignore.skipped.tests }}"
             project: "{{ other.project.name }}"
         tags: always
 

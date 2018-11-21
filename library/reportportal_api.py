@@ -49,6 +49,11 @@ options:
           - Ignore ssl verifications
       default: True
       type: bool
+    ignore_skipped_tests:
+      description:
+          - Ignore skipped tests and don't publish them to Reportportal at all
+      default: False
+      type: bool
     project_name:
       description:
           - Reportportal project name to push results to.
@@ -132,12 +137,13 @@ def get_expanded_paths(paths):
 
 class ReportPortalPublisher:
 
-    def __init__(self, service, launch_name,
-                 launch_tags, launch_description, expanded_paths):
+    def __init__(self, service, launch_name,launch_tags,
+                 launch_description, ignore_skipped_tests, expanded_paths):
         self.service = service
         self.launch_name = launch_name
         self.launch_tags = launch_tags
         self.launch_description = launch_description
+        self.ignore_skipped_tests = ignore_skipped_tests
         self.expanded_paths = expanded_paths
 
     def publish_tests(self):
@@ -212,6 +218,11 @@ class ReportPortalPublisher:
         :param case: Test case to publish
         """
         issue = None
+
+        if case.get('skipped') and self.ignore_skipped_tests:
+            # ignore skipped tests when flag is true
+            return
+
         description = "{tc_name} time: {case_time}".format(
             tc_name=case.get('@name', case.get('@id', 'NULL')),
             case_time=case.get('@time'))
@@ -281,6 +292,7 @@ def main():
         url=dict(type='str', required=True),
         token=dict(type='str', required=True),
         ssl_verify=dict(type='bool', required=False, default=True),
+        ignore_skipped_tests=dict(type='bool', required=False, default=False),
         project_name=dict(type='str', required=True),
         launch_name=dict(type='str', required=True),
         launch_tags=dict(type='list', required=False),
@@ -323,6 +335,7 @@ def main():
             launch_name=module.params.pop('launch_name'),
             launch_tags=module.params.pop('launch_tags'),
             launch_description=module.params.pop('launch_description'),
+            ignore_skipped_tests=module.params.pop('ignore_skipped_tests'),
             expanded_paths=expanded_paths
         )
 

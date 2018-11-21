@@ -5,6 +5,7 @@
     url: "{{ reportportal_url }}"
     token: "{{ api_token }}"
     ssl_verify: "{{ ssl_verify | bool }}"
+    ignore_skipped_tests: "{{ ignore_skipped_tests | bool }}"
     project_name: "{{ project }}"
     launch_name: "{{ jenkins_job_name }}"
     launch_tags: "{{ tags }}"
