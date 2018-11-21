@@ -130,108 +130,147 @@ def get_expanded_paths(paths):
     return expanded_paths
 
 
-def publish_test_suite(service, test_suite):
-    """
-    Publish results of test suite xml file
-    :param service: Reportportal service
-    :param test_suite: Test suite to publish
-    :return:
-    """
-    # get test cases from xml
-    test_cases = test_suite.get("testcase")
+class ReportPortalPublisher:
 
-    # safety incase of single test case which is not a list
-    if not isinstance(test_cases, list):
-        test_cases = [test_cases]
+    def __init__(self, service, launch_name,
+                 launch_tags, launch_description, expanded_paths):
+        self.service = service
+        self.launch_name = launch_name
+        self.launch_tags = launch_tags
+        self.launch_description = launch_description
+        self.expanded_paths = expanded_paths
 
-    # start test suite
-    service.start_test_item(
-        name=test_suite.get('@name', test_suite.get('@id', 'NULL')),
-        start_time=str(int(time.time() * 1000)),
-        item_type="SUITE")
+    def publish_tests(self):
+        """
+        Publish results of test xml file
+        """
+        # Start Reportportal launch
+        self.service.start_launch(
+            name=self.launch_name,
+            start_time=str(int(time.time() * 1000)),
+            tags=self.launch_tags,
+            description=self.launch_description
+        )
 
-    # publish all test cases
-    for case in test_cases:
-        publish_test_cases(service, case)
+        # Iterate over XUnit test paths
+        for test_path in self.expanded_paths:
+            # open the XUnit file and parse to xml object
+            with open(test_path) as fd:
+                data = xmltodict.parse(fd.read())
 
-    # calculate status
-    num_of_failutes = int(test_suite.get('@failures'))
-    num_of_errors = int(test_suite.get('@errors'))
-    status = 'FAILED' if (num_of_failutes > 0 or num_of_errors > 0) \
-        else 'PASSED'
+            # get multiple test suites if present
+            if data.get('testsuites'):
+                # get the test suite object
+                test_suites_object = data.get('testsuites')
+                # get all test suites (1 or more) from the object
+                test_suites = test_suites_object.get('testsuite') \
+                    if isinstance(test_suites_object.get('testsuite'), list) \
+                    else [test_suites_object.get('testsuite')]
 
-    service.finish_test_item(
-        end_time=str(int(time.time() * 1000)),
-        status=status)
+                # publish all test suites
+                for test_suite in test_suites:
+                    self.publish_test_suite(test_suite)
+            else:
+                # publish single test suite
+                self.publish_test_suite(data.get('testsuite'))
 
+    def publish_test_suite(self, test_suite):
+        """
+        Publish results of test suite xml file
+        :param test_suite: Test suite to publish
+        """
+        # get test cases from xml
+        test_cases = test_suite.get("testcase")
 
-def publish_test_cases(service, case):
-    """
-    Publish test cases to reportportal
-    :param service: Reportportal service
-    :param case: Test case to publish
-    :return:
-    """
-    issue = None
-    description = "{tc_name} time: {case_time}".format(
-        tc_name=case.get('@name', case.get('@id', 'NULL')),
-        case_time=case.get('@time'))
+        # safety incase of single test case which is not a list
+        if not isinstance(test_cases, list):
+            test_cases = [test_cases]
 
-    name = case.get('@name', case.get('@id', 'NULL'))
+        # start test suite
+        self.service.start_test_item(
+            name=test_suite.get('@name', test_suite.get('@id', 'NULL')),
+            start_time=str(int(time.time() * 1000)),
+            item_type="SUITE")
 
-    # start test case
-    service.start_test_item(
-        name=name[:255],
-        description=description,
-        tags=case.get('@classname', '').split('.'),
-        start_time=str(int(time.time() * 1000)),
-        item_type="STEP")
+        # publish all test cases
+        for case in test_cases:
+            self.publish_test_cases(case)
 
-    # Add system_out log.
-    if case.get('system-out'):
-        service.log(
-            time=str(int(time.time() * 1000)),
-            message=case.get('system-out'),
-            level="INFO")
+        # calculate status
+        num_of_failutes = int(test_suite.get('@failures'))
+        num_of_errors = int(test_suite.get('@errors'))
+        status = 'FAILED' if (num_of_failutes > 0 or num_of_errors > 0) \
+            else 'PASSED'
 
-    # Indicate type of test case (skipped, failures, passed)
-    if case.get('skipped'):
-        issue = {"issue_type": "NOT_ISSUE"}
-        status = 'SKIPPED'
-        skipped_case = case.get('skipped')
-        msg = skipped_case.get('@message', '#text') \
-            if isinstance(skipped_case, dict) else skipped_case
-        service.log(
-            time=str(int(time.time() * 1000)),
-            message=msg,
-            level="DEBUG")
-    elif case.get('failure') or case.get('error'):
-        status = 'FAILED'
+        self.service.finish_test_item(
+            end_time=str(int(time.time() * 1000)),
+            status=status)
 
-        failures = case.get('failure', case.get('error'))
-        failures_txt = ""
-        if isinstance(failures, list):
-            for failure in failures:
-                msg = failure.get('@message', failure.get('#text')) \
-                    if isinstance(failure, dict) else failure
-                failures_txt += \
-                    '{msg}\n'.format(msg=msg)
+    def publish_test_cases(self, case):
+        """
+        Publish test cases to reportportal
+        :param case: Test case to publish
+        """
+        issue = None
+        description = "{tc_name} time: {case_time}".format(
+            tc_name=case.get('@name', case.get('@id', 'NULL')),
+            case_time=case.get('@time'))
+
+        name = case.get('@name', case.get('@id', 'NULL'))
+
+        # start test case
+        self.service.start_test_item(
+            name=name[:255],
+            description=description,
+            tags=case.get('@classname', '').split('.'),
+            start_time=str(int(time.time() * 1000)),
+            item_type="STEP")
+
+        # Add system_out log.
+        if case.get('system-out'):
+            self.service.log(
+                time=str(int(time.time() * 1000)),
+                message=case.get('system-out'),
+                level="INFO")
+
+        # Indicate type of test case (skipped, failures, passed)
+        if case.get('skipped'):
+            issue = {"issue_type": "NOT_ISSUE"}
+            status = 'SKIPPED'
+            skipped_case = case.get('skipped')
+            msg = skipped_case.get('@message', '#text') \
+                if isinstance(skipped_case, dict) else skipped_case
+            self.service.log(
+                time=str(int(time.time() * 1000)),
+                message=msg,
+                level="DEBUG")
+        elif case.get('failure') or case.get('error'):
+            status = 'FAILED'
+
+            failures = case.get('failure', case.get('error'))
+            failures_txt = ""
+            if isinstance(failures, list):
+                for failure in failures:
+                    msg = failure.get('@message', failure.get('#text')) \
+                        if isinstance(failure, dict) else failure
+                    failures_txt += \
+                        '{msg}\n'.format(msg=msg)
+            else:
+                failures_txt = failures.get('@message', failures.get('#text')) \
+                    if isinstance(failures, dict) else failures
+
+                self.service.log(
+                    time=str(int(time.time() * 1000)),
+                    message=failures_txt,
+                    level="ERROR")
         else:
-            failures_txt = failures.get('@message', failures.get('#text')) \
-                if isinstance(failures, dict) else failures
+            status = 'PASSED'
 
-        service.log(
-            time=str(int(time.time() * 1000)),
-            message=failures_txt,
-            level="ERROR")
-    else:
-        status = 'PASSED'
-
-    # finish test case
-    service.finish_test_item(
-        end_time=str(int(time.time() * 1000)),
-        status=status,
-        issue=issue)
+        # finish test case
+        self.service.finish_test_item(
+            end_time=str(int(time.time() * 1000)),
+            status=status,
+            issue=issue)
 
 
 def main():
@@ -268,7 +307,7 @@ def main():
                                     expanded_paths=', '.join(expanded_paths),
                                     msg='Error, no source paths were found')
 
-        # Get the Reportortal service instance
+        # Get the ReportPortal service instance
         service = ReportPortalService(
             endpoint=module.params.pop('url'),
             project=module.params.pop('project_name'),
@@ -279,35 +318,15 @@ def main():
         if not ssl_verify:
             os.environ.pop('REQUESTS_CA_BUNDLE', None)
 
-        # Start Reportportal launch
-        service.start_launch(
-            name=module.params.pop('launch_name'),
-            start_time=str(int(time.time() * 1000)),
-            tags=module.params.pop('launch_tags'),
-            description=module.params.pop('launch_description')
+        publisher = ReportPortalPublisher(
+            service=service,
+            launch_name=module.params.pop('launch_name'),
+            launch_tags=module.params.pop('launch_tags'),
+            launch_description=module.params.pop('launch_description'),
+            expanded_paths=expanded_paths
         )
 
-        # Iterate over XUnit test paths
-        for test_path in expanded_paths:
-            # open the XUnit file and parse to xml object
-            with open(test_path) as fd:
-                data = xmltodict.parse(fd.read())
-
-            # get multiple test suites if present
-            if data.get('testsuites'):
-                # get the test suite object
-                test_suites_object = data.get('testsuites')
-                # get all test suites (1 or more) from the object
-                test_suites = test_suites_object.get('testsuite') \
-                    if isinstance(test_suites_object.get('testsuite'), list) \
-                    else [test_suites_object.get('testsuite')]
-
-                # publish all test suites
-                for test_suite in test_suites:
-                    publish_test_suite(service, test_suite)
-            else:
-                # publish single test suite
-                publish_test_suite(service, data.get('testsuite'))
+        publisher.publish_tests()
 
         result['expanded_paths'] = expanded_paths
         result['expanded_exclude_paths'] = expanded_exclude_paths
