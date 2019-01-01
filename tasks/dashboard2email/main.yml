@@ -37,7 +37,6 @@
       register: install_rpms
       retries: 3
       delay: 5
-      timeout: 60
       until: install_rpms.rc == 0
       tags: rpms
 
