@@ -1,0 +1,7 @@
+Code-Review+2: Vadim Griner <vgriner@redhat.com>
+Verified+1: Avishay Mahluf <amachluf@redhat.com>
+Submitted-by: Avishay Mahluf <amachluf@redhat.com>
+Submitted-at: Wed, 02 Jan 2019 12:10:41 +0000
+Reviewed-on: https://review.gerrithub.io/438740
+Project: rhos-infra/reportportal
+Branch: refs/heads/master
