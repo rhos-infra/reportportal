@@ -9,6 +9,7 @@
     volumes: /var/lib/reportportal_dashboard2email:/var/lib/reportportal_dashboard2email
     tty: true
     restart: true
+  tags: start_container
   # THE SAME task parameters have to be used in "stop reportportal_dashboard2email docker container" task
 
 - name: add reportportal_dashboard2email docker container to Ansible inventory
@@ -30,6 +31,7 @@
         name: "{{ item }}"
         state: latest
       with_items:
+        - ansible # for things like loading lib/dashboard2email.py as an ansible module etc.
         - Xvfb
         - firefox
         - tigervnc-server
@@ -131,6 +133,7 @@
     volumes: /var/lib/reportportal_dashboard2email:/var/lib/reportportal_dashboard2email
     tty: true
     restart: true
+  tags: stop_container
 
 - name: fail if dashboard2email_grab not successful
   fail:
