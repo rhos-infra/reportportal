@@ -91,6 +91,12 @@
       no_log: true
       tags: vnc
 
+    - name: create ~/.vnc/xstartup
+      template:
+        src: templates/xstartup.j2
+        dest: "~/.vnc/xstartup"
+        force: yes
+
     - name: start vncserver in the background (DISPLAY=:10)
       shell: vncserver :10 -name reportportal_dashboard2email -geometry 1920x1080
       tags: vnc
