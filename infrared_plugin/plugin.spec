@@ -47,7 +47,15 @@ subparsers:
               options:
                   import:
                       type: Bool
-                      help: Execute import tasks to import test results to ReportPortal
+                      help: |
+                        Execute import tasks using custom ansible library
+                        to import test results to ReportPortal
+                      default: false
+                  api-import:
+                      type: Bool
+                      help: |
+                        Execute import tasks using reportportal import API
+                        to import test results to ReportPortal
                       default: false
                   analyze:
                       type: Bool
