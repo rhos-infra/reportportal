@@ -8,3 +8,7 @@
 - name: Import results to ReportPortal
   include: import/main.yml
   when: import_launch
+
+- name: Import results to ReportPortal using archive
+  include: import/api_import.yml
+  when: api_import_launch
