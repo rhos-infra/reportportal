@@ -60,6 +60,7 @@
       - name: Set tasks variables
         set_fact:
             import_launch: "{{ other.import}}"
+            api_import_launch: "{{ other.api.import}}"
             analyze_launch: "{{ other.analyze}}"
             dashboard2email: "{{ other.dashboard2email}}"
         tags: always
@@ -86,7 +87,7 @@
             set_fact:
                 launch_description: "puddle: {{ core_puddle }}, {{ other.launch.description }}"
             when: other.get('jenkins', {}).get('build', {}).id is not defined
-        when: import_launch
+        when: import_launch or api_import_launch
 
       - import_tasks: ../tasks/dashboard2email/main.yml
         when: dashboard2email

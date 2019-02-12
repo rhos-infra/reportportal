@@ -1,0 +1,56 @@
+---
+
+- name: archive XML result files
+  archive:
+    path: "{{ archive_import_path }}"
+    dest: "{{ archive_dest_path }}/{{ jenkins_job_name }}.zip"
+    exclude_path: "{{ archive_exclude_path }}"
+    format: zip
+
+- block:
+     - name: import test to ReportPortal
+       shell: "curl -X POST {{ reportportal_url }}/api/v1/{{ project }}/launch/import \
+              -H 'Accept: application/json' \
+              -H 'Authorization: {{ authorization_api }}' \
+              -H 'Cache-Control: no-cache' \
+              -H 'content-type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW' \
+              -F file=@{{ archive_dest_path }}/{{ jenkins_job_name }}.zip"
+       register: import_result
+       failed_when: "'is successfully imported' not in import_result.stdout"
+
+     - name: set launch ID
+       set_fact:
+           launchid: "{{ import_result.stdout.split()[4] }}"
+
+     - name: verify upload succeeded
+       uri:
+           url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launchid }}"
+           method: GET
+           status_code: 200
+           headers:
+             Accept: "application/json"
+             Authorization: "{{ authorization_api }}"
+       register: launch_result
+  always:
+     - name: remove zip file
+       file:
+           path: "{{ archive_dest_path }}/{{ jenkins_job_name }}.zip"
+           state: absent
+       ignore_errors: true
+
+- name: update launch tags and description
+  uri:
+      url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launchid }}/update"
+      method: PUT
+      status_code: 200
+      body:
+          description: "{{ launch_description }}"
+          mode: DEFAULT
+          tags: "{{ tags }}"
+      body_format: json
+      headers:
+        Accept: "application/json"
+        Authorization: "{{ authorization_api }}"
+        Content-Type: "application/json"
+  register: launch_update
+  failed_when: "'successfully updated' not in launch_update.json.msg"
