@@ -68,8 +68,11 @@
       - name: Set import launch details
         block:
           - name: Set launch information
+            vars:
+                cleaned_tags: "{% for item in other.launch.tags %}{{ item | replace('\n', '') | truncate(250, True) }}, {% endfor %}"
+                cleaned_tags_list: "{{ cleaned_tags.split(',') }}"
             set_fact:
-                tags: "{{ other.launch.tags }} + [ 'puddle:{{ core_puddle }}' ]"
+                tags: "{{ cleaned_tags_list }} + [ 'puddle:{{ core_puddle }}' ]"
 
           - name: Set archive xmls variables
             set_fact:

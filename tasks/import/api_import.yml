@@ -56,4 +56,3 @@
           Authorization: "{{ authorization_api }}"
           Content-Type: "application/json"
   register: launch_update
-  failed_when: "'successfully updated' not in launch_update.json.msg"
