@@ -39,6 +39,14 @@ subparsers:
                   launch-core-puddle:
                       type: Value
                       help: Core Puddle
+                  launch-start-time:
+                      type: Value
+                      help: Override the launch starting time instead of using current time as default.
+                      ansible_variable: 'launch_start_time'
+                  launch-end-time:
+                      type: Value
+                      help: Override the launch ending time instead of using current time as default.
+                      ansible_variable: 'launch_end_time'
                   ignore-skipped-tests:
                       type: Bool
                       help: Ignore skipped tests and don't publish them to Reportportal at all

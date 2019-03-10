@@ -75,6 +75,14 @@ options:
       required: False
       default: ''
       type: str
+    launch_start_time:
+      description:
+          - Override the launch start time, default will be current time.
+      required: False
+    launch_end_time:
+      description:
+          - Override the launch end time, default will be current time.
+      required: False
     tests_paths:
       description:
           - Pattern for the path location of test xml results.
@@ -138,13 +146,15 @@ def get_expanded_paths(paths):
 class ReportPortalPublisher:
 
     def __init__(self, service, launch_name,launch_tags,
-                 launch_description, ignore_skipped_tests, expanded_paths):
+                 launch_description, ignore_skipped_tests, expanded_paths,
+                 launch_start_time=str(int(time.time() * 1000))):
         self.service = service
         self.launch_name = launch_name
         self.launch_tags = launch_tags
         self.launch_description = launch_description
         self.ignore_skipped_tests = ignore_skipped_tests
         self.expanded_paths = expanded_paths
+        self.launch_start_time = launch_start_time
 
     def publish_tests(self):
         """
@@ -153,7 +163,7 @@ class ReportPortalPublisher:
         # Start Reportportal launch
         self.service.start_launch(
             name=self.launch_name,
-            start_time=str(int(time.time() * 1000)),
+            start_time=self.launch_start_time,
             tags=self.launch_tags,
             description=self.launch_description
         )
@@ -297,6 +307,8 @@ def main():
         launch_name=dict(type='str', required=True),
         launch_tags=dict(type='list', required=False),
         launch_description=dict(type='str', required=False, default=''),
+        launch_start_time=dict(type='str', required=False, default=None),
+        launch_end_time=dict(type='str', required=False, default=None),
         tests_paths=dict(type='list', required=True),
         tests_exclude_paths=dict(type='list', required=False)
     )
@@ -309,6 +321,8 @@ def main():
         tests_paths = module.params.pop('tests_paths')
         tests_exclude_paths = module.params.pop('tests_exclude_paths')
         ssl_verify = module.params.pop('ssl_verify')
+        launch_start_time = module.params.pop('launch_start_time')
+        launch_end_time = module.params.pop('launch_end_time')
 
         expanded_paths = get_expanded_paths(tests_paths)
         expanded_exclude_paths = [] if not tests_exclude_paths else \
@@ -339,20 +353,29 @@ def main():
             expanded_paths=expanded_paths
         )
 
+        if launch_start_time is not None:
+            publisher.launch_start_time = launch_start_time
+
         publisher.publish_tests()
 
         result['expanded_paths'] = expanded_paths
         result['expanded_exclude_paths'] = expanded_exclude_paths
         result['launch_id'] = service.launch_id
 
+        # Set launch ending time
+        if launch_end_time is None:
+            launch_end_time = str(int(time.time() * 1000))
+
         # Finish launch.
-        service.finish_launch(end_time=str(int(time.time() * 1000)))
+        service.finish_launch(end_time=launch_end_time)
 
         module.exit_json(**result)
 
     except Exception as ex:
         if service is not None and service.launch_id:
-            service.stop_launch(end_time=str(int(time.time() * 1000)),
+            if launch_end_time is None:
+                launch_end_time = str(int(time.time() * 1000))
+            service.stop_launch(end_time=launch_end_time,
                                 status="FAILED")
         result['msg'] = ex.message
         module.fail_json(**result)
