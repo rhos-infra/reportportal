@@ -38,7 +38,7 @@
   pre_tasks:
       - name: Set Core Puddle
         set_fact:
-            core_puddle: "{{ hostvars['undercloud-0']['core_puddle'] }}"
+            core_puddle: "{{ hostvars[groups['undercloud'][0]]['core_puddle'] }}"
         when:
             - "'undercloud' in groups"
             - other.launch.get('core', {}).get('puddle', {}) == {}
