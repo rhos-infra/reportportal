@@ -1,4 +1,6 @@
-reportportal-client
+# Newer versions are for Report Portal v5
+reportportal-client==3.2.3
+
 xmltodict
 junitparser
 PyYAML
