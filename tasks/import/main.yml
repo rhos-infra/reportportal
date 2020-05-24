@@ -1,10 +1,5 @@
 ---
 
-- name: install python-xmltodict
-  yum:
-    name: python-xmltodict
-    state: latest
-
 - name: import tests to Reportportal
   reportportal_api:
     url: "{{ reportportal_url }}"
