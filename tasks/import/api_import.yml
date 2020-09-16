@@ -13,7 +13,7 @@
           -H 'Accept: application/json' \
           -H 'Authorization: {{ authorization_api }}' \
           -H 'Cache-Control: no-cache' \
-          -H 'content-type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW' \
+          -H 'boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW' \
           -F file=@{{ archive_dest_path }}/{{ jenkins_job_name }}.zip \
           {{ (ssl_verify | bool) | ternary('', '--insecure') }}"
       register: import_result
