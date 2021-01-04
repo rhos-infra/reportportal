@@ -63,6 +63,7 @@
             api_import_launch: "{{ other.api.import}}"
             analyze_launch: "{{ other.analyze}}"
             dashboard2email: "{{ other.dashboard2email}}"
+            reportportal5: "{{ other.reportportal5 }}"
         tags: always
 
       - name: Set import launch details

@@ -22,6 +22,10 @@ subparsers:
                       type: Value
                       help: Reportportal project name to push results to.
                       required: yes
+                  reportportal5:
+                      type: Bool
+                      help: Report Portal version is 5
+                      default: no
 
             - title: ReportPortal Configuration
               options:
