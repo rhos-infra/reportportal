@@ -1,5 +1,11 @@
 ---
 
+- name: Install Report Portal library requirements
+  pip:
+    name:
+      - reportportal-client~=5.0
+      - xmltodict
+
 - name: import tests to Reportportal
   reportportal_api:
     url: "{{ reportportal_url }}"

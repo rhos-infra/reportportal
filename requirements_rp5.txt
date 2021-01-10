@@ -1,0 +1,10 @@
+reportportal-client~=5.0
+
+xmltodict
+junitparser
+PyYAML
+lxml
+
+# required by dashboard2email
+docker-py
+selenium
