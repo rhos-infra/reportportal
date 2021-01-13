@@ -27,6 +27,13 @@ subparsers:
                       help: Report Portal version is 5
                       default: no
 
+            - title: Execution Parameters
+              options:
+                  venv:
+                      type: Value
+                      help: Path to the virtual environment to execute plugin with.
+                      default: ''
+
             - title: ReportPortal Configuration
               options:
                   launch-id:
