@@ -39,7 +39,7 @@
       - name: Set interpreter
         set_fact:
             ansible_python_interpreter: '{{ infrared.python.executable }}'
-        when: infrared|default({}).python|default({}).executable is defined
+        when: ((infrared|default({})).python|default({})).executable is defined
       - name: Set Core Puddle
         set_fact:
             core_puddle: "{{ hostvars[groups['undercloud'][0]]['core_puddle'] }}"
