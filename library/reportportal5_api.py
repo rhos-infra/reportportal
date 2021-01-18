@@ -239,7 +239,10 @@ class ReportPortalPublisher:
             tc_name=case.get('@name', case.get('@id', 'NULL')),
             case_time=case.get('@time'))
 
-        name = case.get('@name', case.get('@id', 'NULL'))
+        classname = case.get('@classname', '')
+        if classname:
+            classname += '.'
+        name = classname + case.get('@name', case.get('@id', 'NULL'))
 
         # start test case
         item_id = self.service.start_test_item(
