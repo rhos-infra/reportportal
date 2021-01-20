@@ -32,6 +32,7 @@
     launch_end_time: "{{ launch_end_time | default(omit) }}"
     tests_paths: "{{ archive_import_path }}"
     tests_exclude_paths: "{{ archive_exclude_path }}"
+    threads: "{{ threads }}"
   ignore_errors: true
   register: import_results
   when: reportportal5

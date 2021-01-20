@@ -26,6 +26,10 @@ subparsers:
                       type: Bool
                       help: Report Portal version is 5
                       default: no
+                  threads:
+                      type: Value
+                      help: Amount of API workers to upload results
+                      default: '8'
 
             - title: ReportPortal Configuration
               options:

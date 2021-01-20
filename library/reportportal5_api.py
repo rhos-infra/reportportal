@@ -20,6 +20,8 @@ import time
 import os
 import glob
 import xmltodict
+import queue
+import threading
 from reportportal_client import ReportPortalService
 from ansible.module_utils.basic import AnsibleModule
 
@@ -49,6 +51,11 @@ options:
           - Ignore ssl verifications
       default: True
       type: bool
+    threads:
+      description:
+          - Amount of workers to upload results
+      required: False
+      type: int
     ignore_skipped_tests:
       description:
           - Ignore skipped tests and don't publish them to Reportportal at all
@@ -143,17 +150,36 @@ def get_expanded_paths(paths):
     return expanded_paths
 
 
+class PublisherThread(threading.Thread):
+
+    def __init__(self, queue, publisher):
+        self.queue = queue
+        self.publisher = publisher
+        super().__init__()
+
+    def run(self):
+        while True:
+            try:
+                test_case, parent_id = self.queue.get(timeout=3)
+                self.publisher.publish_test_cases(test_case, parent_id)
+            except queue.Empty:
+                return
+            finally:
+                self.queue.task_done()
+
+
 class ReportPortalPublisher:
 
-    def __init__(self, service, launch_name,launch_attrs,
+    def __init__(self, service, launch_name, launch_attrs,
                  launch_description, ignore_skipped_tests, expanded_paths,
-                 launch_start_time=str(int(time.time() * 1000))):
+                 threads, launch_start_time=str(int(time.time() * 1000))):
         self.service = service
         self.launch_name = launch_name
         self.launch_attrs = launch_attrs
         self.launch_description = launch_description
         self.ignore_skipped_tests = ignore_skipped_tests
         self.expanded_paths = expanded_paths
+        self.threads = threads
         self.launch_start_time = launch_start_time
 
     def publish_tests(self):
@@ -209,8 +235,18 @@ class ReportPortalPublisher:
             item_type="SUITE")
 
         # publish all test cases
-        for case in test_cases:
-            self.publish_test_cases(case, item_id)
+        if self.threads:
+            q = queue.Queue()
+            for case in test_cases:
+                q.put((case, item_id))
+            for _ in range(self.threads):
+                worker = PublisherThread(q, self)
+                worker.daemon = True
+                worker.start()
+            q.join()
+        else:
+            for case in test_cases:
+                self.publish_test_cases(case, item_id)
 
         # calculate status
         num_of_failutes = int(test_suite.get('@failures'))
@@ -309,6 +345,7 @@ def main():
         url=dict(type='str', required=True),
         token=dict(type='str', required=True),
         ssl_verify=dict(type='bool', required=False, default=True),
+        threads=dict(type='int', required=False, default=8),
         ignore_skipped_tests=dict(type='bool', required=False, default=False),
         project_name=dict(type='str', required=True),
         launch_name=dict(type='str', required=True),
@@ -374,6 +411,7 @@ def main():
             launch_attrs=launch_attrs,
             launch_description=module.params.pop('launch_description'),
             ignore_skipped_tests=module.params.pop('ignore_skipped_tests'),
+            threads=module.params.pop('threads'),
             expanded_paths=expanded_paths
         )
 
