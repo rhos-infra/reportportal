@@ -294,6 +294,7 @@ class ReportPortalPublisher:
             self.service.log(
                 time=str(int(time.time() * 1000)),
                 message=case.get('system-out'),
+                item_id=item_id,
                 level="INFO")
 
         # Indicate type of test case (skipped, failures, passed)
@@ -306,6 +307,7 @@ class ReportPortalPublisher:
             self.service.log(
                 time=str(int(time.time() * 1000)),
                 message=msg,
+                item_id=item_id,
                 level="DEBUG")
         elif case.get('failure') or case.get('error'):
             status = 'FAILED'
@@ -325,6 +327,7 @@ class ReportPortalPublisher:
                 self.service.log(
                     time=str(int(time.time() * 1000)),
                     message=failures_txt,
+                    item_id=item_id,
                     level="ERROR")
         else:
             status = 'PASSED'
