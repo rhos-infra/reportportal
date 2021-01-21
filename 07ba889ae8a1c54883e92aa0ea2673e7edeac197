@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "da3fcf2f_60e1f23a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017009
+      },
+      "writtenOn": "2021-01-21T08:08:06Z",
+      "side": 1,
+      "message": "Looks good to me\nThis change was tested and has shown very good results, reduced an hour of logs upload to 8 minutes.",
+      "revId": "07ba889ae8a1c54883e92aa0ea2673e7edeac197",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
