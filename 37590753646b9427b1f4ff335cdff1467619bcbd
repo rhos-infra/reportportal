@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ca53d6fc_e7c49080",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017009
+      },
+      "writtenOn": "2021-01-24T14:25:11Z",
+      "side": 1,
+      "message": "This was tested in a POC job and we\u0027ve gone over the logs together to make sure this works and doesn\u0027t break anything.",
+      "revId": "37590753646b9427b1f4ff335cdff1467619bcbd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
