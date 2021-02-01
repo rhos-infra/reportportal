@@ -375,11 +375,6 @@ def main():
         expanded_exclude_paths = [] if not tests_exclude_paths else \
             get_expanded_paths(tests_exclude_paths)
 
-        if not expanded_paths:
-            return module.fail_json(path=', '.join(tests_paths),
-                                    expanded_paths=', '.join(expanded_paths),
-                                    msg='Error, no source paths were found')
-
         # Get the ReportPortal service instance
         service = ReportPortalService(
             endpoint=module.params.pop('url'),
