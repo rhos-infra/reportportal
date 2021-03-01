@@ -40,6 +40,7 @@
         set_fact:
             ansible_python_interpreter: '{{ infrared.python.executable }}'
         when: ((infrared|default({})).python|default({})).executable is defined
+
       - name: Set Core Puddle
         set_fact:
             core_puddle: "{{ hostvars[groups['undercloud'][0]]['core_puddle'] }}"
@@ -75,8 +76,7 @@
         block:
           - name: Set launch information
             vars:
-                cleaned_tags: "{% for item in other.launch.tags %}{{ item | replace('\n', '') | truncate(250, True) }}, {% endfor %}"
-                cleaned_tags_list: "{{ cleaned_tags.split(',') }}"
+                cleaned_tags_list: "{{ ((other.launch|default({})).tags|default('')).split(';') | map('replace', '\\n', ' ') | map('replace', '\n', ' ') | map('truncate', 250, True) | map('trim') | list }}"
             set_fact:
                 tags: "{{ cleaned_tags_list }} + [ 'puddle:{{ core_puddle }}' ]"
 
@@ -94,12 +94,14 @@
 
           - name: Set launch description without job URL
             set_fact:
-                launch_description: "puddle: {{ core_puddle }}, {{ other.launch.description }}"
+              launch_description: "puddle: {{ core_puddle }}{{ (other.launch.description != '') | ternary(', ' + other.launch.description, '') }}"
             when: other.get('jenkins', {}).get('build', {}).id is not defined
         when: import_launch or api_import_launch
 
-      - import_tasks: ../tasks/dashboard2email/main.yml
-        when: dashboard2email
-
   roles:
       - reportportal
+
+  post_tasks:
+    - name: Import Dashboard2email tasks
+      include_tasks: ../tasks/dashboard2email/main.yml
+      when: dashboard2email
