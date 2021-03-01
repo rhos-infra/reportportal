@@ -33,13 +33,19 @@ subparsers:
 
             - title: ReportPortal Configuration
               options:
+                  launch-mode:
+                      type: Value
+                      help: The mode to set the launch with
+                      default: DEFAULT
                   launch-id:
                       type: Value
                       help: ID of a launch.
                   launch-tags:
-                      type: ListValue
-                      help: Tags to be applied to a specified launch.
-                      default: ''
+                      type: Value
+                      help: |
+                        Tags to be applied to a specified launch.
+                        Tags should be separated with ';'.
+                        --launch-tags "key1:value1;key2:value2_1,value2_2..."
                   launch-description:
                       type: Value
                       help: Description to be added to a specified launch.
@@ -59,6 +65,19 @@ subparsers:
                       type: Bool
                       help: Ignore skipped tests and don't publish them to Reportportal at all
                       default: false
+                  allow-empty-launches:
+                      type: Bool
+                      help: |
+                        Whether or not to allow creation of empty launches
+                        (no results) in case no XML junit reports are found
+                      default: true
+                  post-validations:
+                      type: Bool
+                      help: |
+                        Whether or nor to run some validation task after
+                        performing launch operations
+                      default: true
+
             - title: tasks
               options:
                   import:
