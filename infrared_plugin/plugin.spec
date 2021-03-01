@@ -33,13 +33,16 @@ subparsers:
 
             - title: ReportPortal Configuration
               options:
+                  launch-mode:
+                      type: Value
+                      help: The mode to set the launch with
+                      default: DEFAULT
                   launch-id:
                       type: Value
                       help: ID of a launch.
                   launch-tags:
                       type: ListValue
                       help: Tags to be applied to a specified launch.
-                      default: ''
                   launch-description:
                       type: Value
                       help: Description to be added to a specified launch.

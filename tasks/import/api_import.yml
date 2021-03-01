@@ -1,58 +1,154 @@
 ---
 
+- name:
+  set_fact:
+    archive_dest_file: "{{ archive_dest_path }}/{{ jenkins_job_name }}.zip"
+    launch_mode: "{{ other.launch.mode }}"
+
 - name: archive XML result files
   archive:
       path: "{{ archive_import_path }}"
-      dest: "{{ archive_dest_path }}/{{ jenkins_job_name }}.zip"
+      dest: "{{ archive_dest_file }}"
       exclude_path: "{{ archive_exclude_path }}"
       format: zip
 
 - block:
-    - name: import test to ReportPortal
-      shell: "curl -X POST {{ reportportal_url }}/api/v1/{{ project }}/launch/import \
-          -H 'Accept: application/json' \
-          -H 'Authorization: {{ authorization_api }}' \
-          -H 'Cache-Control: no-cache' \
-          -H 'boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW' \
-          -F file=@{{ archive_dest_path }}/{{ jenkins_job_name }}.zip \
-          {{ (ssl_verify | bool) | ternary('', '--insecure') }}"
-      register: import_result
-      failed_when: "'is successfully imported' not in import_result.stdout"
+    # The 'command' module should be replaced with 'uri' once the Ansible
+    # version be bumped to >= 2.10.0 in InfraRed requirements.
+    # DON'T DISABLE WARNINGS(!)
+    - name: Upload test results to ReportPortal using the curl command
+      command: "curl -X POST {{ reportportal_url }}/api/v1/{{ project }}/launch/import \
+                --header 'Content-Type: multipart/form-data' \
+                --header 'Accept: application/json' \
+                --header 'Authorization: bearer {{ reportportal_token }}' \
+                --header 'Cache-Control: no-cache' \
+                -F file=@{{ archive_dest_file }} \
+                {{ (ssl_verify | bool) | ternary('', '--insecure') }}"
+      register: curl_cmd
 
-    - name: set launch ID
+    - name: Fail when curl return code is no zero
+      fail:
+        msg: "{{ curl_cmd }}"
+      when: curl_cmd.rc != 0
+
+    - name: Fail when curl response doesn't contain a launch ID
+      fail:
+        msg: "{{ curl_cmd }}"
+      when: curl_cmd.stdout is not match(".*Launch with id = .* is successfully imported")
+
+    - name: Grab the ID of the newly created launch
       set_fact:
-          launchid: "{{ import_result.stdout.split()[4] }}"
+        launch_id: "{{ curl_cmd.stdout | regex_search('= ([-a-zA-Z0-9]+)', '\\1') | first}}"
 
-    - name: verify upload succeeded
+    - name: Get some deatils about the newly created launch
       uri:
-          url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launchid }}"
-          method: GET
-          status_code: 200
-          validate_certs: "{{ ssl_verify | bool }}"
-          headers:
-              Accept: "application/json"
-              Authorization: "{{ authorization_api }}"
-      register: launch_result
+        url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launch_id }}"
+        method: GET
+        status_code: 200
+        validate_certs: "{{ ssl_verify | bool }}"
+        headers:
+          Accept: "application/json"
+          Authorization: "bearer {{ reportportal_token }}"
+      register: launch_details
+
+    # Determination is based on the 'uuid' key which exist in the json part in
+    # the response
+    - name: Automatically determining if the version of ReportPortal is 5
+      set_fact:
+        rp_v5: "{{ (launch_details.json.uuid is defined) | ternary(true, false) }}"
+
+    - name: Perform for changes required for ReportPortal v5
+      when: rp_v5
+      block:
+        - name: Convert tags to attributes data structure
+          set_fact:
+            tags: "{{ tags | rp_attributes }}"
+
+        # Unlike in RP v4, in v5 there is also a 'uuid' attribute and it's
+        # different from the 'id' attribute. The confirmation id we get after a
+        # successful creation of a launch in RPv5 is actual an UUID and not an ID
+        # which is needed to update the launch.
+        - name: Update launch ID in ReportPortal v5 (instead of UUID)
+          set_fact:
+            launch_id: "{{ launch_details.json.id }}"
+
+    - name: Print the ID of the newly created launch
+      debug:
+        var: launch_id
+
+    - name: Set import time facts
+      set_fact:
+        import_start_millis: "{{ import_start_pre | int + import_start_post | int }}"
+        import_end_millis: "{{ import_end_pre | int + import_end_post | int }}"
+      vars:
+        import_start: "{{ curl_cmd.start | regex_findall('(.*)\\.([0-9]+)') }}"
+        import_start_pre: "{{ (import_start[0][0] | to_datetime).strftime('%s') | int * 1000 | int}}"
+        import_start_post: "{{ import_start[0][1] | int % 1000 | int}}"
+        import_end: "{{ curl_cmd.end | regex_findall('(.*)\\.([0-9]+)') }}"
+        import_end_pre: "{{ (import_end[0][0] | to_datetime).strftime('%s') | int * 1000 | int}}"
+        import_end_post: "{{ import_end[0][1] | int % 1000 | int}}"
+
+    - name: Print import duration time
+      debug:
+        msg: "Import took {{ (import_end_millis|int - import_start_millis|int) / 1000}} seconds"
   always:
       - name: remove zip file
         file:
-            path: "{{ archive_dest_path }}/{{ jenkins_job_name }}.zip"
+            path: "{{ archive_dest_file }}"
             state: absent
         ignore_errors: true
 
-- name: update launch tags and description
+- name: Update launch tags, description & mode
   uri:
-      url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launchid }}/update"
-      method: PUT
-      status_code: 200
-      validate_certs: "{{ ssl_verify | bool }}"
-      body:
-          description: "{{ launch_description }}"
-          mode: DEFAULT
-          tags: "{{ tags }}"
-      body_format: json
-      headers:
-          Accept: "application/json"
-          Authorization: "{{ authorization_api }}"
-          Content-Type: "application/json"
-  register: launch_update
+    url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launch_id }}/update"
+    method: PUT
+    status_code: 200
+    validate_certs: "{{ ssl_verify | bool }}"
+    body:
+      description: "{{ launch_description }}"
+      mode: "{{ launch_mode }}"
+      attributes: "{{ (launch_details.json.attributes is defined) | ternary(tags, omit) }}"
+      tags: "{{ (launch_details.json.attributes is not defined) | ternary(tags, omit) }}"
+    body_format: json
+    headers:
+      Accept: "application/json"
+      Authorization: "bearer {{ reportportal_token }}"
+      Content-Type: "application/json"
+
+- name: Get Launch details after update
+  uri:
+    url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launch_id }}"
+    method: GET
+    status_code: 200
+    validate_certs: "{{ ssl_verify | bool }}"
+    headers:
+      Accept: "application/json"
+      Authorization: "bearer {{ reportportal_token }}"
+  register: launch_update_result
+
+- name: Validate that the launch was updated with the description
+  fail:
+    msg: "Input: '{{ launch_description }}', Launch update result: {{ launch_update_result }}"
+  when:
+    - launch_update_result.json.description is not defined or
+      launch_update_result.json.description != launch_description
+
+- name: Validate that the launch was updated with the correct mode
+  fail:
+    msg: "Input: '{{ launch_mode }}', Launch update result: {{ launch_update_result }}"
+  when:
+    - launch_update_result.json.mode is not defined or
+      launch_update_result.json.mode != launch_mode
+
+# Find differences in attributes/tags (compatible with RP v4 & v5)
+- name: Set facts for attributes/tags differences
+  set_fact:
+    only_in_input: "{{ tags | difference(launch_update_result.json.attributes | default(launch_update_result.json.tags)) }}"
+    only_in_launch: "{{ launch_update_result.json.attributes | default(launch_update_result.json.tags) | difference(tags) }}"
+
+- name: Validate that the launch was updated with all attributes/tags
+  fail:
+    msg: "Differences found between attributes/tags in input and launch.\nIn input only: {{ only_in_input }}.\nIn launch only: {{ only_in_launch }}.\nLaunch update result: {{ launch_update_result }}"
+  vars:
+    missing_list: "{{ tags | difference(launch_update_result.json.tags) }}"
+  when: only_in_input != [] or only_in_launch != []
