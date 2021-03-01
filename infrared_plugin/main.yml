@@ -40,6 +40,7 @@
         set_fact:
             ansible_python_interpreter: '{{ infrared.python.executable }}'
         when: ((infrared|default({})).python|default({})).executable is defined
+
       - name: Set Core Puddle
         set_fact:
             core_puddle: "{{ hostvars[groups['undercloud'][0]]['core_puddle'] }}"
@@ -75,8 +76,7 @@
         block:
           - name: Set launch information
             vars:
-                cleaned_tags: "{% for item in other.launch.tags %}{{ item | replace('\n', '') | truncate(250, True) }}, {% endfor %}"
-                cleaned_tags_list: "{{ cleaned_tags.split(',') }}"
+                cleaned_tags_list: "{{ ((other.launch|default({})).tags|default('')).split(';') | map('replace', '\\n', ' ') | map('replace', '\n', ' ') | map('truncate', 250, True) | map('trim') | list }}"
             set_fact:
                 tags: "{{ cleaned_tags_list }} + [ 'puddle:{{ core_puddle }}' ]"
 
@@ -87,19 +87,26 @@
                 archive_exclude_path: "{{ other.archive.exclude.path }}"
                 jenkins_job_name: "{{ other.jenkins.job.name }}"
 
-          - name: Set launch description with job URL
+          - name: Set launch description
             set_fact:
-                launch_description: "puddle: {{ core_puddle }}, job URL: {{ other.jenkins.domain }}/job/{{ other.jenkins.job.name }}/{{ other.jenkins.build.id }}/ \n {{ other.launch.description }}"
+              launch_description: "puddle: {{ core_puddle }}"
+
+          - name: Add job URL to the launch description
+            set_fact:
+              launch_description: ", job URL: {{ other.jenkins.domain }}/job/{{ other.jenkins.job.name }}/{{ other.jenkins.build.id }}/"
             when: other.get('jenkins', {}).get('build', {}).id is defined
 
-          - name: Set launch description without job URL
+          - name: Update launch description with user input
             set_fact:
-                launch_description: "puddle: {{ core_puddle }}, {{ other.launch.description }}"
-            when: other.get('jenkins', {}).get('build', {}).id is not defined
-        when: import_launch or api_import_launch
+              launch_description: "{{ launch_description }}, {{ other.launch.description }}"
+            when: other.launch.description != ''
 
-      - import_tasks: ../tasks/dashboard2email/main.yml
-        when: dashboard2email
+        when: import_launch or api_import_launch
 
   roles:
       - reportportal
+
+  post_tasks:
+    - name: Import Dashboard2email tasks
+      include_tasks: ../tasks/dashboard2email/main.yml
+      when: dashboard2email
