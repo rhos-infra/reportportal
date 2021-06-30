@@ -30,7 +30,7 @@ module: reportportal_api
 version_added: "2.4"
 short_description: Uploads test results to Reportportal server
 description:
-   - This module makes use of the [*] 'reportportal_client' package to talk 
+   - This module makes use of the [*] 'reportportal_client' package to talk
      with Reportportal instance over REST in order to publish Xunit test results
      [*] https://pypi.org/project/reportportal-client/
 options:
@@ -93,7 +93,6 @@ options:
           - Pattern for the path location of excluded test xml results.
       required: False
       type: list
-
 requirements:
     - "reportportal-client"
     - "junitparser"
@@ -145,7 +144,7 @@ def get_expanded_paths(paths):
 
 class ReportPortalPublisher:
 
-    def __init__(self, service, launch_name,launch_tags,
+    def __init__(self, service, launch_name, launch_tags,
                  launch_description, ignore_skipped_tests, expanded_paths,
                  launch_start_time=str(int(time.time() * 1000))):
         self.service = service

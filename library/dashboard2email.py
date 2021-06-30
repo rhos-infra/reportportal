@@ -85,7 +85,6 @@ options:
       required: False
       type: str
       default: ''
-   
 requirements:
     - "selenium"
 '''
@@ -243,16 +242,16 @@ def main():
         supports_check_mode=False)
 
     params = dict(
-        display = module.params.pop('display'),
-        url = module.params.pop('url'),
-        user_name = module.params.pop('user_name'),
-        token = module.params.pop('token'),
-        email_server_name = module.params.pop('email_server_name'),
-        email_server_port = module.params.pop('email_server_port'),
-        email_from = module.params.pop('email_from'),
-        email_to = module.params.pop('email_to'),
-        email_subject = module.params.pop('email_subject'),
-        email_body = module.params.pop('email_body')
+        display=module.params.pop('display'),
+        url=module.params.pop('url'),
+        user_name=module.params.pop('user_name'),
+        token=module.params.pop('token'),
+        email_server_name=module.params.pop('email_server_name'),
+        email_server_port=module.params.pop('email_server_port'),
+        email_from=module.params.pop('email_from'),
+        email_to=module.params.pop('email_to'),
+        email_subject=module.params.pop('email_subject'),
+        email_body=module.params.pop('email_body')
     )
 
     _step("Starting with params... display: %s, url: %s, user_name: %s, token: %s, email_to: %s, email_subject: %s, email_body: %s" % \
