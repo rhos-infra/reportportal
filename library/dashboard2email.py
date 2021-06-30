@@ -102,7 +102,7 @@ def process_exception(step='step unknown', debug=None, _browser=None, _notify=No
     dt = time.localtime()
     datetime = "%04d%02d%02d_%02d%02d%02d" % (dt.tm_year, dt.tm_mon, dt.tm_yday, dt.tm_hour, dt.tm_min, dt.tm_sec)
 
-    print "step: %s, exception: %s" % (step, msg)
+    print("step: %s, exception: %s" % (step, msg))
 
     if debug == "text":
         file_name = 'debug/debug_text_%s.txt' % datetime
@@ -123,7 +123,7 @@ def process_exception(step='step unknown', debug=None, _browser=None, _notify=No
 def _step(msg):
     dt = time.localtime()
     datetime = "%04d%02d%02d_%02d%02d%02d" % (dt.tm_year, dt.tm_mon, dt.tm_mday, dt.tm_hour, dt.tm_min, dt.tm_sec)
-    print "%s | %s" % (datetime, msg)
+    print("%s | %s" % (datetime, msg))
 
 
 def open_rp_dashboard(params=None, _browser=None):
@@ -214,7 +214,7 @@ def send_email(params=None, img=None, stats=None):
         server.sendmail(email_from, email_to, msgRoot.as_string())
         server.close()
 
-        print 'Email sent!'
+        print('Email sent!')
     except Exception as ex:
         process_exception(step='Send email', msg=ex.message)
 
