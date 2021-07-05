@@ -137,7 +137,7 @@
 
 - name: fail if dashboard2email_grab not successful
   fail:
-    msg: "dashboard2email_grab: {{ dashboard2email_grab}}"
+    msg: "dashboard2email_grab: {{ dashboard2email_grab }}"
   when: dashboard2email_grab.failed == true
   tags: grab
   delegate_to: reportportal_dashboard2email
