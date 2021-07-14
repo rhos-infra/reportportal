@@ -22,10 +22,6 @@ subparsers:
                       type: Value
                       help: Reportportal project name to push results to.
                       required: yes
-                  reportportal5:
-                      type: Bool
-                      help: Report Portal version is 5 (Deprecated - This option should be removed)
-                      default: no
                   socket-timeout:
                       type: Value
                       help: Socket timeout
