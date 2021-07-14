@@ -68,7 +68,6 @@
             api_import_launch: "{{ other.api.import}}"
             analyze_launch: "{{ other.analyze}}"
             dashboard2email: "{{ other.dashboard2email}}"
-            reportportal5: "{{ other.reportportal5 }}"
             threads: "{{ other.threads|int }}"
         tags: always
 

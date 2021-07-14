@@ -49,19 +49,11 @@
           Content-Type: "application/json"
       register: empty_launch
 
-    - name: Automatically determine if ReportPortal is v5 (empty launch)
-      set_fact:
-        rp_v5: "{{ ('-' in empty_launch.json.id) | ternary(true, false) }}"
-
-    - name: Print if ReportPortal is version 5 or not
-      debug:
-        msg: "Is ReportPortal v5? {{ rp_v5 }}"
-
     - name: Save the ID of the newly created empty launch
       set_fact:
         launch_id: "{{ empty_launch.json.id }}"
 
-    - name: Print the ID of the newly created empty launch
+    - name: ID of the newly created empty launch
       debug:
         var: launch_id
 
@@ -70,7 +62,6 @@
       register: end_time
 
     - name: Set attributes as tags in ReportPortal v5
-      when: rp_v5
       set_fact:
         tags: "{{ tags | rp_attributes }}"
 
@@ -83,8 +74,7 @@
         body:
           end_time: "{{ end_time.stdout }}"
           endTime: "{{ end_time.stdout }}"
-          attributes: "{{ rp_v5 | ternary(tags, omit) }}"
-          tags: "{{ rp_v5 | ternary(omit, tags) }}"
+          attributes: "{{ tags }}"
           #status: Should be done based on results
         body_format: json
         headers:
@@ -110,7 +100,7 @@
                 {{ (ssl_verify | bool) | ternary('', '--insecure') }}"
       register: curl_cmd
 
-    - name: Fail when curl return code is no zero
+    - name: Fail when curl returned code != 0
       fail:
         msg: "{{ curl_cmd }}"
       when: curl_cmd.rc != 0
@@ -138,14 +128,8 @@
           Authorization: "bearer {{ reportportal_token }}"
       register: launch_details
 
-    # Determination is based on the 'uuid' key which exist in the json part in
-    # the response
-    - name: Automatically determining if the version of ReportPortal is 5
-      set_fact:
-        rp_v5: "{{ (launch_details.json.uuid is defined) | ternary(true, false) }}"
 
     - name: Perform changes required for ReportPortal v5
-      when: rp_v5
       block:
         - name: Convert tags to attributes data structure
           set_fact:
@@ -188,8 +172,7 @@
         body:
           description: "{{ launch_description }}"
           mode: "{{ launch_mode }}"
-          attributes: "{{ rp_v5 | ternary(tags, omit) }}"
-          tags: "{{ rp_v5 | ternary(omit, tags) }}"
+          attributes: "{{ tags }}"
         body_format: json
         headers:
           Accept: "application/json"
@@ -231,18 +214,15 @@
         - launch_update_result.json.mode is not defined or
           launch_update_result.json.mode != launch_mode
 
-    # Find differences in attributes/tags (compatible with RP v4 & v5)
-    # RPv4 replaces ',' with '_'
     - name: Set facts for attributes/tags differences
       vars:
-        replace_commas: "{{ not rp_v5 and archive_result.failed }}"
-        input_tags_attrs: "{{ replace_commas | ternary(tags | map('replace', ',', '_') | list, tags) }}"
-        launch_tags_attrs: "{{ rp_v5 | ternary(launch_update_result.json.attributes, launch_update_result.json.tags)}}"
+        input_tags_attrs: "{{ tags }}"
+        launch_tags_attrs: "{{ launch_update_result.json.attributes }}"
       set_fact:
         only_in_input: "{{ input_tags_attrs | difference(launch_tags_attrs) }}"
         only_in_launch: "{{ launch_tags_attrs | difference(input_tags_attrs) }}"
 
-    - name: Validate that the launch was updated with all attributes/tags
+    - name: Validate that the launch was updated with all attributes
       fail:
         msg: "Differences found between attributes/tags in input and launch.\nIn input only: {{ only_in_input }}.\nIn launch only: {{ only_in_launch }}.\nLaunch update result: {{ launch_update_result }}"
       vars:

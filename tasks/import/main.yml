@@ -1,25 +1,6 @@
 ---
-
-- name: import tests to Reportportal
-  reportportal_api:
-    url: "{{ reportportal_url }}"
-    token: "{{ api_token }}"
-    ssl_verify: "{{ ssl_verify | bool }}"
-    ignore_skipped_tests: "{{ ignore_skipped_tests | bool }}"
-    project_name: "{{ project }}"
-    launch_name: "{{ jenkins_job_name }}"
-    launch_tags: "{{ tags }}"
-    launch_description: "{{ launch_description }}"
-    launch_start_time: "{{ launch_start_time | default(omit) }}"
-    launch_end_time: "{{ launch_end_time | default(omit) }}"
-    tests_paths: "{{ archive_import_path }}"
-    tests_exclude_paths: "{{ archive_exclude_path }}"
-  ignore_errors: true
-  register: import_results
-  when: not reportportal5
-
 - name: import tests to Reportportal version 5
-  reportportal5_api:
+  reportportal_api:
     url: "{{ reportportal_url }}"
     token: "{{ reportportal_token }}"
     ssl_verify: "{{ ssl_verify | bool }}"
@@ -35,7 +16,6 @@
     threads: "{{ threads }}"
   ignore_errors: true
   register: import_results
-  when: reportportal5
 
 - debug:
     var: import_results
@@ -44,18 +24,17 @@
     msg: Import tests to Reportportal failed
   when: import_results.failed
 
-- name: set launch ID
+- name: set launch UUID
   set_fact:
-    launchid: "{{ import_results.launch_id }}"
+    launch_uuid: "{{ import_results.launch_id }}"
 
 - name: verify upload succeeded
   uri:
-    url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launchid }}"
+    url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launch_uuid }}"
     method: GET
     validate_certs: "{{ ssl_verify | bool }}"
     status_code: 200
     headers:
      Accept: "application/json"
-     Authorization: "{{ authorization_api }}"
+     Authorization: "bearer {{ reportportal_token }}"
   register: launch_result
-  when: not reportportal5
