@@ -20,6 +20,8 @@ import time
 import os
 import glob
 import xmltodict
+import queue
+import threading
 from reportportal_client import ReportPortalService
 from ansible.module_utils.basic import AnsibleModule
 
@@ -28,15 +30,15 @@ DOCUMENTATION = '''
 ---
 module: reportportal_api
 version_added: "2.4"
-short_description: Uploads test results to Reportportal server
+short_description: Uploads test results to ReportPortal v5 server
 description:
-   - This module makes use of the [*] 'reportportal_client' package to talk
+   - This module makes use of the [*] 'reportportal_client' package to talk 
      with Reportportal instance over REST in order to publish Xunit test results
      [*] https://pypi.org/project/reportportal-client/
 options:
     url:
       description:
-          - The URL of the Bugzilla instance to talk with.
+          - The URL of the Report Portal server.
       required: True
       type: str
     token:
@@ -49,6 +51,11 @@ options:
           - Ignore ssl verifications
       default: True
       type: bool
+    threads:
+      description:
+          - Amount of workers to upload results
+      required: False
+      type: int
     ignore_skipped_tests:
       description:
           - Ignore skipped tests and don't publish them to Reportportal at all
@@ -93,6 +100,7 @@ options:
           - Pattern for the path location of excluded test xml results.
       required: False
       type: list
+
 requirements:
     - "reportportal-client"
     - "junitparser"
@@ -142,17 +150,36 @@ def get_expanded_paths(paths):
     return expanded_paths
 
 
+class PublisherThread(threading.Thread):
+
+    def __init__(self, queue, publisher):
+        self.queue = queue
+        self.publisher = publisher
+        super().__init__()
+
+    def run(self):
+        while True:
+            try:
+                test_case, parent_id = self.queue.get(timeout=3)
+                self.publisher.publish_test_cases(test_case, parent_id)
+            except queue.Empty:
+                return
+            finally:
+                self.queue.task_done()
+
+
 class ReportPortalPublisher:
 
-    def __init__(self, service, launch_name, launch_tags,
+    def __init__(self, service, launch_name, launch_attrs,
                  launch_description, ignore_skipped_tests, expanded_paths,
-                 launch_start_time=str(int(time.time() * 1000))):
+                 threads, launch_start_time=str(int(time.time() * 1000))):
         self.service = service
         self.launch_name = launch_name
-        self.launch_tags = launch_tags
+        self.launch_attrs = launch_attrs
         self.launch_description = launch_description
         self.ignore_skipped_tests = ignore_skipped_tests
         self.expanded_paths = expanded_paths
+        self.threads = threads
         self.launch_start_time = launch_start_time
 
     def publish_tests(self):
@@ -163,7 +190,7 @@ class ReportPortalPublisher:
         self.service.start_launch(
             name=self.launch_name,
             start_time=self.launch_start_time,
-            tags=self.launch_tags,
+            attributes=self.launch_attrs,
             description=self.launch_description
         )
 
@@ -202,14 +229,24 @@ class ReportPortalPublisher:
             test_cases = [test_cases]
 
         # start test suite
-        self.service.start_test_item(
+        item_id = self.service.start_test_item(
             name=test_suite.get('@name', test_suite.get('@id', 'NULL')),
             start_time=str(int(time.time() * 1000)),
             item_type="SUITE")
 
         # publish all test cases
-        for case in test_cases:
-            self.publish_test_cases(case)
+        if self.threads > 0:
+            q = queue.Queue()
+            for case in test_cases:
+                q.put((case, item_id))
+            for _ in range(self.threads):
+                worker = PublisherThread(q, self)
+                worker.daemon = True
+                worker.start()
+            q.join()
+        else:
+            for case in test_cases:
+                self.publish_test_cases(case, item_id)
 
         # calculate status
         num_of_failutes = int(test_suite.get('@failures'))
@@ -218,13 +255,15 @@ class ReportPortalPublisher:
             else 'PASSED'
 
         self.service.finish_test_item(
+            item_id,
             end_time=str(int(time.time() * 1000)),
             status=status)
 
-    def publish_test_cases(self, case):
+    def publish_test_cases(self, case, parent_id):
         """
         Publish test cases to reportportal
         :param case: Test case to publish
+        :param parent_id: ID of the test suite
         """
         issue = None
 
@@ -236,21 +275,26 @@ class ReportPortalPublisher:
             tc_name=case.get('@name', case.get('@id', 'NULL')),
             case_time=case.get('@time'))
 
-        name = case.get('@name', case.get('@id', 'NULL'))
+        classname = case.get('@classname', '')
+        if classname:
+            classname += '.'
+        name = classname + case.get('@name', case.get('@id', 'NULL'))
 
         # start test case
-        self.service.start_test_item(
+        item_id = self.service.start_test_item(
             name=name[:255],
             description=description,
             tags=case.get('@classname', '').split('.'),
             start_time=str(int(time.time() * 1000)),
-            item_type="STEP")
+            item_type="STEP",
+            parent_item_id=parent_id)
 
         # Add system_out log.
         if case.get('system-out'):
             self.service.log(
                 time=str(int(time.time() * 1000)),
                 message=case.get('system-out'),
+                item_id=item_id,
                 level="INFO")
 
         # Indicate type of test case (skipped, failures, passed)
@@ -263,6 +307,7 @@ class ReportPortalPublisher:
             self.service.log(
                 time=str(int(time.time() * 1000)),
                 message=msg,
+                item_id=item_id,
                 level="DEBUG")
         elif case.get('failure') or case.get('error'):
             status = 'FAILED'
@@ -282,12 +327,14 @@ class ReportPortalPublisher:
                 self.service.log(
                     time=str(int(time.time() * 1000)),
                     message=failures_txt,
+                    item_id=item_id,
                     level="ERROR")
         else:
             status = 'PASSED'
 
         # finish test case
         self.service.finish_test_item(
+            item_id,
             end_time=str(int(time.time() * 1000)),
             status=status,
             issue=issue)
@@ -301,6 +348,7 @@ def main():
         url=dict(type='str', required=True),
         token=dict(type='str', required=True),
         ssl_verify=dict(type='bool', required=False, default=True),
+        threads=dict(type='int', required=False, default=8),
         ignore_skipped_tests=dict(type='bool', required=False, default=False),
         project_name=dict(type='str', required=True),
         launch_name=dict(type='str', required=True),
@@ -316,6 +364,9 @@ def main():
         argument_spec=module_args,
         supports_check_mode=False)
 
+    service = None
+    launch_end_time = None
+
     try:
         tests_paths = module.params.pop('tests_paths')
         tests_exclude_paths = module.params.pop('tests_exclude_paths')
@@ -327,10 +378,20 @@ def main():
         expanded_exclude_paths = [] if not tests_exclude_paths else \
             get_expanded_paths(tests_exclude_paths)
 
+        expanded_paths = \
+            list(set(expanded_paths) - set(expanded_exclude_paths))
+
         if not expanded_paths:
-            return module.fail_json(path=', '.join(tests_paths),
-                                    expanded_paths=', '.join(expanded_paths),
-                                    msg='Error, no source paths were found')
+            raise IOError("There are no paths to fetch data from")
+
+        missing_paths = []
+        for a_path in expanded_paths:
+            if not os.path.exists(a_path):
+                missing_paths.append(a_path)
+        if missing_paths:
+            raise FileNotFoundError(
+                "Paths not exist: {missing_paths}'".format
+                (missing_paths=str(missing_paths)))
 
         # Get the ReportPortal service instance
         service = ReportPortalService(
@@ -343,12 +404,30 @@ def main():
         if not ssl_verify:
             os.environ.pop('REQUESTS_CA_BUNDLE', None)
 
+        launch_tags = module.params.pop('launch_tags')
+        launch_attrs = {}
+        for tag in launch_tags:
+            tag_attr = tag.split(':', 1)
+            if len(tag_attr) == 2:
+                if len(tag_attr[0]) > 127:
+                    key = tag_attr[0][:127]
+                else:
+                    key = tag_attr[0]
+                if not tag_attr[1]:
+                    val = 'N/A'
+                elif len(tag_attr[1]) > 127:
+                    val = tag_attr[1][:127]
+                else:
+                    val = tag_attr[1]
+                launch_attrs[key] = val
+
         publisher = ReportPortalPublisher(
             service=service,
             launch_name=module.params.pop('launch_name'),
-            launch_tags=module.params.pop('launch_tags'),
+            launch_attrs=launch_attrs,
             launch_description=module.params.pop('launch_description'),
             ignore_skipped_tests=module.params.pop('ignore_skipped_tests'),
+            threads=module.params.pop('threads'),
             expanded_paths=expanded_paths
         )
 
@@ -374,9 +453,8 @@ def main():
         if service is not None and service.launch_id:
             if launch_end_time is None:
                 launch_end_time = str(int(time.time() * 1000))
-            service.stop_launch(end_time=launch_end_time,
-                                status="FAILED")
-        result['msg'] = ex.message
+            service.finish_launch(end_time=launch_end_time, status="FAILED")
+        result['msg'] = ex
         module.fail_json(**result)
 
 
