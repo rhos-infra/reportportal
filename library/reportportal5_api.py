@@ -364,6 +364,9 @@ def main():
         argument_spec=module_args,
         supports_check_mode=False)
 
+    service = None
+    launch_end_time = None
+
     try:
         tests_paths = module.params.pop('tests_paths')
         tests_exclude_paths = module.params.pop('tests_exclude_paths')
@@ -374,6 +377,21 @@ def main():
         expanded_paths = get_expanded_paths(tests_paths)
         expanded_exclude_paths = [] if not tests_exclude_paths else \
             get_expanded_paths(tests_exclude_paths)
+
+        expanded_paths = \
+            list(set(expanded_paths) - set(expanded_exclude_paths))
+
+        if not expanded_paths:
+            raise IOError("There are no paths to fetch data from")
+
+        missing_paths = []
+        for a_path in expanded_paths:
+            if not os.path.exists(a_path):
+                missing_paths.append(a_path)
+        if missing_paths:
+            raise FileNotFoundError(
+                "Paths not exist: {missing_paths}'".format
+                (missing_paths=str(missing_paths)))
 
         # Get the ReportPortal service instance
         service = ReportPortalService(
@@ -435,8 +453,7 @@ def main():
         if service is not None and service.launch_id:
             if launch_end_time is None:
                 launch_end_time = str(int(time.time() * 1000))
-            service.finish_launch(end_time=launch_end_time,
-                                  status="FAILED")
+            service.finish_launch(end_time=launch_end_time, status="FAILED")
         result['msg'] = ex
         module.fail_json(**result)
 
