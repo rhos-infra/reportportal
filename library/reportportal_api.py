@@ -228,10 +228,13 @@ class ReportPortalPublisher:
         if not isinstance(test_cases, list):
             test_cases = [test_cases]
 
+        end_time = str(int(time.time() * 1000))
+        start_time = str(int(end_time) - int(test_suite.get('@time', '0')) * 1000)
+
         # start test suite
         item_id = self.service.start_test_item(
             name=test_suite.get('@name', test_suite.get('@id', 'NULL')),
-            start_time=str(int(time.time() * 1000)),
+            start_time=start_time,
             item_type="SUITE")
 
         # publish all test cases
@@ -256,7 +259,7 @@ class ReportPortalPublisher:
 
         self.service.finish_test_item(
             item_id,
-            end_time=str(int(time.time() * 1000)),
+            end_time=end_time,
             status=status)
 
     def publish_test_cases(self, case, parent_id):
@@ -276,23 +279,28 @@ class ReportPortalPublisher:
             case_time=case.get('@time'))
 
         classname = case.get('@classname', '')
-        if classname:
-            classname += '.'
-        name = classname + case.get('@name', case.get('@id', 'NULL'))
+        testname = case.get('@name', case.get('@id', 'NULL'))
+        if classname in testname:
+            name = case.get('@name')
+        else:
+            name = classname + '.' + testname
+
+        end_time = str(int(time.time() * 1000))
+        start_time = str(int(end_time) - int(case.get('@time', '0')) * 1000)
 
         # start test case
         item_id = self.service.start_test_item(
             name=name[:255],
             description=description,
             tags=case.get('@classname', '').split('.'),
-            start_time=str(int(time.time() * 1000)),
+            start_time=start_time,
             item_type="STEP",
             parent_item_id=parent_id)
 
         # Add system_out log.
         if case.get('system-out'):
             self.service.log(
-                time=str(int(time.time() * 1000)),
+                time=start_time,
                 message=case.get('system-out'),
                 item_id=item_id,
                 level="INFO")
@@ -305,7 +313,7 @@ class ReportPortalPublisher:
             msg = skipped_case.get('@message', '#text') \
                 if isinstance(skipped_case, dict) else skipped_case
             self.service.log(
-                time=str(int(time.time() * 1000)),
+                time=start_time,
                 message=msg,
                 item_id=item_id,
                 level="DEBUG")
@@ -325,7 +333,7 @@ class ReportPortalPublisher:
                     if isinstance(failures, dict) else failures
 
                 self.service.log(
-                    time=str(int(time.time() * 1000)),
+                    time=start_time,
                     message=failures_txt,
                     item_id=item_id,
                     level="ERROR")
@@ -335,7 +343,7 @@ class ReportPortalPublisher:
         # finish test case
         self.service.finish_test_item(
             item_id,
-            end_time=str(int(time.time() * 1000)),
+            end_time=end_time,
             status=status,
             issue=issue)
 
