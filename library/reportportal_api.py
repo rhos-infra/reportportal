@@ -32,8 +32,9 @@ module: reportportal_api
 version_added: "2.4"
 short_description: Uploads test results to ReportPortal v5 server
 description:
-   - This module makes use of the [*] 'reportportal_client' package to talk 
-     with Reportportal instance over REST in order to publish Xunit test results
+   - This module makes use of the [*] 'reportportal_client' package to talk
+     with Reportportal instance over REST in order to publish Xunit test
+     results
      [*] https://pypi.org/project/reportportal-client/
 options:
     url:
@@ -112,8 +113,7 @@ requirements:
 
 RETURN = '''
 launch_id:
-    description:
-        The created launch ID from Reportportal.
+    description: The created launch ID from Reportportal.
     type: string
     returned: always
 expanded_paths:
@@ -121,7 +121,8 @@ expanded_paths:
     type: list
     returned: always
 expanded_exclude_paths:
-    description: The list of matching exclude paths from the exclude_path argument.
+    description:
+        The list of matching exclude paths from the exclude_path argument.
     type: list
     returned: always
 '''
@@ -228,10 +229,14 @@ class ReportPortalPublisher:
         if not isinstance(test_cases, list):
             test_cases = [test_cases]
 
+        end_time = str(int(time.time() * 1000))
+        duration = int(float(test_suite.get('@time', '0'))) * 1000
+        start_time = str(int(end_time) - duration)
+
         # start test suite
         item_id = self.service.start_test_item(
             name=test_suite.get('@name', test_suite.get('@id', 'NULL')),
-            start_time=str(int(time.time() * 1000)),
+            start_time=start_time,
             item_type="SUITE")
 
         # publish all test cases
@@ -256,7 +261,7 @@ class ReportPortalPublisher:
 
         self.service.finish_test_item(
             item_id,
-            end_time=str(int(time.time() * 1000)),
+            end_time=end_time,
             status=status)
 
     def publish_test_cases(self, case, parent_id):
@@ -271,28 +276,21 @@ class ReportPortalPublisher:
             # ignore skipped tests when flag is true
             return
 
-        description = "{tc_name} time: {case_time}".format(
-            tc_name=case.get('@name', case.get('@id', 'NULL')),
-            case_time=case.get('@time'))
-
-        classname = case.get('@classname', '')
-        if classname:
-            classname += '.'
-        name = classname + case.get('@name', case.get('@id', 'NULL'))
+        end_time = str(int(time.time() * 1000))
+        duration = int(float(case.get('@time', '0'))) * 1000
+        start_time = str(int(end_time) - duration)
 
         # start test case
         item_id = self.service.start_test_item(
-            name=name[:255],
-            description=description,
-            tags=case.get('@classname', '').split('.'),
-            start_time=str(int(time.time() * 1000)),
+            name=case.get('@name', case.get('@id', 'NULL'))[:255],
+            start_time=start_time,
             item_type="STEP",
             parent_item_id=parent_id)
 
         # Add system_out log.
         if case.get('system-out'):
             self.service.log(
-                time=str(int(time.time() * 1000)),
+                time=start_time,
                 message=case.get('system-out'),
                 item_id=item_id,
                 level="INFO")
@@ -305,7 +303,7 @@ class ReportPortalPublisher:
             msg = skipped_case.get('@message', '#text') \
                 if isinstance(skipped_case, dict) else skipped_case
             self.service.log(
-                time=str(int(time.time() * 1000)),
+                time=start_time,
                 message=msg,
                 item_id=item_id,
                 level="DEBUG")
@@ -318,14 +316,14 @@ class ReportPortalPublisher:
                 for failure in failures:
                     msg = failure.get('@message', failure.get('#text')) \
                         if isinstance(failure, dict) else failure
-                    failures_txt += \
-                        '{msg}\n'.format(msg=msg)
+                    failures_txt += '{msg}\n'.format(msg=msg)
             else:
-                failures_txt = failures.get('@message', failures.get('#text')) \
-                    if isinstance(failures, dict) else failures
+                failures_txt = \
+                        failures.get('@message', failures.get('#text')) \
+                        if isinstance(failures, dict) else failures
 
                 self.service.log(
-                    time=str(int(time.time() * 1000)),
+                    time=start_time,
                     message=failures_txt,
                     item_id=item_id,
                     level="ERROR")
@@ -335,7 +333,7 @@ class ReportPortalPublisher:
         # finish test case
         self.service.finish_test_item(
             item_id,
-            end_time=str(int(time.time() * 1000)),
+            end_time=end_time,
             status=status,
             issue=issue)
 
