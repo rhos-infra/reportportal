@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1b32fe6_c6b0e5e5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2021-07-29T07:35:56Z",
+      "side": 1,
+      "message": "Patch works correctly on my laptop. I was able to upload results with correct timestamps and test case names to SUPERADMIN_PERSONAL project",
+      "revId": "6a50dfd8ad2de2606498193fa4483e7bec23218b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
