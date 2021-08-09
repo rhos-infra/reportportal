@@ -254,8 +254,8 @@ class ReportPortalPublisher:
                 self.publish_test_cases(case, item_id)
 
         # calculate status
-        num_of_failutes = int(test_suite.get('@failures'))
-        num_of_errors = int(test_suite.get('@errors'))
+        num_of_failutes = int(test_suite.get('@failures', 0))
+        num_of_errors = int(test_suite.get('@errors', 0))
         status = 'FAILED' if (num_of_failutes > 0 or num_of_errors > 0) \
             else 'PASSED'
 
