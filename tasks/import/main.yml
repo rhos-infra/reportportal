@@ -38,3 +38,21 @@
      Accept: "application/json"
      Authorization: "bearer {{ reportportal_token }}"
   register: launch_result
+
+- name: Dumps the launch IDs to files
+  when:
+    - ((other.launch|default({})).ids|default({})).dir is defined
+    - other.launch.ids.dir
+  block:
+      - name: Creates a directory for the launch ID files
+        file:
+          path: "{{ other.launch.ids.dir }}"
+          state: directory
+
+      - name: Writes launch ID & UUID to files
+        copy:
+          content: "{{ item.content }}"
+          dest: "{{ item.path }}"
+        with_items:
+          - { path: "{{ other.launch.ids.dir }}/id", content: "{{ launch_result.json.id }}" }
+          - { path: "{{ other.launch.ids.dir }}/uuid", content: "{{ launch_result.json.uuid }}" }

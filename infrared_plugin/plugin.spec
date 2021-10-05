@@ -30,7 +30,7 @@ subparsers:
                       help: Amount of API workers to upload results
                       default: '8'
 
-            - title: ReportPortal Configuration
+            - title: ReportPortal launch options
               options:
                   launch-mode:
                       type: Value
@@ -70,6 +70,11 @@ subparsers:
                         Whether or not to allow creation of empty launches
                         (no results) in case no XML junit reports are found
                       default: true
+                  launch-ids-dir:
+                      type: Value
+                      help: |
+                        Path to a directory that will contain files with the ID
+                        and the UUID of the newly created launch
                   post-validations:
                       type: Bool
                       help: |
