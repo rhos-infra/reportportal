@@ -118,6 +118,10 @@ subparsers:
                       type: ListValue
                       default: "{{ inventory_dir }}/tempest_results/tempest-results-none*.xml"
                       help: Pattern for the path location of exluded test xml results
+                  deployment-results-path:
+                      type: Value
+                      default: "{{ inventory_dir }}"
+                      help: Directory to save deployment XUnit report
 
             - title: Jenkins Job Metadata
               options:

@@ -1,4 +1,11 @@
 ---
+- name: Generate deployment XUnit
+  jenkins_job_stages:
+    jenkins_domain: "{{ other.jenkins.domain }}"
+    jenkins_job_name: "{{ other.jenkins.job.name }}"
+    jenkins_job_build_id: "{{ other.jenkins.build.id }}"
+    xml_path: "{{ other.deployment.results.path }}"
+
 - name: import tests to Reportportal version 5
   reportportal_api:
     url: "{{ reportportal_url }}"
