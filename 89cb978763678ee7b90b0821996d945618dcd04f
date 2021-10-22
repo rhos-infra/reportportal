@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "959869b6_988387f1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2021-10-22T11:55:08Z",
+      "side": 1,
+      "message": "Test patch with several jobs (hope all jobs will finish with desired results):\n\n1. Job is aborted - https://rhos-ci-staging-jenkins.lab.eng.tlv2.redhat.com/view/DFG/view/network/view/neutron/job/DFG-network-neutron-16.1_director-rhel-virthost-3cont_2comp-ipv4-vxlan-ml2ovs-dvr/28\n2. Job failed (not enough RAM on hypervisor) - https://rhos-ci-staging-jenkins.lab.eng.tlv2.redhat.com/view/DFG/view/network/view/neutron/job/DFG-network-neutron-16.1_director-rhel-virthost-3cont_2comp-ipv4-vxlan-ml2ovs-dvr/29\n3. Job succeed (no tests executed) - https://rhos-ci-staging-jenkins.lab.eng.tlv2.redhat.com/view/DFG/view/network/view/neutron/job/DFG-network-neutron-16.1_director-rhel-virthost-3cont_2comp-ipv4-vxlan-ml2ovs-dvr/30\n4. Job succeed (tempest+tobiko) - https://rhos-ci-staging-jenkins.lab.eng.tlv2.redhat.com/view/DFG/view/network/view/neutron/job/DFG-network-neutron-16.1_director-rhel-virthost-3cont_2comp-ipv4-vxlan-ml2ovs-dvr/31",
+      "revId": "89cb978763678ee7b90b0821996d945618dcd04f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
