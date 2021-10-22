@@ -229,9 +229,17 @@ class ReportPortalPublisher:
         if not isinstance(test_cases, list):
             test_cases = [test_cases]
 
-        end_time = str(int(time.time() * 1000))
         duration = int(float(test_suite.get('@time', '0'))) * 1000
-        start_time = str(int(end_time) - duration)
+        if test_suite.get('@timestamp'):
+            try:
+                start_time = str(int(test_suite.get('@timestamp', '0')) * 1000)
+                end_time = str(int(start_time) + duration)
+            except ValueError:
+                end_time = str(int(time.time() * 1000))
+                start_time = str(int(end_time) - duration)
+        else:
+            end_time = str(int(time.time() * 1000))
+            start_time = str(int(end_time) - duration)
 
         # start test suite
         item_id = self.service.start_test_item(
@@ -276,15 +284,19 @@ class ReportPortalPublisher:
             # ignore skipped tests when flag is true
             return
 
-        end_time = str(int(time.time() * 1000))
         duration = int(float(case.get('@time', '0'))) * 1000
-        start_time = str(int(end_time) - duration)
+        if case.get('@timestamp'):
+            start_time = str(int(case.get('@timestamp', '0')) * 1000)
+            end_time = str(int(start_time) + duration)
+        else:
+            end_time = str(int(time.time() * 1000))
+            start_time = str(int(end_time) - duration)
 
         # start test case
         item_id = self.service.start_test_item(
             name=case.get('@name', case.get('@id', 'NULL'))[:255],
             start_time=start_time,
-            item_type="STEP",
+            item_type=case.get('@item_type', 'STEP'),
             parent_item_id=parent_id)
 
         # Add system_out log.
@@ -322,11 +334,11 @@ class ReportPortalPublisher:
                         failures.get('@message', failures.get('#text')) \
                         if isinstance(failures, dict) else failures
 
-                self.service.log(
-                    time=start_time,
-                    message=failures_txt,
-                    item_id=item_id,
-                    level="ERROR")
+            self.service.log(
+                time=start_time,
+                message=failures_txt,
+                item_id=item_id,
+                level="ERROR")
         else:
             status = 'PASSED'
 
@@ -441,6 +453,8 @@ def main():
         # Set launch ending time
         if launch_end_time is None:
             launch_end_time = str(int(time.time() * 1000))
+        result['started'] = launch_start_time
+        result['ended'] = launch_end_time
 
         # Finish launch.
         service.finish_launch(end_time=launch_end_time)
