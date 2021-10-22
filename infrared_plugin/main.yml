@@ -5,6 +5,7 @@
   hosts: undercloud
   gather_facts: no
   become: yes
+  ignore: true
   tasks:
       - name: get core puddle version from environment variables
         set_fact:
