@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "277133d8_b767e978",
+        "filename": "library/jenkins_job_stages.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2021-10-22T07:10:30Z",
+      "side": 1,
+      "message": "XML has strict character policy. need to clear logs from not supported symbols",
+      "range": {
+        "startLine": 73,
+        "startChar": 4,
+        "endLine": 74,
+        "endChar": 40
+      },
+      "revId": "de0c5a517e73c448b8d894ba2e55fd888770668b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ba767608_da788ae5",
+        "filename": "library/jenkins_job_stages.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2021-10-22T07:10:30Z",
+      "side": 1,
+      "message": "If stage is in progress - there is no need to report it",
+      "range": {
+        "startLine": 114,
+        "startChar": 34,
+        "endLine": 114,
+        "endChar": 45
+      },
+      "revId": "de0c5a517e73c448b8d894ba2e55fd888770668b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c4448ac5_ac8eebe3",
+        "filename": "library/jenkins_job_stages.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2021-10-22T07:10:30Z",
+      "side": 1,
+      "message": "It makes the stage not to appear in the total test amount calculation. For example if there are 1000 tempest test executed in the job + 15 jenkins stages - reportportal will show only 1000 tests executed. In case there was a deployment failure (no tests are actually executed) - there will be launch with no test counters but it will show a single object that requires investigation",
+      "range": {
+        "startLine": 127,
+        "startChar": 26,
+        "endLine": 127,
+        "endChar": 39
+      },
+      "revId": "de0c5a517e73c448b8d894ba2e55fd888770668b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c193a8dd_8cbe8b81",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2021-10-22T07:10:30Z",
+      "side": 1,
+      "message": "tobiko generates report with different timestamp format. need to handle it accordingly",
+      "range": {
+        "startLine": 237,
+        "startChar": 19,
+        "endLine": 237,
+        "endChar": 29
+      },
+      "revId": "de0c5a517e73c448b8d894ba2e55fd888770668b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6db23c59_93f78026",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2021-10-22T07:10:30Z",
+      "side": 1,
+      "message": "In deployment results there will be \u0027BEFORE_TEST\u0027",
+      "range": {
+        "startLine": 299,
+        "startChar": 32,
+        "endLine": 299,
+        "endChar": 42
+      },
+      "revId": "de0c5a517e73c448b8d894ba2e55fd888770668b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
