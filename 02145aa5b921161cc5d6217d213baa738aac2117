@@ -43,6 +43,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f4a92624_975cceac",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2021-10-31T06:33:20Z",
+      "side": 1,
+      "message": "We have to do better converting for different possible time formats. But I think it deserves a separate patch :)",
+      "parentUuid": "63e25203_83dd7db8",
+      "range": {
+        "startLine": 238,
+        "startChar": 0,
+        "endLine": 242,
+        "endChar": 54
+      },
+      "revId": "02145aa5b921161cc5d6217d213baa738aac2117",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "961764dd_5c554345",
         "filename": "tasks/import/main.yml",
         "patchSetId": 8
@@ -54,6 +78,30 @@
       "writtenOn": "2021-10-31T01:43:33Z",
       "side": 1,
       "message": "Do we always want to generate the deployment files? I suggest to add a condition here.",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 51
+      },
+      "revId": "02145aa5b921161cc5d6217d213baa738aac2117",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "180656b4_728631d7",
+        "filename": "tasks/import/main.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2021-10-31T06:33:20Z",
+      "side": 1,
+      "message": "I would say that deployment report is the minimum that should be uploaded. Can you please tell me, in which case do you think we may need to skip this step?",
+      "parentUuid": "961764dd_5c554345",
       "range": {
         "startLine": 2,
         "startChar": 0,
