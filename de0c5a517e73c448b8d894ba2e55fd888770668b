@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "4e5f40e8_201ceb02",
+        "filename": "library/jenkins_job_stages.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2021-10-31T01:43:33Z",
+      "side": 1,
+      "message": "why not to use string.printable instead?",
+      "parentUuid": "277133d8_b767e978",
+      "range": {
+        "startLine": 73,
+        "startChar": 4,
+        "endLine": 74,
+        "endChar": 40
+      },
+      "revId": "de0c5a517e73c448b8d894ba2e55fd888770668b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "ba767608_da788ae5",
         "filename": "library/jenkins_job_stages.py",
         "patchSetId": 2
@@ -83,6 +107,30 @@
       "writtenOn": "2021-10-22T07:10:30Z",
       "side": 1,
       "message": "tobiko generates report with different timestamp format. need to handle it accordingly",
+      "range": {
+        "startLine": 237,
+        "startChar": 19,
+        "endLine": 237,
+        "endChar": 29
+      },
+      "revId": "de0c5a517e73c448b8d894ba2e55fd888770668b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d7e85a3_9282ec25",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2021-10-31T01:43:33Z",
+      "side": 1,
+      "message": "Can you please give an example of the different formats?\nAlso, I guess you\u0027re converting from seconds to milliseconds by multiplying by 1000, does the value always represents seconds? Maybe we check that just to be on the safe side?",
+      "parentUuid": "c193a8dd_8cbe8b81",
       "range": {
         "startLine": 237,
         "startChar": 19,
