@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
+from datetime import datetime
 import time
 import os
 import glob
@@ -151,6 +152,47 @@ def get_expanded_paths(paths):
     return expanded_paths
 
 
+def format_timestamp(timestamp):
+    if not timestamp:
+        return None
+    try:
+        time_obj = datetime.strptime(str(timestamp), '%Y-%m-%dT%H:%M:%S.%f')
+        return int(datetime.timestamp(time_obj) * 1000)
+    except ValueError:
+        pass
+    try:
+        time_obj = datetime.strptime(str(timestamp), '%Y-%m-%dT%H:%M:%S')
+        return int(datetime.timestamp(time_obj) * 1000)
+    except ValueError:
+        pass
+    try:
+        time_obj = datetime.utcfromtimestamp(float(timestamp))
+        return int(datetime.timestamp(time_obj) * 1000)
+    except ValueError:
+        pass
+    try:
+        time_obj = datetime.utcfromtimestamp(timestamp / 1000)
+        return int(datetime.timestamp(time_obj) * 1000)
+    except TypeError:
+        pass
+    return None
+
+
+def get_start_end_time(test_obj):
+    if not test_obj.get('@time'):
+        duration = 0
+    else:
+        duration = int(float(test_obj.get('@time')) * 1000)
+    end_time = int(time.time() * 1000)
+    timestamp = format_timestamp(test_obj.get('@timestamp'))
+    if not timestamp:
+        start_time = end_time - duration
+    else:
+        start_time = timestamp
+        end_time = start_time + duration
+    return str(start_time), str(end_time)
+
+
 class PublisherThread(threading.Thread):
 
     def __init__(self, queue, publisher):
@@ -229,17 +271,7 @@ class ReportPortalPublisher:
         if not isinstance(test_cases, list):
             test_cases = [test_cases]
 
-        duration = int(float(test_suite.get('@time', '0'))) * 1000
-        if test_suite.get('@timestamp'):
-            try:
-                start_time = str(int(test_suite.get('@timestamp', '0')) * 1000)
-                end_time = str(int(start_time) + duration)
-            except ValueError:
-                end_time = str(int(time.time() * 1000))
-                start_time = str(int(end_time) - duration)
-        else:
-            end_time = str(int(time.time() * 1000))
-            start_time = str(int(end_time) - duration)
+        start_time, end_time = get_start_end_time(test_suite)
 
         # start test suite
         item_id = self.service.start_test_item(
@@ -284,13 +316,7 @@ class ReportPortalPublisher:
             # ignore skipped tests when flag is true
             return
 
-        duration = int(float(case.get('@time', '0'))) * 1000
-        if case.get('@timestamp'):
-            start_time = str(int(case.get('@timestamp', '0')) * 1000)
-            end_time = str(int(start_time) + duration)
-        else:
-            end_time = str(int(time.time() * 1000))
-            start_time = str(int(end_time) - duration)
+        start_time, end_time = get_start_end_time(case)
 
         # start test case
         item_id = self.service.start_test_item(
