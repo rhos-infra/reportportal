@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
+from dateutil import parser
 import time
 import os
 import glob
@@ -103,6 +104,7 @@ options:
       type: list
 
 requirements:
+    - "python-dateutl"
     - "reportportal-client"
     - "junitparser"
     - "PyYAML"
@@ -149,6 +151,34 @@ def get_expanded_paths(paths):
         else:
             expanded_paths.append(path)
     return expanded_paths
+
+
+def format_timestamp(timestamp):
+    if not timestamp:
+        return None
+    str_time = str(timestamp)
+    if str_time.isdigit():
+        if int(str_time) > 9999999999:
+            return int(str_time)
+        else:
+            return int(str_time) * 1000
+    else:
+        return int(parser.parse(str_time).timestamp() * 1000)
+
+
+def get_start_end_time(test_obj):
+    if not test_obj.get('@time'):
+        duration = 0
+    else:
+        duration = int(float(test_obj.get('@time')) * 1000)
+    end_time = int(time.time() * 1000)
+    timestamp = format_timestamp(test_obj.get('@timestamp'))
+    if not timestamp:
+        start_time = end_time - duration
+    else:
+        start_time = timestamp
+        end_time = start_time + duration
+    return str(start_time), str(end_time)
 
 
 class PublisherThread(threading.Thread):
@@ -229,17 +259,7 @@ class ReportPortalPublisher:
         if not isinstance(test_cases, list):
             test_cases = [test_cases]
 
-        duration = int(float(test_suite.get('@time', '0'))) * 1000
-        if test_suite.get('@timestamp'):
-            try:
-                start_time = str(int(test_suite.get('@timestamp', '0')) * 1000)
-                end_time = str(int(start_time) + duration)
-            except ValueError:
-                end_time = str(int(time.time() * 1000))
-                start_time = str(int(end_time) - duration)
-        else:
-            end_time = str(int(time.time() * 1000))
-            start_time = str(int(end_time) - duration)
+        start_time, end_time = get_start_end_time(test_suite)
 
         # start test suite
         item_id = self.service.start_test_item(
@@ -284,13 +304,7 @@ class ReportPortalPublisher:
             # ignore skipped tests when flag is true
             return
 
-        duration = int(float(case.get('@time', '0'))) * 1000
-        if case.get('@timestamp'):
-            start_time = str(int(case.get('@timestamp', '0')) * 1000)
-            end_time = str(int(start_time) + duration)
-        else:
-            end_time = str(int(time.time() * 1000))
-            start_time = str(int(end_time) - duration)
+        start_time, end_time = get_start_end_time(case)
 
         # start test case
         item_id = self.service.start_test_item(
