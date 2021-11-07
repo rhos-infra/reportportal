@@ -1,5 +1,6 @@
 reportportal-client~=5.0
 
+python-dateutil
 xmltodict
 junitparser
 PyYAML
