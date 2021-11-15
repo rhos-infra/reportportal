@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b82b4b10_482dc857",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2021-11-15T14:52:43Z",
+      "side": 1,
+      "message": "Please add a docstring explaining what this function suppose to do, the expected arguments types \u0026 formats and the expected return value",
+      "range": {
+        "startLine": 156,
+        "startChar": 0,
+        "endLine": 156,
+        "endChar": 32
+      },
+      "revId": "b687effb0bd38866bd212031db01d086ebf9b7f5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d2757354_1e7d8027",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2021-11-15T14:52:43Z",
+      "side": 1,
+      "message": "What if timestamp is 0? It\u0027s a valid use case...",
+      "range": {
+        "startLine": 157,
+        "startChar": 4,
+        "endLine": 158,
+        "endChar": 19
+      },
+      "revId": "b687effb0bd38866bd212031db01d086ebf9b7f5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d65a3a0b_b0f6da90",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2021-11-15T14:52:43Z",
+      "side": 1,
+      "message": "We don\u0027t expect to have timestamps older than 2001, therefore we can tell if the time is in milliseconds if it\u0027s 12 digits long or more (or 9 digits long in case it\u0027s in seconds).",
+      "range": {
+        "startLine": 159,
+        "startChar": 0,
+        "endLine": 166,
+        "endChar": 61
+      },
+      "revId": "b687effb0bd38866bd212031db01d086ebf9b7f5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "49cbad0d_bbafcdc4",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2021-11-15T14:52:43Z",
+      "side": 1,
+      "message": "Please add a docstring here as well",
+      "revId": "b687effb0bd38866bd212031db01d086ebf9b7f5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5e6f2c24_da07ebcf",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2021-11-15T14:52:43Z",
+      "side": 1,
+      "message": "you can move it under the next \u0027if\u0027 if it depends on the check of the timestamp.",
+      "range": {
+        "startLine": 174,
+        "startChar": 4,
+        "endLine": 174,
+        "endChar": 38
+      },
+      "revId": "b687effb0bd38866bd212031db01d086ebf9b7f5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1266d19f_74151de1",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2021-11-15T14:52:43Z",
+      "side": 1,
+      "message": "I suggest checking all the time and timestamp object in this function and to make sure they are (or aren\u0027t) in seconds. Maybe a helper function can be useful here.",
+      "range": {
+        "startLine": 169,
+        "startChar": 0,
+        "endLine": 181,
+        "endChar": 41
+      },
+      "revId": "b687effb0bd38866bd212031db01d086ebf9b7f5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
