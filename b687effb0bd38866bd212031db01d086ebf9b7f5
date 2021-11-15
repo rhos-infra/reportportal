@@ -97,6 +97,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2cedb750_23e1814f",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2021-11-15T16:30:53Z",
+      "side": 1,
+      "message": "What I wanted to suggest is that in such a case, raising an exception could be a better approach.",
+      "parentUuid": "cfe141ef_e28f034d",
+      "range": {
+        "startLine": 157,
+        "startChar": 4,
+        "endLine": 158,
+        "endChar": 19
+      },
+      "revId": "b687effb0bd38866bd212031db01d086ebf9b7f5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "d65a3a0b_b0f6da90",
         "filename": "library/reportportal_api.py",
         "patchSetId": 3
@@ -132,6 +156,30 @@
       "side": 1,
       "message": "I guess you mean 10 digits long. 9 digits timestamp is from 3 Mar 1973 to 9 Sep 2001. This is something I check in line 161",
       "parentUuid": "d65a3a0b_b0f6da90",
+      "range": {
+        "startLine": 159,
+        "startChar": 0,
+        "endLine": 166,
+        "endChar": 61
+      },
+      "revId": "b687effb0bd38866bd212031db01d086ebf9b7f5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "87fd906c_e0604e61",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2021-11-15T16:30:53Z",
+      "side": 1,
+      "message": "12 digits for milliseconds / 9 digits for seconds\nYou can try it here: https://www.epochconverter.com/\n(try entering 12x\u00279\u0027 and 9x\u00279\u0027 and notice that the time is the same but in milliseconds and seconds)",
+      "parentUuid": "7abdddb9_b18cdc97",
       "range": {
         "startLine": 159,
         "startChar": 0,
@@ -261,6 +309,30 @@
       "side": 1,
       "message": "Not sure there is a way to figure out if time (duration) is in seconds because it can be from 0 to almost anything. The timestamp is verified in format_timestamp helper function.",
       "parentUuid": "1266d19f_74151de1",
+      "range": {
+        "startLine": 169,
+        "startChar": 0,
+        "endLine": 181,
+        "endChar": 41
+      },
+      "revId": "b687effb0bd38866bd212031db01d086ebf9b7f5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e2141446_0bff3086",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2021-11-15T16:30:53Z",
+      "side": 1,
+      "message": "The question is if we expecting results older than 2001? Personally, I don\u0027t think so ;-)",
+      "parentUuid": "b228d270_a2ad7120",
       "range": {
         "startLine": 169,
         "startChar": 0,
