@@ -24,6 +24,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "eb7ac095_8faf7981",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2021-11-15T15:43:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b82b4b10_482dc857",
+      "range": {
+        "startLine": 156,
+        "startChar": 0,
+        "endLine": 156,
+        "endChar": 32
+      },
+      "revId": "b687effb0bd38866bd212031db01d086ebf9b7f5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d2757354_1e7d8027",
@@ -37,6 +61,30 @@
       "writtenOn": "2021-11-15T14:52:43Z",
       "side": 1,
       "message": "What if timestamp is 0? It\u0027s a valid use case...",
+      "range": {
+        "startLine": 157,
+        "startChar": 4,
+        "endLine": 158,
+        "endChar": 19
+      },
+      "revId": "b687effb0bd38866bd212031db01d086ebf9b7f5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cfe141ef_e28f034d",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2021-11-15T15:43:02Z",
+      "side": 1,
+      "message": "Technically - yes. We don\u0027t expect to see timestamps earlier than a couple of days ago. Or maybe a year ago if this is a \u0027reupload\u0027 of an old job. But I guess this is out of the scope of reportportal infrared plugin.",
+      "parentUuid": "d2757354_1e7d8027",
       "range": {
         "startLine": 157,
         "startChar": 4,
@@ -72,6 +120,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7abdddb9_b18cdc97",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2021-11-15T15:43:02Z",
+      "side": 1,
+      "message": "I guess you mean 10 digits long. 9 digits timestamp is from 3 Mar 1973 to 9 Sep 2001. This is something I check in line 161",
+      "parentUuid": "d65a3a0b_b0f6da90",
+      "range": {
+        "startLine": 159,
+        "startChar": 0,
+        "endLine": 166,
+        "endChar": 61
+      },
+      "revId": "b687effb0bd38866bd212031db01d086ebf9b7f5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "49cbad0d_bbafcdc4",
         "filename": "library/reportportal_api.py",
         "patchSetId": 3
@@ -83,6 +155,24 @@
       "writtenOn": "2021-11-15T14:52:43Z",
       "side": 1,
       "message": "Please add a docstring here as well",
+      "revId": "b687effb0bd38866bd212031db01d086ebf9b7f5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "73659654_54ba69c2",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2021-11-15T15:43:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "49cbad0d_bbafcdc4",
       "revId": "b687effb0bd38866bd212031db01d086ebf9b7f5",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -110,6 +200,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5034e447_846cbd50",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2021-11-15T15:43:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5e6f2c24_da07ebcf",
+      "range": {
+        "startLine": 174,
+        "startChar": 4,
+        "endLine": 174,
+        "endChar": 38
+      },
+      "revId": "b687effb0bd38866bd212031db01d086ebf9b7f5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1266d19f_74151de1",
@@ -123,6 +237,30 @@
       "writtenOn": "2021-11-15T14:52:43Z",
       "side": 1,
       "message": "I suggest checking all the time and timestamp object in this function and to make sure they are (or aren\u0027t) in seconds. Maybe a helper function can be useful here.",
+      "range": {
+        "startLine": 169,
+        "startChar": 0,
+        "endLine": 181,
+        "endChar": 41
+      },
+      "revId": "b687effb0bd38866bd212031db01d086ebf9b7f5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b228d270_a2ad7120",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2021-11-15T15:43:02Z",
+      "side": 1,
+      "message": "Not sure there is a way to figure out if time (duration) is in seconds because it can be from 0 to almost anything. The timestamp is verified in format_timestamp helper function.",
+      "parentUuid": "1266d19f_74151de1",
       "range": {
         "startLine": 169,
         "startChar": 0,
