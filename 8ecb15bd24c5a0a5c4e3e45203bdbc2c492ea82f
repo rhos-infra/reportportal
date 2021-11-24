@@ -16,6 +16,24 @@
       "message": "I think we should handle the method(s) for returning the number of failures as int instead of NoneType as undefined or so..",
       "revId": "8ecb15bd24c5a0a5c4e3e45203bdbc2c492ea82f",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f97edf90_8b8d32bf",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2021-11-24T09:42:34Z",
+      "side": 1,
+      "message": "Can you please elaborate on it?",
+      "parentUuid": "aaf54f06_b2881739",
+      "revId": "8ecb15bd24c5a0a5c4e3e45203bdbc2c492ea82f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
