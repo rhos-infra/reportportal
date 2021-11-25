@@ -34,6 +34,24 @@
       "parentUuid": "aaf54f06_b2881739",
       "revId": "8ecb15bd24c5a0a5c4e3e45203bdbc2c492ea82f",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "529d8f8b_fa3277ad",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 1014217
+      },
+      "writtenOn": "2021-11-25T12:54:02Z",
+      "side": 1,
+      "message": "On the test_suite object there is a get method implemented to return the NUMBER of failures/errors etc...\nI am NOT familiar with the code of this object, but we should take care of the type safe method to return a number ONLY.\nI understand that this is GET attribute, but a general attribute should be set clear as a Number in case of a number and a string in case of other...\nAlso, are we using this code on tobiko cases? if yes, what we are doing with the NoneType as \u00270\u0027? Is it an error behind this returned \u00270\u0027?",
+      "parentUuid": "f97edf90_8b8d32bf",
+      "revId": "8ecb15bd24c5a0a5c4e3e45203bdbc2c492ea82f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
