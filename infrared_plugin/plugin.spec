@@ -75,6 +75,9 @@ subparsers:
                       help: |
                         Path to a directory that will contain files with the ID
                         and the UUID of the newly created launch
+                  launch-altname:
+                      type: Value
+                      help: Override jenkins-name as launch name if defined
                   post-validations:
                       type: Bool
                       help: |
