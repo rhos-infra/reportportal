@@ -13,7 +13,7 @@
     ssl_verify: "{{ ssl_verify | bool }}"
     ignore_skipped_tests: "{{ ignore_skipped_tests | bool }}"
     project_name: "{{ project }}"
-    launch_name: "{{ jenkins_job_name }}"
+    launch_name: "{{ other.launch.altname|default(false) | ternary (other.launch.altname, jenkins_job_name) }}"
     launch_tags: "{{ tags }}"
     launch_description: "{{ launch_description }}"
     launch_start_time: "{{ launch_start_time | default(omit) }}"
