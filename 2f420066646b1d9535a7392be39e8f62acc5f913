@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b1cd455d_91486310",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2022-01-18T12:12:25Z",
+      "side": 1,
+      "message": "Verified locally:\n\nhttps://seal46.qa.lab.tlv.redhat.com/ui/#rhel_osp_staging/launches/all/15713",
+      "revId": "2f420066646b1d9535a7392be39e8f62acc5f913",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
