@@ -19,6 +19,7 @@
 from dateutil import parser
 import time
 import os
+import re
 import glob
 import xmltodict
 import queue
@@ -102,6 +103,16 @@ options:
           - Pattern for the path location of excluded test xml results.
       required: False
       type: list
+    log_last_traceback_only:
+      description:
+          - Write only traceback as a log for the test case
+      default: False
+      type: bool
+    full_log_attachment:
+      description:
+          - Save the test case log as the attachment if traceback is chosen
+      default: False
+      type: bool
 
 requirements:
     - "python-dateutl"
@@ -224,13 +235,17 @@ class PublisherThread(threading.Thread):
 class ReportPortalPublisher:
 
     def __init__(self, service, launch_name, launch_attrs,
-                 launch_description, ignore_skipped_tests, expanded_paths,
-                 threads, launch_start_time=str(int(time.time() * 1000))):
+                 launch_description, ignore_skipped_tests,
+                 log_last_traceback_only, full_log_attachment,
+                 expanded_paths, threads,
+                 launch_start_time=str(int(time.time() * 1000))):
         self.service = service
         self.launch_name = launch_name
         self.launch_attrs = launch_attrs
         self.launch_description = launch_description
         self.ignore_skipped_tests = ignore_skipped_tests
+        self.log_last_traceback_only = log_last_traceback_only
+        self.full_log_attachment = full_log_attachment
         self.expanded_paths = expanded_paths
         self.threads = threads
         self.launch_start_time = launch_start_time
@@ -370,10 +385,23 @@ class ReportPortalPublisher:
                         failures.get('@message', failures.get('#text')) \
                         if isinstance(failures, dict) else failures
 
+            log_message = failures_txt
+            attachment = None
+            if self.log_last_traceback_only:
+                matches = re.findall(
+                    r'^(Traceback[\s\S]*?)(?:^\s*$|\Z)', failures_txt, re.M)
+                if matches:
+                    log_message = matches[-1]
+                if self.full_log_attachment:
+                    if log_message != failures_txt:
+                        attachment = {"name": "Entire_log.txt",
+                                      "data": failures_txt,
+                                      "mime": "text/plain"}
             self.service.log(
                 time=start_time,
-                message=failures_txt,
+                message=log_message,
                 item_id=item_id,
+                attachment = attachment,
                 level="ERROR")
         else:
             status = 'PASSED'
@@ -393,17 +421,19 @@ def main():
     module_args = dict(
         url=dict(type='str', required=True),
         token=dict(type='str', required=True),
-        ssl_verify=dict(type='bool', required=False, default=True),
-        threads=dict(type='int', required=False, default=8),
-        ignore_skipped_tests=dict(type='bool', required=False, default=False),
+        ssl_verify=dict(type='bool', default=True),
+        threads=dict(type='int', default=8),
+        ignore_skipped_tests=dict(type='bool', default=False),
         project_name=dict(type='str', required=True),
         launch_name=dict(type='str', required=True),
         launch_tags=dict(type='list', required=False),
-        launch_description=dict(type='str', required=False, default=''),
-        launch_start_time=dict(type='str', required=False, default=None),
-        launch_end_time=dict(type='str', required=False, default=None),
+        launch_description=dict(type='str', default=''),
+        launch_start_time=dict(type='str', default=None),
+        launch_end_time=dict(type='str', default=None),
         tests_paths=dict(type='list', required=True),
-        tests_exclude_paths=dict(type='list', required=False)
+        tests_exclude_paths=dict(type='list', required=False),
+        log_last_traceback_only=dict(type='bool', default=False),
+        full_log_attachment=dict(type='bool', default=False)
     )
 
     module = AnsibleModule(
@@ -473,6 +503,9 @@ def main():
             launch_attrs=launch_attrs,
             launch_description=module.params.pop('launch_description'),
             ignore_skipped_tests=module.params.pop('ignore_skipped_tests'),
+            log_last_traceback_only=\
+                    module.params.pop('log_last_traceback_only'),
+            full_log_attachment=module.params.pop('full_log_attachment'),
             threads=module.params.pop('threads'),
             expanded_paths=expanded_paths
         )
