@@ -102,6 +102,11 @@ options:
           - Pattern for the path location of excluded test xml results.
       required: False
       type: list
+    traceback_only:
+      description:
+          - Attach the entire failure log as a file and the traceback as a log
+      default: False
+      type: bool
 
 requirements:
     - "python-dateutl"
@@ -129,6 +134,17 @@ expanded_exclude_paths:
     returned: always
 '''
 
+
+def get_traceback(full_log):
+    """Grab the last traceback out of log
+    """
+    if not isinstance(full_log, str):
+        return full_log
+    log_list = full_log.split('\n')
+    for idx, line in enumerate(reversed(log_list)):
+        if line.startswith('Traceback'):
+            return '\n'.join(log_list[-1-idx:])
+    return full_log
 
 def get_expanded_paths(paths):
     """
@@ -224,13 +240,15 @@ class PublisherThread(threading.Thread):
 class ReportPortalPublisher:
 
     def __init__(self, service, launch_name, launch_attrs,
-                 launch_description, ignore_skipped_tests, expanded_paths,
-                 threads, launch_start_time=str(int(time.time() * 1000))):
+                 launch_description, ignore_skipped_tests, traceback_only,
+                 expanded_paths, threads,
+                 launch_start_time=str(int(time.time() * 1000))):
         self.service = service
         self.launch_name = launch_name
         self.launch_attrs = launch_attrs
         self.launch_description = launch_description
         self.ignore_skipped_tests = ignore_skipped_tests
+        self.traceback_only = traceback_only
         self.expanded_paths = expanded_paths
         self.threads = threads
         self.launch_start_time = launch_start_time
@@ -370,11 +388,24 @@ class ReportPortalPublisher:
                         failures.get('@message', failures.get('#text')) \
                         if isinstance(failures, dict) else failures
 
-            self.service.log(
-                time=start_time,
-                message=failures_txt,
-                item_id=item_id,
-                level="ERROR")
+            if self.traceback_only:
+                traceback = get_traceback(failures_txt)
+                self.service.log(
+                    time=start_time,
+                    message=traceback,
+                    item_id=item_id,
+                    attachment = {
+                        "name": "Entire_log.txt",
+                        "data": failures_txt,
+                        "mime": "text/plain"
+                    },
+                    level="ERROR")
+            else:
+                self.service.log(
+                    time=start_time,
+                    message=failures_txt,
+                    item_id=item_id,
+                    level="ERROR")
         else:
             status = 'PASSED'
 
@@ -403,7 +434,8 @@ def main():
         launch_start_time=dict(type='str', required=False, default=None),
         launch_end_time=dict(type='str', required=False, default=None),
         tests_paths=dict(type='list', required=True),
-        tests_exclude_paths=dict(type='list', required=False)
+        tests_exclude_paths=dict(type='list', required=False),
+        traceback_only=dict(type='bool', required=False, default=False)
     )
 
     module = AnsibleModule(
@@ -473,6 +505,7 @@ def main():
             launch_attrs=launch_attrs,
             launch_description=module.params.pop('launch_description'),
             ignore_skipped_tests=module.params.pop('ignore_skipped_tests'),
+            traceback_only=module.params.pop('traceback_only'),
             threads=module.params.pop('threads'),
             expanded_paths=expanded_paths
         )

@@ -18,6 +18,7 @@
     launch_description: "{{ launch_description }}"
     launch_start_time: "{{ launch_start_time | default(omit) }}"
     launch_end_time: "{{ launch_end_time | default(omit) }}"
+    traceback_only: "{{ other.traceback.only }}"
     tests_paths: "{{ archive_import_path }}"
     tests_exclude_paths: "{{ archive_exclude_path }}"
     threads: "{{ threads }}"

@@ -100,6 +100,12 @@ subparsers:
                       type: Bool
                       help: Anazlyze failures of build (TBD)
                       default: false
+                  traceback-only:
+                      type: Bool
+                      help: |
+                        Upload traceback as a log and the entire failure
+                        message as the attachment
+                      default: false
                   dashboard2email:
                       type: Bool
                       help: Send a Report Portal Dashboard as an email
