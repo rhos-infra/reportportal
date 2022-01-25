@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9c79466b_3a56488c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-01-25T14:25:44Z",
+      "side": 1,
+      "message": "Tested with tempest, tobiko, rally and ansible_sts",
+      "revId": "fd386b3ae0da6e459dc11ff4af1eea6d26060700",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
