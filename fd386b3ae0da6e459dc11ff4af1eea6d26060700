@@ -81,6 +81,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "96a02f93_bb21303d",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-01-26T22:01:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2c478f4c_fd920ed2",
+      "range": {
+        "startLine": 143,
+        "startChar": 4,
+        "endLine": 147,
+        "endChar": 19
+      },
+      "revId": "fd386b3ae0da6e459dc11ff4af1eea6d26060700",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0094d8ac_50a34f84",
@@ -94,6 +118,30 @@
       "writtenOn": "2022-01-26T16:01:16Z",
       "side": 1,
       "message": "DRY:\nlog \u003d get_traceback(failures_txt)\nif (log !\u003d faliures_txt):\n  attachment \u003d {\n    \"name\": \"Entire_log.txt\",\n    \"data\": failures_txt,\n    \"mime\": \"text/plain\"\n  }\nelse:\n  attachment \u003d None\n  \nself.service.log(\n  time\u003dstart_time,\n  message\u003dlog,\n  item_id\u003ditem_id,\n  attachment\u003dattachment, \n  level\u003d\"ERROR\"\n)",
+      "range": {
+        "startLine": 391,
+        "startChar": 12,
+        "endLine": 408,
+        "endChar": 34
+      },
+      "revId": "fd386b3ae0da6e459dc11ff4af1eea6d26060700",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0dfeb5bd_05be1345",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-01-26T22:01:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0094d8ac_50a34f84",
       "range": {
         "startLine": 391,
         "startChar": 12,
@@ -127,6 +175,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cea7ebf4_1a771de0",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 438,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-01-26T22:01:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0befd07e_f1765d93",
+      "range": {
+        "startLine": 438,
+        "startChar": 41,
+        "endLine": 438,
+        "endChar": 55
+      },
+      "revId": "fd386b3ae0da6e459dc11ff4af1eea6d26060700",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a4fca41c_b390a774",
@@ -140,6 +212,30 @@
       "writtenOn": "2022-01-26T16:01:16Z",
       "side": 1,
       "message": "Maybe use something like \u0027traceback(s)_only_log\u0027 ?\n\nAnd maybe also add another flag \u0027traceback(s)_only_log_skip_attachment\u0027 that will tell if to upload the attachemnt or not (default: true). But this is not a must...",
+      "range": {
+        "startLine": 508,
+        "startChar": 46,
+        "endLine": 508,
+        "endChar": 60
+      },
+      "revId": "fd386b3ae0da6e459dc11ff4af1eea6d26060700",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c81ccc6_169224df",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 508,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-01-26T22:01:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a4fca41c_b390a774",
       "range": {
         "startLine": 508,
         "startChar": 46,
