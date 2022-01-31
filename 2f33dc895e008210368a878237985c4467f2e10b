@@ -41,6 +41,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0415437d_4eac91a4",
+        "filename": "infrared_plugin/plugin.spec",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-01-31T10:47:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "49530b2f_b2037bbe",
+      "range": {
+        "startLine": 103,
+        "startChar": 18,
+        "endLine": 103,
+        "endChar": 34
+      },
+      "revId": "2f33dc895e008210368a878237985c4467f2e10b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "14dcf5e4_39171330",
@@ -54,6 +78,30 @@
       "writtenOn": "2022-01-27T12:07:43Z",
       "side": 1,
       "message": "Please mention that instead of the full message of failed test cases, only the last Python Traceback will be uploaded as the log",
+      "range": {
+        "startLine": 105,
+        "startChar": 28,
+        "endLine": 105,
+        "endChar": 63
+      },
+      "revId": "2f33dc895e008210368a878237985c4467f2e10b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f991f756_bd9e0e2e",
+        "filename": "infrared_plugin/plugin.spec",
+        "patchSetId": 2
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-01-31T10:47:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "14dcf5e4_39171330",
       "range": {
         "startLine": 105,
         "startChar": 28,
@@ -87,6 +135,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "988f0f1f_a2fb823d",
+        "filename": "infrared_plugin/plugin.spec",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-01-31T10:47:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "84ccc244_de4b3cd4",
+      "range": {
+        "startLine": 107,
+        "startChar": 18,
+        "endLine": 107,
+        "endChar": 35
+      },
+      "revId": "2f33dc895e008210368a878237985c4467f2e10b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "be235400_d4805cf8",
@@ -110,6 +182,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0fdd05a8_ff0f42c6",
+        "filename": "infrared_plugin/plugin.spec",
+        "patchSetId": 2
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-01-31T10:47:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be235400_d4805cf8",
+      "range": {
+        "startLine": 109,
+        "startChar": 28,
+        "endLine": 109,
+        "endChar": 65
+      },
+      "revId": "2f33dc895e008210368a878237985c4467f2e10b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8d164f32_98a84eb8",
@@ -123,6 +219,30 @@
       "writtenOn": "2022-01-27T12:07:43Z",
       "side": 1,
       "message": "attachment \u003d None\nlog_message \u003d failure_txt\nif self.traceback_to_log:\n    matches \u003d re.findall(r\u0027^(Traceback[\\s\\S]*?)(?:^\\s*$|\\Z)\u0027, failure_txt, re.M)\n    if matches:\n        log_message \u003d matches[-1]\n    \n    // I don\u0027t think there is a need to attach the log if it\u0027s the same as the log message    \n    if attach_full_log and log_message !\u003d failure_txt:\n        attachment \u003d {\"name\": \"Entire_log.txt\",\n                      \"data\": failures_txt,\n                      \"mime\": \"text/plain\"}",
+      "range": {
+        "startLine": 387,
+        "startChar": 0,
+        "endLine": 401,
+        "endChar": 33
+      },
+      "revId": "2f33dc895e008210368a878237985c4467f2e10b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "25a9b27d_8ca8e997",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-01-31T10:47:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8d164f32_98a84eb8",
       "range": {
         "startLine": 387,
         "startChar": 0,
