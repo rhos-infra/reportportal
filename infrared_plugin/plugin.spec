@@ -103,6 +103,16 @@ subparsers:
                       type: Bool
                       help: Anazlyze failures of build (TBD)
                       default: false
+                  log-last-traceback-only:
+                      type: Bool
+                      help: Upload only the last python traceback to the logs
+                      default: false
+                  full-log-attachment:
+                      type: Bool
+                      help: |
+                        Save full test case log as attachment if traceback
+                        only option has be chosen
+                      default: false
                   dashboard2email:
                       type: Bool
                       help: Send a Report Portal Dashboard as an email
