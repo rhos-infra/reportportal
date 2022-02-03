@@ -113,6 +113,10 @@ options:
           - Save the test case log as the attachment if traceback is chosen
       default: False
       type: bool
+    no_log_passed_tests:
+      description:
+          - Don't upload data of passed tests
+      default: False
 
 requirements:
     - "python-dateutl"
@@ -238,7 +242,8 @@ class ReportPortalPublisher:
                  launch_description, ignore_skipped_tests,
                  log_last_traceback_only, full_log_attachment,
                  expanded_paths, threads,
-                 launch_start_time=str(int(time.time() * 1000))):
+                 launch_start_time=str(int(time.time() * 1000)),
+                 no_log_passed_tests=False):
         self.service = service
         self.launch_name = launch_name
         self.launch_attrs = launch_attrs
@@ -249,6 +254,7 @@ class ReportPortalPublisher:
         self.expanded_paths = expanded_paths
         self.threads = threads
         self.launch_start_time = launch_start_time
+        self.no_log_passed_tests = no_log_passed_tests
 
     def publish_tests(self):
         """
@@ -335,13 +341,14 @@ class ReportPortalPublisher:
         :param case: Test case to publish
         :param parent_id: ID of the test suite
         """
+        start_time, end_time = get_start_end_time(case)
+
         issue = None
+        skip_log = False
 
         if case.get('skipped') and self.ignore_skipped_tests:
             # ignore skipped tests when flag is true
             return
-
-        start_time, end_time = get_start_end_time(case)
 
         # start test case
         item_id = self.service.start_test_item(
@@ -349,14 +356,6 @@ class ReportPortalPublisher:
             start_time=start_time,
             item_type=case.get('@item_type', 'STEP'),
             parent_item_id=parent_id)
-
-        # Add system_out log.
-        if case.get('system-out'):
-            self.service.log(
-                time=start_time,
-                message=case.get('system-out'),
-                item_id=item_id,
-                level="INFO")
 
         # Indicate type of test case (skipped, failures, passed)
         if case.get('skipped'):
@@ -401,10 +400,19 @@ class ReportPortalPublisher:
                 time=start_time,
                 message=log_message,
                 item_id=item_id,
-                attachment = attachment,
+                attachment=attachment,
                 level="ERROR")
         else:
             status = 'PASSED'
+            skip_log = self.no_log_passed_tests
+
+        # Add system_out log.
+        if not skip_log and case.get('system-out'):
+            self.service.log(
+                time=start_time,
+                message=case.get('system-out'),
+                item_id=item_id,
+                level="INFO")
 
         # finish test case
         self.service.finish_test_item(
@@ -433,7 +441,8 @@ def main():
         tests_paths=dict(type='list', required=True),
         tests_exclude_paths=dict(type='list', required=False),
         log_last_traceback_only=dict(type='bool', default=False),
-        full_log_attachment=dict(type='bool', default=False)
+        full_log_attachment=dict(type='bool', default=False),
+        no_log_passed_tests=dict(type='bool', default=False)
     )
 
     module = AnsibleModule(
@@ -507,7 +516,8 @@ def main():
                     module.params.pop('log_last_traceback_only'),
             full_log_attachment=module.params.pop('full_log_attachment'),
             threads=module.params.pop('threads'),
-            expanded_paths=expanded_paths
+            expanded_paths=expanded_paths,
+            no_log_passed_tests=module.params['no_log_passed_tests']
         )
 
         if launch_start_time is not None:

@@ -23,6 +23,7 @@
     tests_paths: "{{ archive_import_path }}"
     tests_exclude_paths: "{{ archive_exclude_path }}"
     threads: "{{ threads }}"
+    no_log_passed_tests: "{{ other.no.log.passed.tests }}"
   ignore_errors: true
   register: import_results
 

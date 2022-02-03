@@ -84,6 +84,11 @@ subparsers:
                         Whether or nor to run some validation task after
                         performing launch operations
                       default: true
+                  no-log-passed-tests:
+                      type: Bool
+                      default: false
+                      help: |
+                        Don't upload log (system-out) of passed tests
 
             - title: tasks
               options:
