@@ -225,7 +225,7 @@ class PublisherThread(threading.Thread):
         while True:
             try:
                 test_case, parent_id = self.queue.get(timeout=3)
-                self.publisher.publish_test_cases(test_case, parent_id)
+                self.publisher.publish_test_case(test_case, parent_id)
             except queue.Empty:
                 return
             finally:
@@ -316,7 +316,7 @@ class ReportPortalPublisher:
             q.join()
         else:
             for case in test_cases:
-                self.publish_test_cases(case, item_id)
+                self.publish_test_case(case, item_id)
 
         # calculate status
         num_of_failutes = int(test_suite.get('@failures', 0))
@@ -329,84 +329,81 @@ class ReportPortalPublisher:
             end_time=end_time,
             status=status)
 
-    def publish_test_cases(self, case, parent_id):
+    def publish_test_case(self, case, parent_id):
         """
         Publish test cases to reportportal
         :param case: Test case to publish
         :param parent_id: ID of the test suite
         """
-        issue = None
 
-        if case.get('skipped') and self.ignore_skipped_tests:
-            # ignore skipped tests when flag is true
-            return
+        def parse_log(log_to_parse):
+            logs_to_parse = []
+            output = []
+            if isinstance(log_to_parse, list):
+                logs_to_parse = log_to_parse
+            else:
+                logs_to_parse.append(log_to_parse)
+            for log in logs_to_parse:
+                if not log:
+                    continue
+                if isinstance(log, dict):
+                    msg = log.get('@message', log.get('#text', ''))
+                else:
+                    msg = log
+                output.append(msg)
+            return '\n'.join(output)
+
+        logs = []
+        if case.get('system-out'):
+            logs.append(parse_log(case.get('system-out')))
+        if case.get('system-err'):
+            logs.append(parse_log(case.get('system-err')))
+
+        attachment = None
+        if case.get('skipped'):
+            issue = {"issue_type": "NOT_ISSUE"}
+            if self.ignore_skipped_tests:
+                return
+            logs.append(parse_log(case.get('skipped')))
+            status = 'SKIPPED'
+        elif case.get('failure') or case.get('error'):
+            issue = None
+            status = 'FAILED'
+            logs.append(parse_log(case.get('failure')))
+            logs.append(parse_log(case.get('error')))
+        else:
+            issue = None
+            status = 'PASSED'
+
+        log = '\n'.join(logs)
+        if status == 'FAILED' and self.log_last_traceback_only:
+            if self.full_log_attachment:
+                attachment = {'name': 'Entire_log.txt',
+                              'mime': 'text/plain',
+                              'data': log}
+
+            # Required for tobiko traceback
+            a = log.replace('testtools.testresult.real._StringException: ', '')
+
+            match = re.findall(r'^(Traceback[\s\S]*?)(?:^\s*$|\Z)', a, re.M)
+            if match:
+                log = match[-1]
 
         start_time, end_time = get_start_end_time(case)
 
-        # start test case
         item_id = self.service.start_test_item(
             name=case.get('@name', case.get('@id', 'NULL'))[:255],
             start_time=start_time,
             item_type=case.get('@item_type', 'STEP'),
             parent_item_id=parent_id)
 
-        # Add system_out log.
-        if case.get('system-out'):
-            self.service.log(
-                time=start_time,
-                message=case.get('system-out'),
-                item_id=item_id,
-                level="INFO")
+        self.service.log(
+            time=start_time,
+            attachment=attachment,
+            message=log,
+            item_id=item_id,
+            level='DEBUG')
 
-        # Indicate type of test case (skipped, failures, passed)
-        if case.get('skipped'):
-            issue = {"issue_type": "NOT_ISSUE"}
-            status = 'SKIPPED'
-            skipped_case = case.get('skipped')
-            msg = skipped_case.get('@message', '#text') \
-                if isinstance(skipped_case, dict) else skipped_case
-            self.service.log(
-                time=start_time,
-                message=msg,
-                item_id=item_id,
-                level="DEBUG")
-        elif case.get('failure') or case.get('error'):
-            status = 'FAILED'
-
-            failures = case.get('failure', case.get('error'))
-            failures_txt = ""
-            if isinstance(failures, list):
-                for failure in failures:
-                    msg = failure.get('@message', failure.get('#text')) \
-                        if isinstance(failure, dict) else failure
-                    failures_txt += '{msg}\n'.format(msg=msg)
-            else:
-                failures_txt = \
-                        failures.get('@message', failures.get('#text')) \
-                        if isinstance(failures, dict) else failures
-
-            log_message = failures_txt
-            attachment = None
-            if self.log_last_traceback_only:
-                matches = re.findall(
-                    r'^(Traceback[\s\S]*?)(?:^\s*$|\Z)', failures_txt, re.M)
-                if matches:
-                    log_message = matches[-1]
-                if self.full_log_attachment:
-                    if log_message != failures_txt:
-                        attachment = {"name": "Entire_log.txt",
-                                      "data": failures_txt,
-                                      "mime": "text/plain"}
-            self.service.log(
-                time=start_time,
-                message=log_message,
-                item_id=item_id,
-                attachment = attachment,
-                level="ERROR")
-        else:
-            status = 'PASSED'
-
-        # finish test case
         self.service.finish_test_item(
             item_id,
             end_time=end_time,
