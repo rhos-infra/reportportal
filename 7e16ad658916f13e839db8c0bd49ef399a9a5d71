@@ -43,6 +43,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b6a2ce4c_ab6d7f48",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-02-14T10:14:29Z",
+      "side": 1,
+      "message": "This function just grab the nested logs from the dict object that are converted from the XML. I see no point to provide it to anything else but the parent function. Can you please elaborate on what is the reason for that?",
+      "parentUuid": "9724e977_698e9637",
+      "range": {
+        "startLine": 339,
+        "startChar": 12,
+        "endLine": 339,
+        "endChar": 21
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "dfd15f26_cc156250",
         "filename": "library/reportportal_api.py",
         "patchSetId": 1
@@ -54,6 +78,30 @@
       "writtenOn": "2022-02-14T09:38:02Z",
       "side": 1,
       "message": "From what I say here you have three types of objects:\n - strings\n - list of objects\n - other kind of objects\n\nI would therefore make things a bit more simple:\n\n\nI would to parse log a generator of strings like below:\n\n def parse_log(obj):\n     \u0027\\n\u0027.join(_parse_log(obj))\n\n def _parse_log(obj):\n     if isinstance(obj, str):\n         yield obj\n     elif isinstance(obj, dict):\n         message \u003d obj.get(\u0027@message\u0027) or obj.get(\u0027#text\u0027)\n         if isinstance(message, str):\n             yield message\n         else:\n             # let see what there is inside this dict instead of\n             # discarding it\n             yield str(obj)  \n      else:\n         # let assume it is an iterable sequence of strings\n         for str in obj:\n             yield str(str)",
+      "range": {
+        "startLine": 342,
+        "startChar": 12,
+        "endLine": 345,
+        "endChar": 50
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "46e9a9ac_cbe5094d",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-02-14T10:14:29Z",
+      "side": 1,
+      "message": "Hmm making a generator from the small if/else block is definitely not something I would call as \u0027a bit more simple\u0027",
+      "parentUuid": "dfd15f26_cc156250",
       "range": {
         "startLine": 342,
         "startChar": 12,
@@ -89,6 +137,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7bf79c69_89ec8d29",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-02-14T10:14:29Z",
+      "side": 1,
+      "message": "Indeed. Better to have \u0027if log is None:\u0027 as it will not catch empty lines. Will fix it in the further patch set",
+      "parentUuid": "2dcef927_98f4564e",
+      "range": {
+        "startLine": 347,
+        "startChar": 26,
+        "endLine": 347,
+        "endChar": 27
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e3c536c9_6f72e067",
         "filename": "library/reportportal_api.py",
         "patchSetId": 1
@@ -100,6 +172,30 @@
       "writtenOn": "2022-02-14T09:38:02Z",
       "side": 1,
       "message": "I would prefer having logs as a jsonable dict and use json.dumps method to finally properly print its content so that we have a nice view of the source of all the things in in.\n\n import json\n json_log \u003d json.dumps(logs, sort_keys\u003dTrue, indent\u003d4)",
+      "range": {
+        "startLine": 378,
+        "startChar": 8,
+        "endLine": 378,
+        "endChar": 29
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e2ce93f9_88919a69",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 378,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-02-14T10:14:29Z",
+      "side": 1,
+      "message": "Based on the output we have from the XML file, all the blocks are divided by the stings with the following format:\n--------------------------------- Captured Out ---------------------------------\nor\n--------------------------------- Captured Err ---------------------------------\nSo we already have all the sources of the information. And more to say we don\u0027t have any indentation that may create new lines where it is not necessary",
+      "parentUuid": "e3c536c9_6f72e067",
       "range": {
         "startLine": 378,
         "startChar": 8,
@@ -158,6 +254,54 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "0c35cc36_9be244f9",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-02-14T10:14:29Z",
+      "side": 1,
+      "message": "Answered above",
+      "parentUuid": "18029224_c81661ff",
+      "range": {
+        "startLine": 379,
+        "startChar": 8,
+        "endLine": 379,
+        "endChar": 29
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "901e8b03_02e26528",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-02-14T10:14:29Z",
+      "side": 1,
+      "message": "Don\u0027t worry the entire log is uploaded as an attachment. We need a \u0027short\u0027 version of it for the automatic analysis to not to manually triage the same problems several times in a row. But if you still want to check the full log it will be available in the same place.\nPlease bear in mind that `log_last_traceback_only` parameter can be enabled or disabled manually using infrared [1].\n\n[1] https://review.gerrithub.io/c/rhos-infra/reportportal/+/532014",
+      "parentUuid": "022f704d_2e2b53c3",
+      "range": {
+        "startLine": 379,
+        "startChar": 34,
+        "endLine": 379,
+        "endChar": 62
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c437f2d3_4f9cc432",
         "filename": "library/reportportal_api.py",
         "patchSetId": 1
@@ -169,6 +313,30 @@
       "writtenOn": "2022-02-14T09:38:02Z",
       "side": 1,
       "message": "Do we support logs compression to format like GZ? It could be they improve performance on handling with big data text.",
+      "range": {
+        "startLine": 381,
+        "startChar": 16,
+        "endLine": 383,
+        "endChar": 42
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f02495c4_e8453f3a",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-02-14T10:14:29Z",
+      "side": 1,
+      "message": "Good point but as far as I know (just double-checked) there is no such option at least at the moment. Will open a bug for that",
+      "parentUuid": "c437f2d3_4f9cc432",
       "range": {
         "startLine": 381,
         "startChar": 16,
@@ -204,6 +372,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "489ba637_64976f2a",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 385,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-02-14T10:14:29Z",
+      "side": 1,
+      "message": "This is required for traceback capture only. The string is removed from the traceback but not from the full log (that is uploaded as an attachment). This string is only observed when `junit_logging` is set to `all` in the pytest configuration.",
+      "parentUuid": "f3158e38_559587de",
+      "range": {
+        "startLine": 385,
+        "startChar": 12,
+        "endLine": 385,
+        "endChar": 43
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "ded1c966_e2fee92f",
         "filename": "library/reportportal_api.py",
         "patchSetId": 1
@@ -227,6 +419,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "9cfa4b95_6f91b414",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-02-14T10:14:29Z",
+      "side": 1,
+      "message": "Answered above",
+      "parentUuid": "ded1c966_e2fee92f",
+      "range": {
+        "startLine": 386,
+        "startChar": 12,
+        "endLine": 386,
+        "endChar": 79
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f62b13a0_8cde7cce",
         "filename": "library/reportportal_api.py",
         "patchSetId": 1
@@ -238,6 +454,30 @@
       "writtenOn": "2022-02-14T09:38:02Z",
       "side": 1,
       "message": "You are removing informations here. Why? We need more. We need them all!",
+      "range": {
+        "startLine": 388,
+        "startChar": 12,
+        "endLine": 390,
+        "endChar": 31
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d8b288fa_9815a7a9",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-02-14T10:14:29Z",
+      "side": 1,
+      "message": "Answered above",
+      "parentUuid": "f62b13a0_8cde7cce",
       "range": {
         "startLine": 388,
         "startChar": 12,
