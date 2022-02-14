@@ -1,0 +1,251 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2a1f15bd_5450722d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1013661
+      },
+      "writtenOn": "2022-02-14T09:38:02Z",
+      "side": 1,
+      "message": "I think we need to send to report portal as much info we can dig from the XML file instead of cleaning it up and removing. Stack trace is not the only info we need. Also we have to give logs info of successful test cases to allow developers understand if the success is because of a test case flaw. Is the test case actually doing well?\n\nOn my opinion is the human being that have to decide which info it needs to archive its goals instead of a reporting tool. Therefore reported data should be as much as it is as possible at this stage. It should be the logging generation tool or the test case that should clean things up on a choice based on test case developers or jobs runners, but that cleaning up shouldn\u0027t never been hardcoded in a data conversion script as it is happening here.\n\nI think this part of reporting has to be refactored in a totally different direction:\n - keep code simple\n - keep info as it is (as much as possible)\n - don\u0027t drop any data\n\nAt the very end this tool is converting text (XML) to text (JSON) is some way. It should not have so much logic on what the data contain and translation should be far more simple without any refectory or alteration of the data.\n\nIt is responsibility of test case developers to improve data readability.\nIn especial mode removing blank lines or strings make life difficult to understand real test case behavior. What happened? Why data is missing? What should I do to improve my test case to have that data back?\n",
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9724e977_698e9637",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 1013661
+      },
+      "writtenOn": "2022-02-14T09:38:02Z",
+      "side": 1,
+      "message": "please create a stand alone function or method for this.",
+      "range": {
+        "startLine": 339,
+        "startChar": 12,
+        "endLine": 339,
+        "endChar": 21
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dfd15f26_cc156250",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 1013661
+      },
+      "writtenOn": "2022-02-14T09:38:02Z",
+      "side": 1,
+      "message": "From what I say here you have three types of objects:\n - strings\n - list of objects\n - other kind of objects\n\nI would therefore make things a bit more simple:\n\n\nI would to parse log a generator of strings like below:\n\n def parse_log(obj):\n     \u0027\\n\u0027.join(_parse_log(obj))\n\n def _parse_log(obj):\n     if isinstance(obj, str):\n         yield obj\n     elif isinstance(obj, dict):\n         message \u003d obj.get(\u0027@message\u0027) or obj.get(\u0027#text\u0027)\n         if isinstance(message, str):\n             yield message\n         else:\n             # let see what there is inside this dict instead of\n             # discarding it\n             yield str(obj)  \n      else:\n         # let assume it is an iterable sequence of strings\n         for str in obj:\n             yield str(str)",
+      "range": {
+        "startLine": 342,
+        "startChar": 12,
+        "endLine": 345,
+        "endChar": 50
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2dcef927_98f4564e",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 1013661
+      },
+      "writtenOn": "2022-02-14T09:38:02Z",
+      "side": 1,
+      "message": "I do want to see empty lines. They typically helps humans to read text. Therefore empty strings should be treated as they are an not skipped.",
+      "range": {
+        "startLine": 347,
+        "startChar": 26,
+        "endLine": 347,
+        "endChar": 27
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e3c536c9_6f72e067",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 378,
+      "author": {
+        "id": 1013661
+      },
+      "writtenOn": "2022-02-14T09:38:02Z",
+      "side": 1,
+      "message": "I would prefer having logs as a jsonable dict and use json.dumps method to finally properly print its content so that we have a nice view of the source of all the things in in.\n\n import json\n json_log \u003d json.dumps(logs, sort_keys\u003dTrue, indent\u003d4)",
+      "range": {
+        "startLine": 378,
+        "startChar": 8,
+        "endLine": 378,
+        "endChar": 29
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "022f704d_2e2b53c3",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 1013661
+      },
+      "writtenOn": "2022-02-14T09:38:02Z",
+      "side": 1,
+      "message": "Why? What does it means? I think people is going to look for logs only basing on human decision that should be taken in advance when logs are being produced. All what you can should go to the final report. The selection of what should be logged should be done only at time the log is being generated to have only one control point instead of many everywhere in the pipeline. Are I am missing some requirement?",
+      "range": {
+        "startLine": 379,
+        "startChar": 34,
+        "endLine": 379,
+        "endChar": 62
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18029224_c81661ff",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 1013661
+      },
+      "writtenOn": "2022-02-14T09:38:02Z",
+      "side": 1,
+      "message": "Please remove this. I care of the logs even if the test did succeeded! Is status only used here? In such case I thing we cans simply remove this variable. It does prevent us to have a complete report. I would like to have in report portal all what I have in the XML file without any other logic here.",
+      "range": {
+        "startLine": 379,
+        "startChar": 8,
+        "endLine": 379,
+        "endChar": 29
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c437f2d3_4f9cc432",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 1013661
+      },
+      "writtenOn": "2022-02-14T09:38:02Z",
+      "side": 1,
+      "message": "Do we support logs compression to format like GZ? It could be they improve performance on handling with big data text.",
+      "range": {
+        "startLine": 381,
+        "startChar": 16,
+        "endLine": 383,
+        "endChar": 42
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f3158e38_559587de",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 385,
+      "author": {
+        "id": 1013661
+      },
+      "writtenOn": "2022-02-14T09:38:02Z",
+      "side": 1,
+      "message": "Can you explain the issue here? I think we should improve Tobiko output quality instead of cleaning it up here.",
+      "range": {
+        "startLine": 385,
+        "startChar": 12,
+        "endLine": 385,
+        "endChar": 43
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ded1c966_e2fee92f",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 1013661
+      },
+      "writtenOn": "2022-02-14T09:38:02Z",
+      "side": 1,
+      "message": "Why?",
+      "range": {
+        "startLine": 386,
+        "startChar": 12,
+        "endLine": 386,
+        "endChar": 79
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f62b13a0_8cde7cce",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 1013661
+      },
+      "writtenOn": "2022-02-14T09:38:02Z",
+      "side": 1,
+      "message": "You are removing informations here. Why? We need more. We need them all!",
+      "range": {
+        "startLine": 388,
+        "startChar": 12,
+        "endLine": 390,
+        "endChar": 31
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
