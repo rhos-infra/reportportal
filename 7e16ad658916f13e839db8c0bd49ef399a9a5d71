@@ -159,6 +159,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4a598083_2a4df4f1",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 1017596
+      },
+      "writtenOn": "2022-03-13T13:09:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7bf79c69_89ec8d29",
+      "range": {
+        "startLine": 347,
+        "startChar": 26,
+        "endLine": 347,
+        "endChar": 27
+      },
+      "revId": "7e16ad658916f13e839db8c0bd49ef399a9a5d71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e3c536c9_6f72e067",
