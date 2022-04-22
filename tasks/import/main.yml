@@ -5,6 +5,7 @@
     jenkins_job_name: "{{ other.jenkins.job.name }}"
     jenkins_job_build_id: "{{ other.jenkins.build.id }}"
     xml_path: "{{ other.deployment.results.path }}"
+  when: other.get('deployment', {}).get('results', {}).path is defined and other.deployment.results.path
 
 - name: import tests to Reportportal version 5
   reportportal_api:
