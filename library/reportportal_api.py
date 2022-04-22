@@ -155,7 +155,8 @@ def get_expanded_paths(paths):
         # Expand any glob characters. If found, add the expanded glob to
         # the list of expanded_paths, which might be empty.
         if ('*' in path or '?' in path):
-            expanded_paths = expanded_paths + glob.glob(path)
+            recursive = True if '**' in path else False
+            expanded_paths = expanded_paths + glob.glob(path, recursive=recursive)
 
         # If there are no glob characters the path is added
         # to the expanded paths whether the path exists or not
