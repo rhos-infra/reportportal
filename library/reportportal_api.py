@@ -16,16 +16,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
-from dateutil import parser
-import time
-import os
-import re
-import glob
-import xmltodict
-import queue
-import threading
-from reportportal_client import ReportPortalService
 from ansible.module_utils.basic import AnsibleModule
+from collections import OrderedDict
+from dateutil import parser
+from reportportal_client import ReportPortalService
+import datetime
+import glob
+import os
+import pytz
+import queue
+import re
+import threading
+import time
+import xmltodict
 
 
 DOCUMENTATION = '''
@@ -113,6 +116,13 @@ options:
           - Save the test case log as the attachment if traceback is chosen
       default: False
       type: bool
+    reportportal_timezone:
+      description:
+          - The timezone of the ReportPortal that needs to be updated
+            Timezone differences will be fixed automatically in case the tests
+            were executed in a future time compare to local time of the
+            ReportPortal instance
+      type: str
 
 requirements:
     - "python-dateutl"
@@ -154,9 +164,10 @@ def get_expanded_paths(paths):
 
         # Expand any glob characters. If found, add the expanded glob to
         # the list of expanded_paths, which might be empty.
-        if ('*' in path or '?' in path):
+        if '*' in path or '?' in path:
             recursive = True if '**' in path else False
-            expanded_paths = expanded_paths + glob.glob(path, recursive=recursive)
+            expanded_paths = \
+                expanded_paths + glob.glob(path, recursive=recursive)
 
         # If there are no glob characters the path is added
         # to the expanded paths whether the path exists or not
@@ -233,13 +244,244 @@ class PublisherThread(threading.Thread):
                 self.queue.task_done()
 
 
+class TestSuiteManager:
+
+    _tsms = OrderedDict()
+    deployment_file_name = 'deployment.xml'
+
+    def __init__(self, result_files, skip_dep_times=True):
+        TestSuiteManager._tsms[self] = self
+        self.skip_deployment_times = skip_dep_times
+        self._testsuites = OrderedDict()
+        self._newest_end_time = None
+        self._oldest_start_time = None
+        for result_file in result_files:
+            self.add_testsuites_from_file(result_file)
+
+        self.adjust_times()
+
+    @classmethod
+    def get_last_tsm(cls):
+        return list(cls._tsms.items())[-1][-1]
+
+    def add_testsuites_from_file(self, file):
+        with open(file) as fd:
+            data = xmltodict.parse(fd.read())
+
+        # get multiple test suites if present
+        if data.get('testsuites'):
+            # get the test suite object
+            testsuites_obj = data.get('testsuites')
+            # get all test suites (1 or more) from the object
+            testsuites = testsuites_obj.get('testsuite') \
+                if isinstance(testsuites_obj.get('testsuite'), list) \
+                else [testsuites_obj.get('testsuite')]
+        else:
+            # publish single test suite
+            testsuites = [data.get('testsuite')]
+
+        for idx, testsuite in enumerate(testsuites):
+            self.add_test_suite(testsuite, idx, file)
+
+    @property
+    def testsuites(self):
+        return list(self._testsuites)
+
+    def add_test_suite(self, testsuite, idx, file):
+        tsw = TestSuiteWrapper(testsuite, idx, file)
+        self._testsuites[tsw] = tsw
+
+    @property
+    def oldest_start_time(self):
+
+        oldest = None
+        for testsuite in self.testsuites:
+            if self.skip_deployment_times and \
+                    os.path.basename(testsuite.file) == \
+                    self.__class__.deployment_file_name:
+                continue
+            if oldest is None or testsuite.start_time < oldest:
+                oldest = testsuite.start_time
+
+        self.oldest_start_time = oldest
+        return oldest
+
+    @oldest_start_time.setter
+    def oldest_start_time(self, oldest_start_time):
+        self._oldest_start_time = oldest_start_time
+
+    @property
+    def newest_end_time(self):
+
+        newest = None
+        for testsuite in self.testsuites:
+            if self.skip_deployment_times and \
+                    os.path.basename(testsuite.file) == \
+                    self.__class__.deployment_file_name:
+                continue
+            if newest is None or testsuite.end_time > newest:
+                newest = testsuite.end_time
+
+        self.newest_end_time = newest
+        return newest
+
+    @newest_end_time.setter
+    def newest_end_time(self, newest_end_time):
+        self._newest_end_time = newest_end_time
+
+    def adjust_times(self):
+
+        for testsuite in self.testsuites:
+            if os.path.basename(testsuite.file) == \
+                    self.__class__.deployment_file_name:
+                testsuite.end_time = self.newest_end_time
+
+                dep_start_time = self.newest_end_time - testsuite.duration
+
+                if self.oldest_start_time > dep_start_time:
+                    self.oldest_start_time = dep_start_time
+
+                testsuite.start_time = dep_start_time
+
+    def correct_times(self, rp_cur_time):
+        for testsuite in self.testsuites:
+            testsuite.correct_times(rp_cur_time)
+
+
+class TestSuiteWrapper:
+
+    def __init__(self, testsuite, idx, file):
+        self._testsuite = testsuite
+        self._idx = idx
+        self._file = file
+        self._start_time = None
+        self._end_time = None
+        self._timestamp = None
+
+    @property
+    def idx(self):
+        return self._idx
+
+    @property
+    def file(self):
+        return self._file
+
+    @property
+    def time(self):
+        return self._testsuite.get('@time')
+
+    @property
+    def duration(self):
+        return self.time
+
+    @property
+    def name(self):
+        return self._testsuite.get('@name', self.testsuite.get('@id', 'NULL'))
+
+    @property
+    def errors(self):
+        return int(self._testsuite.get('@errors', 0))
+
+    @property
+    def failures(self):
+        return int(self._testsuite.get('@failures', 0))
+
+    @property
+    def skipped(self):
+        return int(self._testsuite.get('@skipped', 0))
+
+    @property
+    def tests(self):
+        return int(self._testsuite.get('@tests'))
+
+    @property
+    def passed(self):
+        return self.tests - self.skipped - self.errors - self.failures
+
+    @property
+    def timestamp(self):
+        if self._timestamp is not None:
+            return self._timestamp
+
+        timestamp = self._testsuite.get('@timestamp')
+        if timestamp is None:
+            return
+
+        # Numeric timestamp
+        if str(timestamp).isnumeric():
+            if len(timestamp) >= 13:
+                timestamp = int(timestamp)
+            else:
+                timestamp = int(timestamp) * 1000
+
+        # ISO format timestamp
+        else:
+            parsed_time = parser.parse(timestamp)
+            timestamp = int(parsed_time.timestamp()) * 1000
+
+        self._timestamp = timestamp
+        return timestamp
+
+    @timestamp.setter
+    def timestamp(self, timestamp):
+        self._timestamp = timestamp
+
+    def get_file_modified_time(self):
+        status = os.stat(self.file)
+        return int(status.st_mtime * 1000)
+
+    @property
+    def start_time(self):
+        if self._start_time is not None:
+            return self._start_time
+
+        if self.timestamp:
+            self._start_time = self.timestamp
+        else:
+            self._start_time = self.get_file_modified_time() - \
+                        int(float(self.duration) * 1000)
+
+        return self._start_time
+
+    @start_time.setter
+    def start_time(self, start_time):
+        self._start_time = int(start_time)
+
+    @property
+    def end_time(self):
+        if self._end_time is not None:
+            return self._end_time
+
+        self._end_time = self.start_time + int(float(self.duration) * 1000)
+
+        return self._end_time
+
+    @end_time.setter
+    def end_time(self, end_time):
+        self._end_time = int(end_time)
+
+    def correct_times(self, rp_cur_time):
+        if self.end_time > rp_cur_time:
+            delta_ms = self.end_time - rp_cur_time
+
+            self.start_time -= delta_ms
+            self.end_time -= delta_ms
+
+            if self.timestamp:
+                self._timestamp -= delta_ms
+
+    @property
+    def testsuite(self):
+        return self._testsuite
+
+
 class ReportPortalPublisher:
 
     def __init__(self, service, launch_name, launch_attrs,
                  launch_description, ignore_skipped_tests,
                  log_last_traceback_only, full_log_attachment,
                  expanded_paths, threads,
-                 launch_start_time=str(int(time.time() * 1000))):
+                 launch_start_time=None):
         self.service = service
         self.launch_name = launch_name
         self.launch_attrs = launch_attrs
@@ -250,40 +492,25 @@ class ReportPortalPublisher:
         self.expanded_paths = expanded_paths
         self.threads = threads
         self.launch_start_time = launch_start_time
+        self.tsm = TestSuiteManager.get_last_tsm()
 
     def publish_tests(self):
         """
         Publish results of test xml file
         """
+        oldest_launch_start_time = \
+            self.launch_start_time or str(self.tsm.oldest_start_time)
+
         # Start Reportportal launch
         self.service.start_launch(
             name=self.launch_name,
-            start_time=self.launch_start_time,
+            start_time=oldest_launch_start_time,
             attributes=self.launch_attrs,
             description=self.launch_description
         )
 
-        # Iterate over XUnit test paths
-        for test_path in self.expanded_paths:
-            # open the XUnit file and parse to xml object
-            with open(test_path) as fd:
-                data = xmltodict.parse(fd.read())
-
-            # get multiple test suites if present
-            if data.get('testsuites'):
-                # get the test suite object
-                test_suites_object = data.get('testsuites')
-                # get all test suites (1 or more) from the object
-                test_suites = test_suites_object.get('testsuite') \
-                    if isinstance(test_suites_object.get('testsuite'), list) \
-                    else [test_suites_object.get('testsuite')]
-
-                # publish all test suites
-                for test_suite in test_suites:
-                    self.publish_test_suite(test_suite)
-            else:
-                # publish single test suite
-                self.publish_test_suite(data.get('testsuite'))
+        for test_suite in self.tsm.testsuites:
+            self.publish_test_suite(test_suite)
 
     def publish_test_suite(self, test_suite):
         """
@@ -291,18 +518,16 @@ class ReportPortalPublisher:
         :param test_suite: Test suite to publish
         """
         # get test cases from xml
-        test_cases = test_suite.get("testcase")
+        test_cases = test_suite.testsuite.get("testcase")
 
-        # safety incase of single test case which is not a list
+        # safety in case of single test case which is not a list
         if not isinstance(test_cases, list):
             test_cases = [test_cases]
 
-        start_time, end_time = get_start_end_time(test_suite)
-
         # start test suite
         item_id = self.service.start_test_item(
-            name=test_suite.get('@name', test_suite.get('@id', 'NULL')),
-            start_time=start_time,
+            name=test_suite.name,
+            start_time=test_suite.start_time,
             item_type="SUITE")
 
         # publish all test cases
@@ -320,14 +545,14 @@ class ReportPortalPublisher:
                 self.publish_test_cases(case, item_id)
 
         # calculate status
-        num_of_failutes = int(test_suite.get('@failures', 0))
-        num_of_errors = int(test_suite.get('@errors', 0))
-        status = 'FAILED' if (num_of_failutes > 0 or num_of_errors > 0) \
-            else 'PASSED'
+        if test_suite.failures > 0 or test_suite.errors > 0:
+            status = 'FAILED'
+        else:
+            status = 'PASSED'
 
         self.service.finish_test_item(
             item_id,
-            end_time=end_time,
+            end_time=test_suite.end_time,
             status=status)
 
     def publish_test_cases(self, case, parent_id):
@@ -434,7 +659,8 @@ def main():
         tests_paths=dict(type='list', required=True),
         tests_exclude_paths=dict(type='list', required=False),
         log_last_traceback_only=dict(type='bool', default=False),
-        full_log_attachment=dict(type='bool', default=False)
+        full_log_attachment=dict(type='bool', default=False),
+        reportportal_timezone=dict(type='str', default=None)
     )
 
     module = AnsibleModule(
@@ -450,6 +676,7 @@ def main():
         ssl_verify = module.params.pop('ssl_verify')
         launch_start_time = module.params.pop('launch_start_time')
         launch_end_time = module.params.pop('launch_end_time')
+        rp_timezone = module.params.pop('reportportal_timezone')
 
         expanded_paths = get_expanded_paths(tests_paths)
         expanded_exclude_paths = [] if not tests_exclude_paths else \
@@ -469,6 +696,15 @@ def main():
             raise FileNotFoundError(
                 "Paths not exist: {missing_paths}'".format
                 (missing_paths=str(missing_paths)))
+
+        # Updates TestSuiteManager with all test suites from all files
+        tsm = TestSuiteManager(expanded_paths)
+
+        # Correct timezones difference
+        if rp_timezone:
+            rp_cur_time = int(datetime.datetime.now(
+                pytz.timezone(rp_timezone)).timestamp() * 1000)
+            tsm.correct_times(rp_cur_time)
 
         # Get the ReportPortal service instance
         service = ReportPortalService(
@@ -514,8 +750,7 @@ def main():
         if launch_start_time is not None:
             # Time in deployment report may be higher than the time set
             # as launch_start_time because of all the rounds
-            fixed_start_time = str(int(launch_start_time) - 1000)
-            publisher.launch_start_time = fixed_start_time
+            publisher.launch_start_time = tsm.oldest_start_time
 
         publisher.publish_tests()
 
@@ -528,7 +763,7 @@ def main():
             launch_end_time = str(int(time.time() * 1000))
 
         # Finish launch.
-        service.finish_launch(end_time=launch_end_time)
+        service.finish_launch(end_time=tsm.newest_end_time)
 
         module.exit_json(**result)
 

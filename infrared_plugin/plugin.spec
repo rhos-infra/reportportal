@@ -29,6 +29,11 @@ subparsers:
                       type: Value
                       help: Amount of API workers to upload results
                       default: '8'
+                  timezone:
+                      type: Value
+                      help: |
+                        The time zone of the ReportPortal instance.
+                        (Example: Israel)
 
             - title: ReportPortal launch options
               options:
