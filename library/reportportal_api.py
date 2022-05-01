@@ -248,6 +248,7 @@ class TestSuiteManager:
 
     _tsms = OrderedDict()
     deployment_file_name = 'deployment.xml'
+    stats_exec_str = "launch_info['statistics']['executions']"
 
     def __init__(self, result_files, skip_dep_times=True):
         TestSuiteManager._tsms[self] = self
@@ -346,6 +347,74 @@ class TestSuiteManager:
     def correct_times(self, rp_cur_time):
         for testsuite in self.testsuites:
             testsuite.correct_times(rp_cur_time)
+
+    @property
+    def tests(self):
+        tests = 0
+        for testsuite in self.testsuites:
+            tests += testsuite.tests
+
+        return tests
+
+    @property
+    def failures(self):
+        failures = 0
+        for testsuite in self.testsuites:
+            failures += testsuite.failures
+
+        return failures
+
+    @property
+    def errors(self):
+        errors = 0
+        for testsuite in self.testsuites:
+            errors += testsuite.errors
+
+        return errors
+
+    @property
+    def skipped(self):
+        skipped = 0
+        for testsuite in self.testsuites:
+            skipped += testsuite.skipped
+
+        return skipped
+
+    @property
+    def passed(self):
+        passed = 0
+        for testsuite in self.testsuites:
+            passed += testsuite.passed
+
+        return passed
+
+    def _validate_tests_cnt(self, tests_str, calc_tests, stats_exec):
+
+        if calc_tests == 0:
+            assert tests_str not in stats_exec, \
+                "{} should not be found in {}".format(
+                    tests_str, self.stats_exec_str, calc_tests)
+
+        else:
+            assert tests_str in stats_exec, \
+                "{} should be in {}".format(tests_str, self.stats_exec_str)
+
+            tests = stats_exec[tests_str]
+            assert calc_tests == tests, \
+                "calculated ({}) & launch_info ({}) '{}' tests are " \
+                "not the same".format(calc_tests, tests, tests_str)
+
+    def validate(self, launch_info):
+        stats_exec = launch_info['statistics']['executions']
+
+        cnt_tests = (
+            ('total', self.tests, stats_exec),
+            ('passed', self.passed, stats_exec),
+            ('skipped', self.skipped, stats_exec),
+            ('failed', self.failures + self.errors, stats_exec)
+        )
+        for test in cnt_tests:
+            self._validate_tests_cnt(test[0], test[1], test[2])
 
 
 class TestSuiteWrapper:
@@ -660,7 +729,8 @@ def main():
         tests_exclude_paths=dict(type='list', required=False),
         log_last_traceback_only=dict(type='bool', default=False),
         full_log_attachment=dict(type='bool', default=False),
-        reportportal_timezone=dict(type='str', default=None)
+        reportportal_timezone=dict(type='str', default=None),
+        validate_launch=dict(type='bool', default=True)
     )
 
     module = AnsibleModule(
@@ -677,6 +747,7 @@ def main():
         launch_start_time = module.params.pop('launch_start_time')
         launch_end_time = module.params.pop('launch_end_time')
         rp_timezone = module.params.pop('reportportal_timezone')
+        validate_launch = module.params.pop('validate_launch')
 
         expanded_paths = get_expanded_paths(tests_paths)
         expanded_exclude_paths = [] if not tests_exclude_paths else \
@@ -762,8 +833,30 @@ def main():
         if launch_end_time is None:
             launch_end_time = str(int(time.time() * 1000))
 
+        errors = tsm.errors
+        failures = tsm.failures
+        passed = tsm.passed
+        skipped = tsm.skipped
+        total = tsm.tests
+
+        result['tests'] = {}
+        result['tests']['errors'] = errors
+        result['tests']['failures'] = failures
+        result['tests']['passed'] = passed
+        result['tests']['skipped'] = skipped
+        result['tests']['total'] = total
+
         # Finish launch.
         service.finish_launch(end_time=tsm.newest_end_time)
+
+        launch_info = service.get_launch_info()
+        result['launch_info'] = launch_info
+
+        if validate_launch:
+            tsm.validate(launch_info)
+            result['launch_validated'] = True
+        else:
+            result['launch_validated'] = False
 
         module.exit_json(**result)
 

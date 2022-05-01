@@ -25,6 +25,7 @@
     tests_exclude_paths: "{{ archive_exclude_path }}"
     threads: "{{ threads }}"
     reportportal_timezone: "{{ other.timezone | default(omit) }}"
+    validate_launch: "{{ (other.validate|default({})).launch|default(false) }}"
   ignore_errors: true
   register: import_results
 

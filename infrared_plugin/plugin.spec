@@ -89,6 +89,11 @@ subparsers:
                         Whether or nor to run some validation task after
                         performing launch operations
                       default: true
+                  validate-launch:
+                      type: Bool
+                      help: |
+                        Performs a set of validation tests against the newly created launch
+                      default: false
 
             - title: tasks
               options:
