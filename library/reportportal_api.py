@@ -603,14 +603,19 @@ class ReportPortalPublisher:
         if self.threads > 0:
             q = queue.Queue()
             for case in test_cases:
+                if case is None:
+                    continue
                 q.put((case, item_id))
-            for _ in range(self.threads):
-                worker = PublisherThread(q, self)
-                worker.daemon = True
-                worker.start()
-            q.join()
+            if not q.empty():
+                for _ in range(self.threads):
+                    worker = PublisherThread(q, self)
+                    worker.daemon = True
+                    worker.start()
+                q.join()
         else:
             for case in test_cases:
+                if case is None:
+                    continue
                 self.publish_test_cases(case, item_id)
 
         # calculate status
