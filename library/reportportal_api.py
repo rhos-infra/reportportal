@@ -291,7 +291,7 @@ class ReportPortalPublisher:
         :param test_suite: Test suite to publish
         """
         # get test cases from xml
-        test_cases = test_suite.get("testcase")
+        test_cases = test_suite.get("testcase", [])
 
         # safety incase of single test case which is not a list
         if not isinstance(test_cases, list):
@@ -306,18 +306,19 @@ class ReportPortalPublisher:
             item_type="SUITE")
 
         # publish all test cases
-        if self.threads > 0:
-            q = queue.Queue()
-            for case in test_cases:
-                q.put((case, item_id))
-            for _ in range(self.threads):
-                worker = PublisherThread(q, self)
-                worker.daemon = True
-                worker.start()
-            q.join()
-        else:
-            for case in test_cases:
-                self.publish_test_cases(case, item_id)
+        if test_cases:
+            if self.threads > 0:
+                q = queue.Queue()
+                for case in test_cases:
+                    q.put((case, item_id))
+                for _ in range(self.threads):
+                    worker = PublisherThread(q, self)
+                    worker.daemon = True
+                    worker.start()
+                q.join()
+            else:
+                for case in test_cases:
+                    self.publish_test_cases(case, item_id)
 
         # calculate status
         num_of_failutes = int(test_suite.get('@failures', 0))
