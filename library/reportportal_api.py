@@ -379,13 +379,22 @@ class ReportPortalPublisher:
             failures_txt = ""
             if isinstance(failures, list):
                 for failure in failures:
-                    msg = failure.get('@message', failure.get('#text')) \
-                        if isinstance(failure, dict) else failure
+                    if isinstance(failure, dict):
+                        if failure.get('@message'):
+                            msg = failure.get('@message')
+                        else: # None or empty
+                            msg = failure.get('#text')
+                    else:
+                        msg = failure
                     failures_txt += '{msg}\n'.format(msg=msg)
             else:
-                failures_txt = \
-                        failures.get('@message', failures.get('#text')) \
-                        if isinstance(failures, dict) else failures
+                if isinstance(failures, dict):
+                    if failures.get('@message'):
+                        failures_txt = failures.get('@message')
+                    else: # None or empty
+                        failures_txt = failures.get('#text')
+                else:
+                    failures_txt = failures
 
             log_message = failures_txt
             attachment = None
