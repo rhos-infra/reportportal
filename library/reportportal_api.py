@@ -376,16 +376,15 @@ class ReportPortalPublisher:
             status = 'FAILED'
 
             failures = case.get('failure', case.get('error'))
+            failure_list = list()
             failures_txt = ""
             if isinstance(failures, list):
-                for failure in failures:
-                    msg = failure.get('@message', failure.get('#text')) \
-                        if isinstance(failure, dict) else failure
-                    failures_txt += '{msg}\n'.format(msg=msg)
+                failure_list = failures
             else:
-                failures_txt = \
-                        failures.get('@message', failures.get('#text')) \
-                        if isinstance(failures, dict) else failures
+                failure_list.append(failures)
+            for failure in failure_list:
+                msg = msg if failure.get('@message') else failure.get('#text')
+                failures_txt += '{msg}\n'.format(msg=msg)
 
             log_message = failures_txt
             attachment = None
