@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0b2f5953_1dfd7812",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2022-07-22T11:27:33Z",
+      "side": 1,
+      "message": "Verified for OSASINFRA test results on https://seal46.qa.lab.tlv.redhat.com/ui/#rlobillo_personal/launches/all/42430",
+      "revId": "db7daf67303958a81a88ab94ee82b2c41dbc876b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
