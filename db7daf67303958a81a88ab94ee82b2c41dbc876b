@@ -56,6 +56,30 @@
       },
       "revId": "db7daf67303958a81a88ab94ee82b2c41dbc876b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fe4b255e_7c5f36e5",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2022-07-27T12:48:00Z",
+      "side": 1,
+      "message": "Resolved in new patchset",
+      "parentUuid": "42e5c67b_739ef731",
+      "range": {
+        "startLine": 380,
+        "startChar": 12,
+        "endLine": 397,
+        "endChar": 43
+      },
+      "revId": "db7daf67303958a81a88ab94ee82b2c41dbc876b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }

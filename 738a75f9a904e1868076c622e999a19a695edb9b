@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c658fec0_f60e118c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2022-07-27T12:48:00Z",
+      "side": 1,
+      "message": "Hello Ariel. \n\nI submitted new patchset addressing your comments and tested successfully.\n\nFor testing I used http://file.rdu.redhat.com/rlobillo/tempest_conformance_results.xml and upload to seal46 with below command:\n\n\u0027\u0027\u0027\n$  infrared reportportal -o reportportal.yml --import true --api-import false --url-address \"https://seal46.qa.lab.tlv.redhat.com\" --token \u003cHIDDEN\u003e --threads 0 --launch-tags \"DATE:2022-07-15;DFG:osasinfra\" --project-name \"RHEL_OSP_STAGING\" --jenkins-domain \"https://rhos-ci-jenkins.lab.eng.tlv2.redhat.com\" --jenkins-job-name \"DFG-osasinfra-shiftstack_periodic_subjob-ocp_testing\" --jenkins-build-id \"15\" --archive-import-path \"/home/rlobillo/Downloads/rp_test/*.xml\" --ignore-skipped-tests true --log-last-traceback-only true --full-log-attachment true --launch-start-time \"1657857034805\" --launch-altname \"DFG-osasinfra-shiftstack_periodic_subjob-ocp_testing-16.2-4.9-OpenShiftSDN-ipi-provider_secondary\" --launch-core-puddle \"RHOS-16.2-RHEL-8-20220610.n.1\"\n\u0027\u0027\u0027\n\nThe resulting launch in RP is here: https://seal46.qa.lab.tlv.redhat.com/ui/#rhel_osp_staging/launches/-1/44377",
+      "revId": "738a75f9a904e1868076c622e999a19a695edb9b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
