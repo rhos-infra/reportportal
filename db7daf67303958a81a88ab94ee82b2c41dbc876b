@@ -16,6 +16,46 @@
       "message": "Verified for OSASINFRA test results on https://seal46.qa.lab.tlv.redhat.com/ui/#rlobillo_personal/launches/all/42430",
       "revId": "db7daf67303958a81a88ab94ee82b2c41dbc876b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "51dab0be_6ec336b0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2022-07-27T09:42:48Z",
+      "side": 1,
+      "message": "Hi Ramon,\n\nPlease see my comments below and also upload an example of the Junit file that you upload and also links to POC job/output\n\nThanks!",
+      "revId": "db7daf67303958a81a88ab94ee82b2c41dbc876b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "42e5c67b_739ef731",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2022-07-27T09:42:48Z",
+      "side": 1,
+      "message": "A few comments:\n\n1. DRY! The original code wasn\u0027t written by you, but, please don\u0027t duplicate the code! If the object is a dict instance, just append it into a list and start from the \u0027for\u0027 loop.\n2. msg/failure: Why do we need to have both?\n3. Inner \u0027if\u0027: You have several \u0027ternary operator\u0027 like options that you can use in python or you can use the \u0027get\u0027 default value to get the \u0027text\u0027 if the message doesn\u0027t exist (like it was before)",
+      "range": {
+        "startLine": 380,
+        "startChar": 12,
+        "endLine": 397,
+        "endChar": 43
+      },
+      "revId": "db7daf67303958a81a88ab94ee82b2c41dbc876b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
