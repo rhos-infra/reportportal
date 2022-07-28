@@ -16,6 +16,126 @@
       "message": "Hello Ariel. \n\nI submitted new patchset addressing your comments and tested successfully.\n\nFor testing I used http://file.rdu.redhat.com/rlobillo/tempest_conformance_results.xml and upload to seal46 with below command:\n\n\u0027\u0027\u0027\n$  infrared reportportal -o reportportal.yml --import true --api-import false --url-address \"https://seal46.qa.lab.tlv.redhat.com\" --token \u003cHIDDEN\u003e --threads 0 --launch-tags \"DATE:2022-07-15;DFG:osasinfra\" --project-name \"RHEL_OSP_STAGING\" --jenkins-domain \"https://rhos-ci-jenkins.lab.eng.tlv2.redhat.com\" --jenkins-job-name \"DFG-osasinfra-shiftstack_periodic_subjob-ocp_testing\" --jenkins-build-id \"15\" --archive-import-path \"/home/rlobillo/Downloads/rp_test/*.xml\" --ignore-skipped-tests true --log-last-traceback-only true --full-log-attachment true --launch-start-time \"1657857034805\" --launch-altname \"DFG-osasinfra-shiftstack_periodic_subjob-ocp_testing-16.2-4.9-OpenShiftSDN-ipi-provider_secondary\" --launch-core-puddle \"RHOS-16.2-RHEL-8-20220610.n.1\"\n\u0027\u0027\u0027\n\nThe resulting launch in RP is here: https://seal46.qa.lab.tlv.redhat.com/ui/#rhel_osp_staging/launches/-1/44377",
       "revId": "738a75f9a904e1868076c622e999a19a695edb9b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "151130a3_c5dc5f7b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2022-07-28T13:24:52Z",
+      "side": 1,
+      "message": "Hi Ramon,\n\nPlease see my comments below provide links to the tested new changes.\n\nThanks,\nAriel",
+      "revId": "738a75f9a904e1868076c622e999a19a695edb9b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9c693f75_bcd6bbd2",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2022-07-28T13:24:52Z",
+      "side": 1,
+      "message": "not really needed",
+      "revId": "738a75f9a904e1868076c622e999a19a695edb9b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fb969722_744adb83",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 380,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2022-07-28T13:24:52Z",
+      "side": 1,
+      "message": "failures_txt_list \u003d []",
+      "range": {
+        "startLine": 380,
+        "startChar": 12,
+        "endLine": 380,
+        "endChar": 29
+      },
+      "revId": "738a75f9a904e1868076c622e999a19a695edb9b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a21385be_141002f7",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 384,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2022-07-28T13:24:52Z",
+      "side": 1,
+      "message": "if not isinstance(failures, list):\n  failures \u003d [failures]",
+      "range": {
+        "startLine": 382,
+        "startChar": 0,
+        "endLine": 384,
+        "endChar": 45
+      },
+      "revId": "738a75f9a904e1868076c622e999a19a695edb9b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7e57deb9_8e988302",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2022-07-28T13:24:52Z",
+      "side": 1,
+      "message": "failures_txt_list.append(\n  failure.get(\u0027@message\u0027, failure.get(\u0027#text\u0027)) if isinstance(failure, dict) else failure\n)",
+      "range": {
+        "startLine": 386,
+        "startChar": 16,
+        "endLine": 387,
+        "endChar": 57
+      },
+      "revId": "738a75f9a904e1868076c622e999a19a695edb9b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8eb31f91_7230e6b6",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2022-07-28T13:24:52Z",
+      "side": 1,
+      "message": "log_message \u003d \"\\n\".join(faliures_txt_list)",
+      "revId": "738a75f9a904e1868076c622e999a19a695edb9b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
