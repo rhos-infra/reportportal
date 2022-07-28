@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "17b3d107_37c0fec9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2022-07-28T14:42:47Z",
+      "side": 1,
+      "message": "Testing with the same xml as before, but with new code. This is the result: https://seal46.qa.lab.tlv.redhat.com/ui/#rhel_osp_staging/launches/-1/44593",
+      "revId": "52af95e63669e2683c379eecd638fe1b08cd1c89",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
