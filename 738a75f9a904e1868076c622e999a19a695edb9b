@@ -286,6 +286,24 @@
       "parentUuid": "86c92fe7_0a3b56d9",
       "revId": "738a75f9a904e1868076c622e999a19a695edb9b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1aba6ce1_38e2e660",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2022-08-08T08:52:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0068b841_7d55171c",
+      "revId": "738a75f9a904e1868076c622e999a19a695edb9b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
