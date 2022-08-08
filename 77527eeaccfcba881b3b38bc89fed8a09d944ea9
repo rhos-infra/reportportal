@@ -41,6 +41,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2d10bf63_82ecdc4f",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 384,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2022-08-08T08:52:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e51e79ff_8b265332",
+      "range": {
+        "startLine": 384,
+        "startChar": 20,
+        "endLine": 384,
+        "endChar": 111
+      },
+      "revId": "77527eeaccfcba881b3b38bc89fed8a09d944ea9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "78f59c0c_c355ef44",
@@ -54,6 +78,30 @@
       "writtenOn": "2022-08-07T13:33:01Z",
       "side": 1,
       "message": "Line length",
+      "range": {
+        "startLine": 387,
+        "startChar": 0,
+        "endLine": 387,
+        "endChar": 12
+      },
+      "revId": "77527eeaccfcba881b3b38bc89fed8a09d944ea9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5d2361b9_461fdec1",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2022-08-08T08:52:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "78f59c0c_c355ef44",
       "range": {
         "startLine": 387,
         "startChar": 0,
