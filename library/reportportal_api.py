@@ -331,6 +331,16 @@ class ReportPortalPublisher:
             end_time=end_time,
             status=status)
 
+    def get_test_case_name(self, case, limit=255):
+        """
+        Get the test case name from classname and name combined.
+        """
+        name = "{c_name}.{t_name}".format(
+            c_name = case.get('@classname', ''),
+            t_name = case.get('@name', case.get('@id', 'NULL'))
+        )
+        return name[:limit]
+
     def publish_test_cases(self, case, parent_id):
         """
         Publish test cases to reportportal
@@ -347,7 +357,7 @@ class ReportPortalPublisher:
 
         # start test case
         item_id = self.service.start_test_item(
-            name=case.get('@name', case.get('@id', 'NULL'))[:255],
+            name = self.get_test_case_name(case, 511),
             start_time=start_time,
             item_type=case.get('@item_type', 'STEP'),
             parent_item_id=parent_id)
