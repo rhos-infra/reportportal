@@ -27,6 +27,7 @@ import threading
 from reportportal_client import ReportPortalService
 from ansible.module_utils.basic import AnsibleModule
 
+custom_debug_str = "==Custom debug=="
 
 DOCUMENTATION = '''
 ---
@@ -113,6 +114,12 @@ options:
           - Save the test case log as the attachment if traceback is chosen
       default: False
       type: bool
+    class_in_name:
+        type: Bool
+        help: |
+          For test case name in Reportportal use combination of
+          classname+name. If not set (false) only name is used.
+        default: false
 
 requirements:
     - "python-dateutl"
@@ -239,6 +246,7 @@ class ReportPortalPublisher:
                  launch_description, ignore_skipped_tests,
                  log_last_traceback_only, full_log_attachment,
                  expanded_paths, threads,
+                 class_in_name,
                  launch_start_time=str(int(time.time() * 1000))):
         self.service = service
         self.launch_name = launch_name
@@ -250,6 +258,7 @@ class ReportPortalPublisher:
         self.expanded_paths = expanded_paths
         self.threads = threads
         self.launch_start_time = launch_start_time
+        self.class_in_name = class_in_name
 
     def publish_tests(self):
         """
@@ -300,8 +309,9 @@ class ReportPortalPublisher:
         start_time, end_time = get_start_end_time(test_suite)
 
         # start test suite
+        self.custom_debug(f"Starting test suite: {test_suite.get('@name', test_suite.get('@id', 'Noname'))}")
         item_id = self.service.start_test_item(
-            name=test_suite.get('@name', test_suite.get('@id', 'NULL')),
+            name=test_suite.get('@name', test_suite.get('@id', 'Noname')),
             start_time=start_time,
             item_type="SUITE")
 
@@ -318,6 +328,7 @@ class ReportPortalPublisher:
                 q.join()
             else:
                 for case in test_cases:
+                    self.custom_debug(f"Processing case: {case.get('name')}")
                     self.publish_test_cases(case, item_id)
 
         # calculate status
@@ -330,6 +341,22 @@ class ReportPortalPublisher:
             item_id,
             end_time=end_time,
             status=status)
+
+    def custom_debug(self, dbg_str):
+        global custom_debug_str
+        custom_debug_str = f"{custom_debug_str}\n{dbg_str}"
+
+    def get_test_case_name(self, case, limit=255):
+        """
+        Get the test case name from classname and name combined if required.
+        """
+        name = case.get('@name', case.get('@id', 'NULL'))
+        if self.class_in_name:
+            c_name = case.get('@classname', '')
+            if c_name:
+                name = f"{c_name}.{name}"
+        self.custom_debug(f"Test case name: {name}")
+        return name[:limit]
 
     def publish_test_cases(self, case, parent_id):
         """
@@ -347,7 +374,7 @@ class ReportPortalPublisher:
 
         # start test case
         item_id = self.service.start_test_item(
-            name=case.get('@name', case.get('@id', 'NULL'))[:255],
+            name = self.get_test_case_name(case, 511),
             start_time=start_time,
             item_type=case.get('@item_type', 'STEP'),
             parent_item_id=parent_id)
@@ -435,7 +462,8 @@ def main():
         tests_paths=dict(type='list', required=True),
         tests_exclude_paths=dict(type='list', required=False),
         log_last_traceback_only=dict(type='bool', default=False),
-        full_log_attachment=dict(type='bool', default=False)
+        full_log_attachment=dict(type='bool', default=False),
+        class_in_name=dict(type='bool', default=False)
     )
 
     module = AnsibleModule(
@@ -509,6 +537,7 @@ def main():
                     module.params.pop('log_last_traceback_only'),
             full_log_attachment=module.params.pop('full_log_attachment'),
             threads=module.params.pop('threads'),
+            class_in_name = module.params.pop('class_in_name'),
             expanded_paths=expanded_paths
         )
 
@@ -538,7 +567,7 @@ def main():
             if launch_end_time is None:
                 launch_end_time = str(int(time.time() * 1000))
             service.finish_launch(end_time=launch_end_time, status="FAILED")
-        result['msg'] = ex
+        result['msg'] = f"{ex}\n{custom_debug_str}"
         module.fail_json(**result)
 
 
