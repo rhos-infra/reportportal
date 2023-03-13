@@ -29,6 +29,12 @@ subparsers:
                       type: Value
                       help: Amount of API workers to upload results
                       default: '8'
+                  class-in-name:
+                      type: Bool
+                      help: |
+                        For test case name in Reportportal use combination of
+                        classname+name. If not set (false) only name is used.
+                      default: false
 
             - title: ReportPortal launch options
               options:
