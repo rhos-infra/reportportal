@@ -24,7 +24,10 @@
     tests_paths: "{{ archive_import_path }}"
     tests_exclude_paths: "{{ archive_exclude_path }}"
     threads: "{{ threads }}"
+    class_in_name: "{{ class_in_name | default(false) }}"
   ignore_errors: true
+  environment:
+    REQUESTS_CA_BUNDLE: /etc/pki/tls/certs/ca-bundle.crt
   register: import_results
 
 - debug:
