@@ -26,6 +26,8 @@ Configuration Flags
     Description to be added to a specified launch.
 * `--project-name`:
     Reportportal project name to push results to.
+* `--class-in-name`:
+    For test case name in Reportportal use combination of classname+name. If not set (false) only name is used.
 
 Jenkins Environment Variables
 -----------------------------
@@ -58,7 +60,8 @@ Example:
     --project-name PROJECT_NAME \
     --jenkins-domain $JENKINS_URL \
     --jenkins-job-name  $JOB_NAME \
-    --jenkins-build-id $BUILD_ID
+    --jenkins-build-id $BUILD_ID \
+    --class-in-name true
 
 
 Dashboard2Email
