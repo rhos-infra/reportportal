@@ -27,7 +27,6 @@ import threading
 from reportportal_client import ReportPortalService
 from ansible.module_utils.basic import AnsibleModule
 
-
 DOCUMENTATION = '''
 ---
 module: reportportal_api
@@ -113,6 +112,11 @@ options:
           - Save the test case log as the attachment if traceback is chosen
       default: False
       type: bool
+    class_in_name:
+      description:
+        - For test case name use combination of classname+name.
+      default: False
+      type: bool
 
 requirements:
     - "python-dateutl"
@@ -121,7 +125,6 @@ requirements:
     - "PyYAML"
     - "lxml"
     - "xmltodict"
-
 '''
 
 RETURN = '''
@@ -156,7 +159,8 @@ def get_expanded_paths(paths):
         # the list of expanded_paths, which might be empty.
         if ('*' in path or '?' in path):
             recursive = True if '**' in path else False
-            expanded_paths = expanded_paths + glob.glob(path, recursive=recursive)
+            expanded_paths = expanded_paths + \
+                glob.glob(path, recursive=recursive)
 
         # If there are no glob characters the path is added
         # to the expanded paths whether the path exists or not
@@ -239,6 +243,7 @@ class ReportPortalPublisher:
                  launch_description, ignore_skipped_tests,
                  log_last_traceback_only, full_log_attachment,
                  expanded_paths, threads,
+                 class_in_name,
                  launch_start_time=str(int(time.time() * 1000))):
         self.service = service
         self.launch_name = launch_name
@@ -250,6 +255,7 @@ class ReportPortalPublisher:
         self.expanded_paths = expanded_paths
         self.threads = threads
         self.launch_start_time = launch_start_time
+        self.class_in_name = class_in_name
 
     def publish_tests(self):
         """
@@ -300,8 +306,11 @@ class ReportPortalPublisher:
         start_time, end_time = get_start_end_time(test_suite)
 
         # start test suite
+        suite_name = test_suite.get('@name', test_suite.get('@id', 'NULL'))
+        if not suite_name:
+            suite_name = 'Noname'
         item_id = self.service.start_test_item(
-            name=test_suite.get('@name', test_suite.get('@id', 'NULL')),
+            name=suite_name,
             start_time=start_time,
             item_type="SUITE")
 
@@ -331,6 +340,17 @@ class ReportPortalPublisher:
             end_time=end_time,
             status=status)
 
+    def get_test_case_name(self, case, limit=255):
+        """
+        Get the test case name from classname and name combined if required.
+        """
+        name = case.get('@name', case.get('@id', 'NULL'))
+        if self.class_in_name:
+            c_name = case.get('@classname', '')
+            if c_name:
+                name = f"{c_name}.{name}"
+        return name[:limit]
+
     def publish_test_cases(self, case, parent_id):
         """
         Publish test cases to reportportal
@@ -347,7 +367,7 @@ class ReportPortalPublisher:
 
         # start test case
         item_id = self.service.start_test_item(
-            name=case.get('@name', case.get('@id', 'NULL'))[:255],
+            name=self.get_test_case_name(case, 511),
             start_time=start_time,
             item_type=case.get('@item_type', 'STEP'),
             parent_item_id=parent_id)
@@ -381,12 +401,12 @@ class ReportPortalPublisher:
                 failures = [failures]
             for failure in failures:
                 failures_txt_list.append(
-                    (failure.get('@message') or failure.get('#text')) \
-                       if isinstance(failure, dict) else failure
+                    (failure.get('@message') or failure.get('#text'))
+                    if isinstance(failure, dict) else failure
                 )
             failures_txt_list = list(filter(None, failures_txt_list))
             failures_txt = None if not len(failures_txt_list) \
-              else "\n".join(failures_txt_list)
+                else "\n".join(failures_txt_list)
             log_message = failures_txt
             attachment = None
             if self.log_last_traceback_only:
@@ -403,7 +423,7 @@ class ReportPortalPublisher:
                 time=start_time,
                 message=log_message,
                 item_id=item_id,
-                attachment = attachment,
+                attachment=attachment,
                 level="ERROR")
         else:
             status = 'PASSED'
@@ -435,7 +455,8 @@ def main():
         tests_paths=dict(type='list', required=True),
         tests_exclude_paths=dict(type='list', required=False),
         log_last_traceback_only=dict(type='bool', default=False),
-        full_log_attachment=dict(type='bool', default=False)
+        full_log_attachment=dict(type='bool', default=False),
+        class_in_name=dict(type='bool', default=False)
     )
 
     module = AnsibleModule(
@@ -505,10 +526,11 @@ def main():
             launch_attrs=launch_attrs,
             launch_description=module.params.pop('launch_description'),
             ignore_skipped_tests=module.params.pop('ignore_skipped_tests'),
-            log_last_traceback_only=\
-                    module.params.pop('log_last_traceback_only'),
+            log_last_traceback_only=module.params.pop(
+                'log_last_traceback_only'),
             full_log_attachment=module.params.pop('full_log_attachment'),
             threads=module.params.pop('threads'),
+            class_in_name=module.params.pop('class_in_name'),
             expanded_paths=expanded_paths
         )
 
@@ -530,6 +552,7 @@ def main():
 
         # Finish launch.
         service.finish_launch(end_time=launch_end_time)
+        service.terminate()
 
         module.exit_json(**result)
 
