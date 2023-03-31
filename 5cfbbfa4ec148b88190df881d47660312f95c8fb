@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cb6d1d19_a70157a9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1016110
+      },
+      "writtenOn": "2023-03-31T12:45:21Z",
+      "side": 1,
+      "message": "This is not a code I contributes too, but as far as I can see the change matches what it is expected from it.\nMaybe you just want to update the commit message now that the behavior is opt-in?",
+      "revId": "5cfbbfa4ec148b88190df881d47660312f95c8fb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
