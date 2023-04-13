@@ -36,6 +36,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1f28958d_557ab987",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1016110
+      },
+      "writtenOn": "2023-04-13T09:21:30Z",
+      "side": 0,
+      "message": "you may want to mention (just few words) those linting fix in the commit message",
+      "parentUuid": "1334a637_a3b94ef5",
+      "revId": "3a612c693a2e98cf242ff8788db52a5e549eee3a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "477f6237_b5d85cc6",
