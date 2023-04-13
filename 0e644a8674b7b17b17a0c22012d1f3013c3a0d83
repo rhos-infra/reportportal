@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "354b7228_1039e88c",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 24
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1016110
+      },
+      "writtenOn": "2023-04-13T09:14:04Z",
+      "side": 1,
+      "message": "unrelated change?",
+      "revId": "0e644a8674b7b17b17a0c22012d1f3013c3a0d83",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "894e2b3a_87d16ee9",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 24
+      },
+      "lineNbr": 530,
+      "author": {
+        "id": 1016110
+      },
+      "writtenOn": "2023-04-13T09:14:04Z",
+      "side": 1,
+      "message": "unrelated change?",
+      "revId": "0e644a8674b7b17b17a0c22012d1f3013c3a0d83",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "03916e70_4a17d3f7",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 24
+      },
+      "lineNbr": 555,
+      "author": {
+        "id": 1016110
+      },
+      "writtenOn": "2023-04-13T09:14:04Z",
+      "side": 1,
+      "message": "was this needed even regardless of this specific review?",
+      "revId": "0e644a8674b7b17b17a0c22012d1f3013c3a0d83",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
