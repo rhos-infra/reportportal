@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "645280d5_f736f129",
+        "filename": "README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1016110
+      },
+      "writtenOn": "2023-04-13T08:15:56Z",
+      "side": 1,
+      "message": "unrelated blank line change?",
+      "revId": "3141334ea18e4b7e63c3cb11ecc2b1dc6bd62a9c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "54da6917_7a92081a",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1016110
+      },
+      "writtenOn": "2023-04-13T08:15:56Z",
+      "side": 1,
+      "message": "shouldn\u0027t the order and the values of the fields be:\n\ndescription (not help, and in a different format)\ndefault: False (not false)\ntype: bool (not Bool)",
+      "revId": "3141334ea18e4b7e63c3cb11ecc2b1dc6bd62a9c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ac761bb0_cf1e1faa",
+        "filename": "tasks/import/main.yml",
+        "patchSetId": 23
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1016110
+      },
+      "writtenOn": "2023-04-13T08:15:56Z",
+      "side": 1,
+      "message": "is it correct to have this hardcoded? Isn\u0027t it up to the environment which calls this code to set the variables?",
+      "revId": "3141334ea18e4b7e63c3cb11ecc2b1dc6bd62a9c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
