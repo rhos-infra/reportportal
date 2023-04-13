@@ -87,6 +87,24 @@
       "message": "unrelated change?",
       "revId": "3a612c693a2e98cf242ff8788db52a5e549eee3a",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fb79d6cd_e72fa153",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 24
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2023-04-13T09:44:34Z",
+      "side": 0,
+      "message": "I don\u0027t think the blank line was functional.",
+      "parentUuid": "477f6237_b5d85cc6",
+      "revId": "3a612c693a2e98cf242ff8788db52a5e549eee3a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }

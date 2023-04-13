@@ -18,6 +18,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a54e14ee_c6346093",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 24
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2023-04-13T09:44:34Z",
+      "side": 1,
+      "message": "fixed flake8 finding",
+      "parentUuid": "354b7228_1039e88c",
+      "revId": "0e644a8674b7b17b17a0c22012d1f3013c3a0d83",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "894e2b3a_87d16ee9",
@@ -35,6 +53,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ec58486c_a1f1860c",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 24
+      },
+      "lineNbr": 530,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2023-04-13T09:44:34Z",
+      "side": 1,
+      "message": "flake8 finding",
+      "parentUuid": "894e2b3a_87d16ee9",
+      "revId": "0e644a8674b7b17b17a0c22012d1f3013c3a0d83",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "03916e70_4a17d3f7",
@@ -48,6 +84,24 @@
       "writtenOn": "2023-04-13T09:14:04Z",
       "side": 1,
       "message": "was this needed even regardless of this specific review?",
+      "revId": "0e644a8674b7b17b17a0c22012d1f3013c3a0d83",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0c4e1d0e_c8c9a17d",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 24
+      },
+      "lineNbr": 555,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2023-04-13T09:44:34Z",
+      "side": 1,
+      "message": "During testing in some cases the launch remained uncompleted. Reportportal client documentation suggest the service.terminate() call at the end of the upload to avoid any data loss.",
+      "parentUuid": "03916e70_4a17d3f7",
       "revId": "0e644a8674b7b17b17a0c22012d1f3013c3a0d83",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
