@@ -18,6 +18,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "85b1ae45_7812cea4",
+        "filename": "README.md",
+        "patchSetId": 23
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2023-04-13T09:13:17Z",
+      "side": 1,
+      "message": "Actually this is how sphinx wants it.",
+      "parentUuid": "645280d5_f736f129",
+      "revId": "3141334ea18e4b7e63c3cb11ecc2b1dc6bd62a9c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "54da6917_7a92081a",
@@ -35,6 +53,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "087e9b7b_b9c2e514",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2023-04-13T09:13:17Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "54da6917_7a92081a",
+      "revId": "3141334ea18e4b7e63c3cb11ecc2b1dc6bd62a9c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ac761bb0_cf1e1faa",
@@ -48,6 +84,24 @@
       "writtenOn": "2023-04-13T08:15:56Z",
       "side": 1,
       "message": "is it correct to have this hardcoded? Isn\u0027t it up to the environment which calls this code to set the variables?",
+      "revId": "3141334ea18e4b7e63c3cb11ecc2b1dc6bd62a9c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a087d1d1_2ef3ced4",
+        "filename": "tasks/import/main.yml",
+        "patchSetId": 23
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2023-04-13T09:13:17Z",
+      "side": 1,
+      "message": "Sorry, this was a debugging leftover. Removed.",
+      "parentUuid": "ac761bb0_cf1e1faa",
       "revId": "3141334ea18e4b7e63c3cb11ecc2b1dc6bd62a9c",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }

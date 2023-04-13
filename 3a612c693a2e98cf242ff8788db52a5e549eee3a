@@ -16,6 +16,24 @@
       "message": "unrelated change, maybe not pep8-compliant?",
       "revId": "3a612c693a2e98cf242ff8788db52a5e549eee3a",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1334a637_a3b94ef5",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2023-04-13T09:13:17Z",
+      "side": 0,
+      "message": "Rechecked with flake8 and fixed couple of unrelated findings",
+      "parentUuid": "d5b0dbbb_e7eb5b7e",
+      "revId": "3a612c693a2e98cf242ff8788db52a5e549eee3a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
