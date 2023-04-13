@@ -54,6 +54,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0d52e9a4_d3ab1e2d",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2023-04-13T09:34:03Z",
+      "side": 0,
+      "message": "done",
+      "parentUuid": "1f28958d_557ab987",
+      "revId": "3a612c693a2e98cf242ff8788db52a5e549eee3a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "477f6237_b5d85cc6",
