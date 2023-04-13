@@ -16,6 +16,24 @@
       "message": "... so ready to be merge after the debugging?",
       "revId": "b0f102c2ea49f44884a3af245422daac285fa7bc",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "96b19363_330266b2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 20
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2023-04-13T05:24:53Z",
+      "side": 1,
+      "message": "Yes, finally I was able to check the functionality. Please see my ticket comment.",
+      "parentUuid": "961fcc06_cb5242ac",
+      "revId": "b0f102c2ea49f44884a3af245422daac285fa7bc",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
