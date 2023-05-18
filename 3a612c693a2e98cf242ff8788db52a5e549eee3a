@@ -105,6 +105,23 @@
       "parentUuid": "477f6237_b5d85cc6",
       "revId": "3a612c693a2e98cf242ff8788db52a5e549eee3a",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d0f4a78c_70631fa7",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 25
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2023-05-18T19:06:51Z",
+      "side": 0,
+      "message": "Two blank lines are recommended after imports",
+      "revId": "3a612c693a2e98cf242ff8788db52a5e549eee3a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }

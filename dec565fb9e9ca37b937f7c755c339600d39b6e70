@@ -33,6 +33,75 @@
       "message": "ping?",
       "revId": "dec565fb9e9ca37b937f7c755c339600d39b6e70",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "277a077c_671e6a38",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 25
+      },
+      "lineNbr": 311,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2023-05-18T19:06:51Z",
+      "side": 1,
+      "message": "Why \u0027NULL\u0027 \u0026 \u0027Noname\u0027? What are the use cases?",
+      "range": {
+        "startLine": 309,
+        "startChar": 0,
+        "endLine": 311,
+        "endChar": 33
+      },
+      "revId": "dec565fb9e9ca37b937f7c755c339600d39b6e70",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7c6991f9_9774c646",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 25
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2023-05-18T19:06:51Z",
+      "side": 1,
+      "message": "Why the difference in limit compare to the function default value?",
+      "range": {
+        "startLine": 370,
+        "startChar": 47,
+        "endLine": 370,
+        "endChar": 50
+      },
+      "revId": "dec565fb9e9ca37b937f7c755c339600d39b6e70",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "49b3fef9_3bc71e7c",
+        "filename": "tasks/import/main.yml",
+        "patchSetId": 25
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2023-05-18T19:06:51Z",
+      "side": 1,
+      "message": "why to define another default(false) here if we already have it in the \u0027plugin.spec\u0027? Maybe default(omit)?",
+      "range": {
+        "startLine": 27,
+        "startChar": 39,
+        "endLine": 27,
+        "endChar": 53
+      },
+      "revId": "dec565fb9e9ca37b937f7c755c339600d39b6e70",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
