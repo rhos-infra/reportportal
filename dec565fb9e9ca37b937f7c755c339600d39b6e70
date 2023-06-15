@@ -60,6 +60,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f75be221_4e8af452",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 25
+      },
+      "lineNbr": 311,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2023-06-15T13:18:59Z",
+      "side": 1,
+      "message": "The noname is for fallback for situation when the suite hame neither name nor id attribute - which is quite often.",
+      "parentUuid": "277a077c_671e6a38",
+      "range": {
+        "startLine": 309,
+        "startChar": 0,
+        "endLine": 311,
+        "endChar": 33
+      },
+      "revId": "dec565fb9e9ca37b937f7c755c339600d39b6e70",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7c6991f9_9774c646",
         "filename": "library/reportportal_api.py",
         "patchSetId": 25
@@ -71,6 +95,30 @@
       "writtenOn": "2023-05-18T19:06:51Z",
       "side": 1,
       "message": "Why the difference in limit compare to the function default value?",
+      "range": {
+        "startLine": 370,
+        "startChar": 47,
+        "endLine": 370,
+        "endChar": 50
+      },
+      "revId": "dec565fb9e9ca37b937f7c755c339600d39b6e70",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aa5289c2_ead52587",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 25
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2023-06-15T13:18:59Z",
+      "side": 1,
+      "message": "The name will be longer including the python path. So I made it twice as long as before to be on the safe side.",
+      "parentUuid": "7c6991f9_9774c646",
       "range": {
         "startLine": 370,
         "startChar": 47,
