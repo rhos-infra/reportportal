@@ -122,6 +122,24 @@
       "message": "Two blank lines are recommended after imports",
       "revId": "3a612c693a2e98cf242ff8788db52a5e549eee3a",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dbcd7808_76cbea0c",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 25
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2023-06-15T13:28:01Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "d0f4a78c_70631fa7",
+      "revId": "3a612c693a2e98cf242ff8788db52a5e549eee3a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }

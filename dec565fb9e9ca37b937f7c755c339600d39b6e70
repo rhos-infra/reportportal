@@ -150,6 +150,30 @@
       },
       "revId": "dec565fb9e9ca37b937f7c755c339600d39b6e70",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a65d4e3a_8a89dde9",
+        "filename": "tasks/import/main.yml",
+        "patchSetId": 25
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2023-06-15T13:28:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "49b3fef9_3bc71e7c",
+      "range": {
+        "startLine": 27,
+        "startChar": 39,
+        "endLine": 27,
+        "endChar": 53
+      },
+      "revId": "dec565fb9e9ca37b937f7c755c339600d39b6e70",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
