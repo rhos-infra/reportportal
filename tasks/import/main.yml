@@ -1,11 +1,44 @@
 ---
-- name: Generate deployment XUnit
+- name: Generate deployment XUnit for Jenkins jobs (default)
   jenkins_job_stages:
     jenkins_domain: "{{ other.jenkins.domain }}"
     jenkins_job_name: "{{ other.jenkins.job.name }}"
     jenkins_job_build_id: "{{ other.jenkins.build.id }}"
     xml_path: "{{ other.deployment.results.path }}"
-  when: other.get('deployment', {}).get('results', {}).path is defined and other.deployment.results.path
+  when: >
+    (ci_server | default('Jenkins')) == 'Jenkins' and 
+    other.get('deployment', {}).get('results', {}).path is defined and 
+    other.deployment.results.path
+
+- name: Generate deployment XUnit for Zuul jobs (if specified)
+  zuul_job_info:
+    zuul_domain: "{{ other.zuul.domain }}"
+    zuul_job_build_id: "{{ other.zuul.build.uuid }}"
+    xml_path: "{{ other.deployment.results.path }}"
+  when: > 
+    (ci_server | default('Zuul')) == 'Zuul' and 
+    other.get('deployment', {}).get('results', {}).path is defined and 
+    other.deployment.results.path
+
+
+- name: print vars
+  ansible.builtin.debug:
+    msg:
+     - "url: {{ reportportal_url }}"
+     - "token: {{ reportportal_token }}"
+     - "ssl_verify: {{ ssl_verify | bool }}"
+     - "ignore_skipped_tests: {{ ignore_skipped_tests | bool }}"
+     - "project_name: {{ project }}"
+     - "launch_name: {{ other.launch.altname|default(false) | ternary (other.launch.altname, jenkins_job_name) }}"
+     - "launch_tags: {{ tags }}"
+     - "launch_description: {{ launch_description }}"
+     - "launch_start_time: {{ launch_start_time | default(omit) }}"
+     - "launch_end_time: {{ launch_end_time | default(omit) }}"
+     - "log_last_traceback_only: {{ other.log.last.traceback.only }}"
+     - "full_log_attachment: {{ other.full.log.attachment }}"
+     - "tests_paths: {{ archive_import_path }}"
+     - "tests_exclude_paths: {{ archive_exclude_path }}"
+     - "threads: {{ threads }}"
 
 - name: import tests to Reportportal version 5
   reportportal_api:
