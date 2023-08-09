@@ -16,11 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
-from ansible.module_utils.basic import AnsibleModule
-from lxml import etree
+
 import requests
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import sys
+
+from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.utils import *
+from lxml import etree
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 DOCUMENTATION = '''
 module: jenkins_job_stages
@@ -44,6 +47,10 @@ options:
         description: ID of the job build
         required: True
         type: str
+    ssl_verify:
+        description: set certification verifications on/off
+        default: True
+        type: bool
     xml_path:
         description: Path to save the XML file
         required: True
@@ -63,11 +70,7 @@ file_path:
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-class ConnectionError(Exception):
-
-    def __init__(self, response):
-        msg = f'HTTP{response.status_code}: {response.text}'
-        super().__init__(msg)
+ssl_verify = True
 
 def clear_log(string):
     allowed_chars = [9, 10, 13]
@@ -78,7 +81,7 @@ def clear_log(string):
 def get_stage_logs(base_url, steps, status):
     logs = []
     for step_id in steps:
-        response = get_json(f'{base_url}/execution/node/{step_id}/wfapi/log')
+        response = get_json(f'{base_url}/execution/node/{step_id}/wfapi/log', ssl_verify)
         log_entry = clear_log(response.get('text', '')).strip()
         if log_entry:
             logs.append(log_entry)
@@ -90,12 +93,6 @@ def get_stage_logs(base_url, steps, status):
     log_obj.text = log
 
     return log_obj
-
-def get_json(url):
-    response = requests.get(url, verify=False)
-    if response.status_code != 200:
-        raise ConnectionError(response)
-    return response.json()
 
 def create_test_suite(base_url):
     response = get_json(f'{base_url}/wfapi/describe')
@@ -131,24 +128,22 @@ def create_test_case(base_url, stage_id):
 
     return case, status
 
-def save_to_file(suite, xml_path):
-    with open(xml_path, 'wb') as xml_file:
-        xml_file.write(etree.tostring(suite, pretty_print=True))
-    return xml_path
-
 def main():
     result = {}
     module_args = dict(jenkins_domain=dict(type='str', required=True),
                        jenkins_job_name=dict(type='str', required=True),
                        jenkins_job_build_id=dict(type='str', required=True),
+                       ssl_verify=dict(type='bool', default=True),
                        xml_path=dict(type='str', required=True))
     module = AnsibleModule(argument_spec=module_args,
                            supports_check_mode=False)
     try:
+        global ssl_verify
         jenkins_url = module.params.pop('jenkins_domain')
         job_name = module.params.pop('jenkins_job_name')
         build_id = module.params.pop('jenkins_job_build_id')
         xml_path = module.params.pop('xml_path')
+        ssl_verify = module.params.pop('ssl_verify')
 
 
         base_url = f'{jenkins_url}/job/{job_name}/{build_id}'
