@@ -16,6 +16,24 @@
       "message": "ping?",
       "revId": "65b81cacafd489e4e1ad29f9a8af6d1a272e3af6",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "06baa749_df33e6de",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 26
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2023-08-11T07:40:48Z",
+      "side": 1,
+      "message": "I\u0027ve replied to the 2 remaining comments made by Ariel. The patch itself is working.",
+      "parentUuid": "b07995cc_60bda9e7",
+      "revId": "65b81cacafd489e4e1ad29f9a8af6d1a272e3af6",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
