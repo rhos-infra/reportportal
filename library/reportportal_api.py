@@ -144,6 +144,8 @@ expanded_exclude_paths:
     returned: always
 '''
 
+class NoLaunchIdException(Exception):
+    pass
 
 def get_expanded_paths(paths):
     """
@@ -269,6 +271,9 @@ class ReportPortalPublisher:
             attributes=self.launch_attrs,
             description=self.launch_description
         )
+
+        if service.launch_id is None:
+            raise NoLaunchIdException("No launch ID available.")
 
         # Iterate over XUnit test paths
         for test_path in self.expanded_paths:
@@ -470,7 +475,6 @@ def main():
     try:
         tests_paths = module.params.pop('tests_paths')
         tests_exclude_paths = module.params.pop('tests_exclude_paths')
-        ssl_verify = module.params.pop('ssl_verify')
         launch_start_time = module.params.pop('launch_start_time')
         launch_end_time = module.params.pop('launch_end_time')
 
@@ -498,11 +502,8 @@ def main():
             endpoint=module.params.pop('url'),
             project=module.params.pop('project_name'),
             token=module.params.pop('token'),
+            verify_ssl=module.params.pop('ssl_verify')
         )
-
-        service.session.verify = ssl_verify
-        if not ssl_verify:
-            os.environ.pop('REQUESTS_CA_BUNDLE', None)
 
         launch_tags = module.params.pop('launch_tags')
         launch_attrs = {}
