@@ -6,11 +6,13 @@
     image: centos
     network_mode: host
     command: bash
+    # yamllint disable-line rule:line-length
     volumes: /var/lib/reportportal_dashboard2email:/var/lib/reportportal_dashboard2email
     tty: true
     restart: true
   tags: start_container
-  # THE SAME task parameters have to be used in "stop reportportal_dashboard2email docker container" task
+  # SAME task parameters have to be used in the
+  # "stop reportportal_dashboard2email docker container" task
 
 - name: add reportportal_dashboard2email docker container to Ansible inventory
   add_host:
@@ -31,11 +33,13 @@
         name: "{{ item }}"
         state: latest
       with_items:
-        - ansible # for things like loading lib/dashboard2email.py as an ansible module etc.
+        # required for the code in lib/dashboard2email.py
+        - ansible
         - Xvfb
         - firefox
         - tigervnc-server
-        - psmisc # for the likes of 'killall' commands etc.
+        # for the likes of 'killall' commands etc
+        - psmisc
       register: install_rpms
       retries: 3
       delay: 5
@@ -58,12 +62,14 @@
       register: geckodriver_exist
       tags: geckodriver
 
-    - name: install geckodriver (Selenium python library is using it to talk to Firefox)
+    - name: install geckodriver (Selenium python lib to work with Firefox)
       unarchive:
-        remote_src: yes
+        remote_src: true
+        # yamllint disable-line rule:line-length
         src: https://github.com/mozilla/geckodriver/releases/download/v0.21.0/geckodriver-v0.21.0-linux64.tar.gz
         dest: /usr/local/bin
-      when: geckodriver_exist.stat.exists == false or geckodriver_exist.stat.executable == false
+      when: geckodriver_exist.stat.exists == false or
+            geckodriver_exist.stat.executable == false
       tags: geckodriver
 
     - name: generate and save machine's uuid (required by Firefox)
@@ -97,10 +103,11 @@
       template:
         src: templates/xstartup.j2
         dest: "~/.vnc/xstartup"
-        force: yes
+        force: true
 
     - name: start vncserver in the background (DISPLAY=:10)
-      shell: vncserver :10 -name reportportal_dashboard2email -geometry 1920x1080
+      shell: >
+        vncserver :10 -name reportportal_dashboard2email -geometry 1920x1080
       tags: vnc
 
     - name: open and grab Dashboard + send it via email
@@ -130,6 +137,7 @@
     image: centos
     network_mode: host
     command: bash
+    # yamllint disable-line rule:line-length
     volumes: /var/lib/reportportal_dashboard2email:/var/lib/reportportal_dashboard2email
     tty: true
     restart: true
@@ -141,4 +149,3 @@
   when: dashboard2email_grab.failed == true
   tags: grab
   delegate_to: reportportal_dashboard2email
-

@@ -1,7 +1,13 @@
 ---
-#      - name: "Connnect to ReportPortal"
-#        shell: "curl -X GET http://seal51.qa.lab.tlv.redhat.com:8081/api/v1/project/OSP13 -H 'Accept: application/json' -H 'Authorization: bearer 741b87bf-35fc-455d-90c3-6964d07b79f8' -H 'Cache-Control: no-cache' -H 'content-type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'"
-#        register: status1
+# - name: "Connnect to ReportPortal"
+#   shell: >
+#     curl -X GET http://redhat.com:8081/api/v1/project/OSP13 \
+#     -H 'Accept: application/json' \
+#     -H 'Authorization: bearer XYZ' \
+#     -H 'Cache-Control: no-cache' \
+#     -H 'content-type: multipart/form-data; \
+#         boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
+#   register: status1
 - name: "Get token API"
   uri:
      url: "{{ reportportal_url }}/uat/sso/me/apitoken"
@@ -30,13 +36,13 @@
      msg: "{{ authorization_api }}"
 
 - name: "Validate Project exist in ReportPortal"
-  uri:
-      url: "{{ reportportal_url }}/api/v1/project/{{ project }}"
-      method: GET
-      validate_certs: "{{ ssl_verify | bool }}"
-      status_code: 200
-      timeout: 10
-      headers:
+  ansible.builtin.uri:
+     url: "{{ reportportal_url }}/api/v1/project/{{ project }}"
+     method: GET
+     validate_certs: "{{ ssl_verify | bool }}"
+     status_code: 200
+     timeout: 10
+     headers:
         Accept: "application/json"
         Authorization: "{{ authorization_api }}"
         Cache-Control: no-cache
@@ -62,12 +68,13 @@
 #        "projectRole": "CUSTOMER"}'
 #      register: user-token
 #
-#    - name: set variable for project url path
-#      var: project_path = {{ url-address }}:{{ port }}/api/v1/{{ project-name }}
+#  - name: set variable for project url path
+#    var: project_path = {{ url-address }}:{{ port }}/api/v1/{{ project-name }}
 #
-#      - name: set variable for all REST headers
-#        var: rest_headers =
-#                -H 'Accept: application/json' \
-#                -H 'Authorization: bearer {{ user-token }}' \
-#                -H 'Cache-Control: no-cache' \
-#                -H 'content-type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW' \
+#  - name: set variable for all REST headers
+#    var: rest_headers =
+#            -H 'Accept: application/json' \
+#            -H 'Authorization: bearer {{ user-token }}' \
+#            -H 'Cache-Control: no-cache' \
+#            -H 'content-type: multipart/form-data; \
+#             boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW' \

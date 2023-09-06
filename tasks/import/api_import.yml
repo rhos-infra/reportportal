@@ -7,16 +7,18 @@
 
 - name: archive XML result files
   archive:
-      path: "{{ archive_import_path }}"
-      dest: "{{ archive_dest_file }}"
-      exclude_path: "{{ archive_exclude_path }}"
-      format: zip
+    path: "{{ archive_import_path }}"
+    dest: "{{ archive_dest_file }}"
+    exclude_path: "{{ archive_exclude_path }}"
+    format: zip
   ignore_errors: true
   register: archive_result
 
 - name: Fail if archive XML failed not because no source paths were found
   fail:
-    msg: "Allow empty launch? {{other.allow.empty.launches }}\n{{ archive_result }}"
+    msg: >
+      Allow empty launch? {{other.allow.empty.launches }}
+      {{ archive_result }}
   when:
     - "{{ archive_result.failed and (
           not other.allow.empty.launches or
@@ -67,6 +69,7 @@
 
     - name: Finish the new empty launch
       uri:
+        # yamllint disable-line rule:line-length
         url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ empty_launch.json.id }}/finish"
         method: PUT
         status_code: [200, 201]
@@ -75,7 +78,7 @@
           end_time: "{{ end_time.stdout }}"
           endTime: "{{ end_time.stdout }}"
           attributes: "{{ tags }}"
-          #status: Should be done based on results
+          # status: Should be done based on results
         body_format: json
         headers:
           Accept: "application/json"
@@ -91,7 +94,8 @@
     # version be bumped to >= 2.10.0 in InfraRed requirements.
     # DON'T DISABLE WARNINGS(!)
     - name: Upload test results to ReportPortal using the curl command
-      command: "curl -X POST {{ reportportal_url }}/api/v1/{{ project }}/launch/import \
+      command: "curl -X POST \
+                {{ reportportal_url }}/api/v1/{{ project }}/launch/import \
                 --header 'Content-Type: multipart/form-data' \
                 --header 'Accept: application/json' \
                 --header 'Authorization: bearer {{ reportportal_token }}' \
@@ -111,14 +115,18 @@
         - name: Fail when curl response doesn't contain a launch ID
           fail:
             msg: "{{ curl_cmd }}"
-          when: curl_cmd.stdout is not match(".*Launch with id = .* is successfully imported")
+          when:
+            curl_cmd.stdout is not
+              match(".*Launch with id = .* is successfully imported")
 
     - name: Grab the ID of the newly created launch
       set_fact:
+        # yamllint disable-line rule:line-length
         launch_id: "{{ curl_cmd.stdout | regex_search('= ([-a-zA-Z0-9]+)', '\\1') | first}}"
 
     - name: Get some deatils about the newly created launch
-      uri:
+      urii:
+        # yamllint disable-line rule:line-length
         url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launch_id }}"
         method: GET
         status_code: 200
@@ -137,8 +145,8 @@
 
         # Unlike in RP v4, in v5 there is also a 'uuid' attribute and it's
         # different from the 'id' attribute. The confirmation id we get after a
-        # successful creation of a launch in RPv5 is actual an UUID and not an ID
-        # which is needed to update the launch.
+        # successful creation of a launch in RPv5 is actual an UUID and not an
+        # ID which is needed to update the launch.
         - name: Update launch ID in ReportPortal v5 (instead of UUID)
           set_fact:
             launch_id: "{{ launch_details.json.id }}"
@@ -149,22 +157,28 @@
 
     - name: Set import time facts
       set_fact:
-        import_start_millis: "{{ import_start_pre | int + import_start_post | int }}"
-        import_end_millis: "{{ import_end_pre | int + import_end_post | int }}"
+        import_start_millis: "{{ import_start_pre | int +
+                                 import_start_post | int }}"
+        import_end_millis: "{{ import_end_pre | int +
+                               import_end_post | int }}"
       vars:
         import_start: "{{ curl_cmd.start | regex_findall('(.*)\\.([0-9]+)') }}"
-        import_start_pre: "{{ (import_start[0][0] | to_datetime).strftime('%s') | int * 1000 | int}}"
+        import_start_pre: "{{ (import_start[0][0] | to_datetime).strftime('%s')
+                              | int * 1000 | int}}"
         import_start_post: "{{ import_start[0][1] | int % 1000 | int}}"
         import_end: "{{ curl_cmd.end | regex_findall('(.*)\\.([0-9]+)') }}"
-        import_end_pre: "{{ (import_end[0][0] | to_datetime).strftime('%s') | int * 1000 | int}}"
+        import_end_pre: "{{ (import_end[0][0] | to_datetime).strftime('%s') |
+                            int * 1000 | int}}"
         import_end_post: "{{ import_end[0][1] | int % 1000 | int}}"
 
     - name: Print import duration time
       debug:
-        msg: "Import took {{ (import_end_millis|int - import_start_millis|int) / 1000}} seconds"
+        msg: "Import took {{ (import_end_millis|int -
+                              import_start_millis|int) / 1000}} seconds"
 
     - name: Update launch tags, description & mode
       uri:
+        # yamllint disable-line rule:line-length
         url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launch_id }}/update"
         method: PUT
         status_code: 200
@@ -180,17 +194,18 @@
           Content-Type: "application/json"
 
   always:
-      - name: remove zip file
-        file:
-            path: "{{ archive_dest_file }}"
-            state: absent
-        ignore_errors: true
+    - name: remove zip file
+      file:
+        path: "{{ archive_dest_file }}"
+        state: absent
+      ignore_errors: true
 
 - name: Perform post launch finish/update validations
   when: "{{ other.post.validations }}"
   block:
     - name: Get Launch details after update
       uri:
+        # yamllint disable-line rule:line-length
         url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launch_id }}"
         method: GET
         status_code: 200
@@ -202,14 +217,18 @@
 
     - name: Validate that the launch was updated with the description
       fail:
-        msg: "Input: '{{ launch_description }}', Launch update result: {{ launch_update_result }}"
+        msg: >
+          Input: '{{ launch_description }}'
+          Launch update result: {{ launch_update_result }}
       when:
         - launch_update_result.json.description is not defined or
           launch_update_result.json.description != launch_description
 
     - name: Validate that the launch was updated with the correct mode
       fail:
-        msg: "Input: '{{ launch_mode }}', Launch update result: {{ launch_update_result }}"
+        msg: >
+          Input: '{{ launch_mode }}'
+          Launch update result: {{ launch_update_result }}
       when:
         - launch_update_result.json.mode is not defined or
           launch_update_result.json.mode != launch_mode
@@ -224,7 +243,11 @@
 
     - name: Validate that the launch was updated with all attributes
       fail:
-        msg: "Differences found between attributes/tags in input and launch.\nIn input only: {{ only_in_input }}.\nIn launch only: {{ only_in_launch }}.\nLaunch update result: {{ launch_update_result }}"
+        msg: >
+          Differences found between attributes/tags in input and launch.
+          In input only: {{ only_in_input }}.
+          In launch only: {{ only_in_launch }}.
+          Launch update result: {{ launch_update_result }}"
       vars:
         missing_list: "{{ tags | difference(launch_update_result.json.tags) }}"
       when: only_in_input != [] or only_in_launch != []
