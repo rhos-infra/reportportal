@@ -1,12 +1,14 @@
 ---
 # tasks file for reportportal
 
-# TODO(aopincar): This include should be completely removed or replaced with code that validate launch details
-#- name: Perform validations
+# TODO(aopincar): This include should be completely removed or replaced
+# with code that validate launch details
+# - name: Perform validations
 #  include: validate/main.yml
 #  when: not dashboard2email and not reportportal5
 
-# TODO(aopincar): This include should be completely removed (only API import should be supported)
+# TODO(aopincar): This include should be completely removed (only API
+# import should be supported)
 - name: Import results to ReportPortal
   include: import/main.yml
   when: import_launch
