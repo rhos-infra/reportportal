@@ -1,6 +1,6 @@
 ---
-- name: prepare and restart reportportal_dashboard2email docker container
-  docker_container:
+- name: Prepare and restart reportportal_dashboard2email docker container
+  community.docker.docker_container:
     state: started
     name: reportportal_dashboard2email
     image: centos
@@ -14,24 +14,25 @@
   # SAME task parameters have to be used in the
   # "stop reportportal_dashboard2email docker container" task
 
-- name: add reportportal_dashboard2email docker container to Ansible inventory
-  add_host:
+- name: Add reportportal_dashboard2email docker container to Ansible inventory
+  ansible.builtin.add_host:
     name: reportportal_dashboard2email
     ansible_connection: docker
     ansible_user: root
   tags: always
 
-- name: setup reportportal_dashboard2email docker container
+- name: Setup reportportal_dashboard2email docker container
+  delegate_to: reportportal_dashboard2email
   block:
-
-    - name: "cleanup yum state (i.e.: after unfinished package installations)"
-      shell: yum-complete-transaction --cleanup-only
+    - name: Cleanup yum state (e.g. after unfinished package installations)
+      ansible.builtin.command: yum-complete-transaction --cleanup-only
       tags: rpms
+      changed_when: "'Complete!' not in command_result.stdout"
 
-    - name: install Xvfb, vncserver, firefox and other deps
-      yum:
+    - name: Install Xvfb, vncserver, firefox and other deps
+      ansible.builtin.yum:
         name: "{{ item }}"
-        state: latest
+        state: present
       with_items:
         # required for the code in lib/dashboard2email.py
         - ansible
@@ -46,71 +47,79 @@
       until: install_rpms.rc == 0
       tags: rpms
 
-    - name: install pip using get-pip.py
-      shell: curl https://bootstrap.pypa.io/get-pip.py | python
+    - name: Install pip using get-pip.py
+      ansible.builtin.command:
+        echo get-pip; curl https://bootstrap.pypa.io/get-pip.py | python
       tags: rpms
+      changed_when: "'Complete!' not in command_result.stdout"
 
-    - name: install selenium (via pip)
-      pip:
+    - name: Install selenium (via pip)
+      ansible.builtin.pip:
         name: selenium
         state: present
       tags: rpms
 
-    - name: check is geckodriver installed
-      stat:
+    - name: Check is geckodriver installed
+      ansible.builtin.stat:
         path: /usr/local/bin/geckodriver
       register: geckodriver_exist
       tags: geckodriver
 
-    - name: install geckodriver (Selenium python lib to work with Firefox)
-      unarchive:
+    - name: Install geckodriver (Selenium python lib to work with Firefox)
+      ansible.builtin.unarchive:
         remote_src: true
         # yamllint disable-line rule:line-length
         src: https://github.com/mozilla/geckodriver/releases/download/v0.21.0/geckodriver-v0.21.0-linux64.tar.gz
         dest: /usr/local/bin
-      when: geckodriver_exist.stat.exists == false or
-            geckodriver_exist.stat.executable == false
+      when: not geckodriver_exist.stat.exists or
+            not geckodriver_exist.stat.executable
       tags: geckodriver
 
-    - name: generate and save machine's uuid (required by Firefox)
-      shell: dbus-uuidgen > /etc/machine-id
+    - name: Generate and save machine's uuid (required by Firefox)
+      ansible.builtin.shell: dbus-uuidgen > /etc/machine-id
       tags: machine_id
+      changed_when: true
 
-    - name: clean /tmp/*
-      shell: |
+    - name: Clean /tmp/*
+      ansible.builtin.shell: |
         rm -rf /tmp/* /tmp/.* || true
+      changed_when: true
 
-    - name: clean mozilla profiles
-      file:
+    - name: Clean mozilla profiles
+      ansible.builtin.file:
         path: ~/.mozilla/
         state: absent
 
-    - name: clean vnc server settings and passwords
-      file:
+    - name: Clean vnc server settings and passwords
+      ansible.builtin.file:
         path: ~/.vnc/
         state: absent
       tags: vnc
 
-    - name: setup vnc server password file
-      shell: |
+    - name: Setup vnc server password file
+      ansible.builtin.shell: |
+        set -o pipefail
         mkdir -p ~/.vnc/
         echo {{ other.vnc_password }} | vncpasswd -f > ~/.vnc/passwd
         chmod 600 ~/.vnc/passwd
       no_log: true
       tags: vnc
+      changed_when: true
 
-    - name: create ~/.vnc/xstartup
-      template:
+    - name: Create ~/.vnc/xstartup
+      ansible.builtin.template:
         src: templates/xstartup.j2
         dest: "~/.vnc/xstartup"
         force: true
+      mode: "0644"  # Set the desired file permissions (rw-r--r--)
 
-    - name: start vncserver in the background (DISPLAY=:10)
-      shell: >
+    - name: Start vncserver in the background (DISPLAY=:10)
+      ansible.builtin.shell: >
         vncserver :10 -name reportportal_dashboard2email -geometry 1920x1080
       tags: vnc
+      warn: no-changed-when
 
-    - name: open and grab Dashboard + send it via email
+    - name: Open and grab Dashboard + send it via email
       dashboard2email:
         display: ':10'
         url: "{{ other.url.address }}"
@@ -128,9 +137,8 @@
       register: dashboard2email_grab
       tags: grab
 
-  delegate_to: reportportal_dashboard2email
 
-- name: stop reportportal_dashboard2email docker container
+- name: Stop reportportal_dashboard2email docker container
   docker_container:
     state: stopped
     name: reportportal_dashboard2email
@@ -143,9 +151,9 @@
     restart: true
   tags: stop_container
 
-- name: fail if dashboard2email_grab not successful
-  fail:
+- name: Fail if dashboard2email_grab not successful
+  ansible.builtin.fail:
     msg: "dashboard2email_grab: {{ dashboard2email_grab }}"
-  when: dashboard2email_grab.failed == true
+  when: dashboard2email_grab.failed
   tags: grab
   delegate_to: reportportal_dashboard2email

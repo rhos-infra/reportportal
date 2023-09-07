@@ -6,4 +6,6 @@ help:
 
 lint:
 	yamllint -f parsable tasks 
-
+	ansible-lint -v --offline tasks/*
+	ansible-playbook --syntax-check tasks/ | grep -v '^$$'
+	flake8 --ignore=E402,W503 --max-line-length=160 library

@@ -1,16 +1,16 @@
 ---
-
-- name:
-  set_fact:
+- name: Set archive_dest_file and launch_mode facts
+  ansible.builtin.set_fact:
     archive_dest_file: "{{ archive_dest_path }}/{{ jenkins_job_name }}.zip"
     launch_mode: "{{ other.launch.mode }}"
 
-- name: archive XML result files
-  archive:
+- name: Archive XML result files
+  community.general.archive:
     path: "{{ archive_import_path }}"
     dest: "{{ archive_dest_file }}"
     exclude_path: "{{ archive_exclude_path }}"
     format: zip
+    mode: "0644"  # Set the desired file permissions (rw-r--r--)
   ignore_errors: true
   register: archive_result
 
