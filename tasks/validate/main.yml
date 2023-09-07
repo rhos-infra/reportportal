@@ -9,7 +9,7 @@
 #         boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
 #   register: status1
 - name: "Get token API"
-  uri:
+  ansible.builtin.uri:
      url: "{{ reportportal_url }}/uat/sso/me/apitoken"
      method: GET
      validate_certs: "{{ ssl_verify | bool }}"
@@ -20,19 +20,21 @@
      timeout: 10
   register: get_token
 
-- debug:
+- name: Print get_token
+  ansible.builtin.debug:
      msg: "{{ get_token }}"
 
-- name: set api token
-  set_fact:
+- name: Set api token
+  ansible.builtin.set_fact:
      api_token: "{{ get_token.json.access_token }}"
      token_type: "{{ get_token.json.token_type }}"
 
-- name: combain authorization details
-  set_fact:
+- name: Combain authorization details
+  ansible.builtin.set_fact:
      authorization_api: "{{ token_type }} {{ api_token }}"
 
-- debug:
+- name: Print auth api
+  ansible.builtin.debug:
      msg: "{{ authorization_api }}"
 
 - name: "Validate Project exist in ReportPortal"

@@ -77,7 +77,7 @@
             vars:
                 cleaned_tags_list: "{{ ((other.launch|default({})).tags|default('')).split(';') | map('replace', '\\n', ' ') | map('replace', '\n', ' ') | map('truncate', 250, True) | map('trim') | list }}"
             set_fact:
-                tags: "{{ cleaned_tags_list }} + [ 'puddle:{{ core_puddle }}' ]"
+                launch_tags: "{{ cleaned_tags_list }} + [ 'puddle:{{ core_puddle }}' ]"
 
           - name: Set archive xmls variables
             set_fact:

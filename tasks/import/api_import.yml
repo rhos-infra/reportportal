@@ -1,38 +1,37 @@
 ---
-
-- name:
-  set_fact:
+- name: Set archive_dest_file and launch_mode facts
+  ansible.builtin.set_fact:
     archive_dest_file: "{{ archive_dest_path }}/{{ jenkins_job_name }}.zip"
     launch_mode: "{{ other.launch.mode }}"
 
-- name: archive XML result files
-  archive:
+- name: Archive XML result files
+  community.general.archive:
     path: "{{ archive_import_path }}"
     dest: "{{ archive_dest_file }}"
     exclude_path: "{{ archive_exclude_path }}"
     format: zip
+    mode: "0644"  # Set the desired file permissions (rw-r--r--)
   ignore_errors: true
   register: archive_result
 
 - name: Fail if archive XML failed not because no source paths were found
-  fail:
+  ansible.builtin.fail:
     msg: >
-      Allow empty launch? {{other.allow.empty.launches }}
-      {{ archive_result }}
-  when:
-    - "{{ archive_result.failed and (
-          not other.allow.empty.launches or
-         'Error, no source paths were found' not in archive_result.msg) }}"
+      Allow empty launch? {{ other.allow.empty.launches }} {{ archive_result }}
+  when: archive_result.failed and (
+         not other.allow.empty.launches or
+         'Error, no source paths were found' not in archive_result.msg)
 
 - name: Create a launch without results when no XML reports are found
   when: archive_result.failed
   block:
     - name: Get start time for the empty launch
-      shell: "echo $((`date +%s`*1000+`date +%-N`/1000000))"
+      ansible.builtin.shell: "echo $((`date +%s`*1000+`date +%-N`/1000000))"
       register: start_time
+      changed_when: true
 
     - name: Start a new empty launch
-      uri:
+      ansible.builtin.uri:
         url: "{{ reportportal_url }}/api/v1/{{ project }}/launch"
         method: POST
         status_code: [200, 201]
@@ -52,23 +51,24 @@
       register: empty_launch
 
     - name: Save the ID of the newly created empty launch
-      set_fact:
+      ansible.builtin.set_fact:
         launch_id: "{{ empty_launch.json.id }}"
 
     - name: ID of the newly created empty launch
-      debug:
+      ansible.builtin.debug:
         var: launch_id
 
     - name: Get end time for the empty launch
-      shell: "echo $((`date +%s`*1000+`date +%-N`/1000000))"
+      ansible.builtin.shell: "echo $((`date +%s`*1000+`date +%-N`/1000000))"
       register: end_time
+      changed_when: true
 
     - name: Set attributes as tags in ReportPortal v5
-      set_fact:
-        tags: "{{ tags | rp_attributes }}"
+      ansible.builtin.set_fact:
+        launch_tags: "{{ launch_tags | rp_attributes }}"
 
     - name: Finish the new empty launch
-      uri:
+      ansible.builtin.uri:
         # yamllint disable-line rule:line-length
         url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ empty_launch.json.id }}/finish"
         method: PUT
@@ -77,7 +77,7 @@
         body:
           end_time: "{{ end_time.stdout }}"
           endTime: "{{ end_time.stdout }}"
-          attributes: "{{ tags }}"
+          attributes: "{{ launch_tags }}"
           # status: Should be done based on results
         body_format: json
         headers:
@@ -93,39 +93,56 @@
     # The 'command' module should be replaced with 'uri' once the Ansible
     # version be bumped to >= 2.10.0 in InfraRed requirements.
     # DON'T DISABLE WARNINGS(!)
-    - name: Upload test results to ReportPortal using the curl command
-      command: "curl -X POST \
-                {{ reportportal_url }}/api/v1/{{ project }}/launch/import \
-                --header 'Content-Type: multipart/form-data' \
-                --header 'Accept: application/json' \
-                --header 'Authorization: bearer {{ reportportal_token }}' \
-                --header 'Cache-Control: no-cache' \
-                -F file=@{{ archive_dest_file }} \
-                {{ (ssl_verify | bool) | ternary('', '--insecure') }}"
-      register: curl_cmd
+    # - name: Upload test results to ReportPortal using the curl command
+    #  command: "curl -X POST \
+    #            {{ reportportal_url }}/api/v1/{{ project }}/launch/import \
+    #            --header 'Content-Type: multipart/form-data' \
+    #            --header 'Accept: application/json' \
+    #            --header 'Authorization: bearer {{ reportportal_token }}' \
+    #            --header 'Cache-Control: no-cache' \
+    #            -F file=@{{ archive_dest_file }} \
+    #            {{ (ssl_verify | bool) | ternary('', '--insecure') }}"
+    #  register: curl_cmd
 
-    - name: Fail when curl returned code != 0
-      fail:
-        msg: "{{ curl_cmd }}"
-      when: curl_cmd.rc != 0
+    # - name: Fail when curl returned code != 0
+    #  fail:
+    #    msg: "{{ curl_cmd }}"
+    #  when: curl_cmd.rc != 0
+
+    - name: Upload test results to ReportPortal
+      ansible.builtin.uri:
+        url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/import"
+        method: POST
+        status_code: [200, 201]
+        validate_certs: "{{ (ssl_verify | bool) |
+                            ternary('', '--insecure') }}"
+        timeout: "{{ (other.socket | default({})).timeout | default(omit) }}"
+        headers:
+          Accept: "application/json"
+          Authorization: "bearer {{ reportportal_token }}"
+          Cache-Control: "no-cache"
+          Content-Type: "multipart/form-data"
+        body_format: form-multipart
+        body:
+          file_param_name: "@{{ archive_dest_file }}"
 
     - name: Perform post import validations
-      when: "{{ other.post.validations }}"
+      when: other.post.validations
       block:
         - name: Fail when curl response doesn't contain a launch ID
-          fail:
+          ansible.builtin.fail:
             msg: "{{ curl_cmd }}"
           when:
             curl_cmd.stdout is not
               match(".*Launch with id = .* is successfully imported")
 
     - name: Grab the ID of the newly created launch
-      set_fact:
+      ansible.builtin.set_fact:
         # yamllint disable-line rule:line-length
-        launch_id: "{{ curl_cmd.stdout | regex_search('= ([-a-zA-Z0-9]+)', '\\1') | first}}"
+        launch_id: "{{ curl_cmd.stdout | regex_search('= ([-a-zA-Z0-9]+)', '\\1') | first }}"
 
     - name: Get some deatils about the newly created launch
-      urii:
+      ansible.builtin.uri:
         # yamllint disable-line rule:line-length
         url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launch_id }}"
         method: GET
@@ -140,23 +157,23 @@
     - name: Perform changes required for ReportPortal v5
       block:
         - name: Convert tags to attributes data structure
-          set_fact:
-            tags: "{{ tags | rp_attributes }}"
+          ansible.builtin.set_fact:
+            launch_tags: "{{ launch_tags | rp_attributes }}"
 
         # Unlike in RP v4, in v5 there is also a 'uuid' attribute and it's
         # different from the 'id' attribute. The confirmation id we get after a
         # successful creation of a launch in RPv5 is actual an UUID and not an
         # ID which is needed to update the launch.
         - name: Update launch ID in ReportPortal v5 (instead of UUID)
-          set_fact:
+          ansible.builtin.set_fact:
             launch_id: "{{ launch_details.json.id }}"
 
     - name: Print the ID of the newly created launch
-      debug:
+      ansible.builtin.debug:
         var: launch_id
 
     - name: Set import time facts
-      set_fact:
+      ansible.builtin.set_fact:
         import_start_millis: "{{ import_start_pre | int +
                                  import_start_post | int }}"
         import_end_millis: "{{ import_end_pre | int +
@@ -164,20 +181,20 @@
       vars:
         import_start: "{{ curl_cmd.start | regex_findall('(.*)\\.([0-9]+)') }}"
         import_start_pre: "{{ (import_start[0][0] | to_datetime).strftime('%s')
-                              | int * 1000 | int}}"
-        import_start_post: "{{ import_start[0][1] | int % 1000 | int}}"
+                              | int * 1000 | int }}"
+        import_start_post: "{{ import_start[0][1] | int % 1000 | int }}"
         import_end: "{{ curl_cmd.end | regex_findall('(.*)\\.([0-9]+)') }}"
-        import_end_pre: "{{ (import_end[0][0] | to_datetime).strftime('%s') |
-                            int * 1000 | int}}"
-        import_end_post: "{{ import_end[0][1] | int % 1000 | int}}"
+        # yamllint disable-line rule:line-length
+        import_end_pre: "{{ (import_end[0][0] | to_datetime).strftime('%s') | int * 1000 | int }}"
+        import_end_post: "{{ import_end[0][1] | int % 1000 | int }}"
 
     - name: Print import duration time
-      debug:
-        msg: "Import took {{ (import_end_millis|int -
-                              import_start_millis|int) / 1000}} seconds"
+      ansible.builtin.debug:
+        msg: "Import took {{ (import_end_millis | int -
+                              import_start_millis | int) / 1000 }} seconds"
 
     - name: Update launch tags, description & mode
-      uri:
+      ansible.builtin.uri:
         # yamllint disable-line rule:line-length
         url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launch_id }}/update"
         method: PUT
@@ -186,7 +203,7 @@
         body:
           description: "{{ launch_description }}"
           mode: "{{ launch_mode }}"
-          attributes: "{{ tags }}"
+          attributes: "{{ launch_tags }}"
         body_format: json
         headers:
           Accept: "application/json"
@@ -194,17 +211,17 @@
           Content-Type: "application/json"
 
   always:
-    - name: remove zip file
-      file:
+    - name: Remove zip file
+      ansible.builtin.file:
         path: "{{ archive_dest_file }}"
         state: absent
-      ignore_errors: true
+      failed_when: false
 
 - name: Perform post launch finish/update validations
-  when: "{{ other.post.validations }}"
+  when: other.post.validations
   block:
     - name: Get Launch details after update
-      uri:
+      ansible.builtin.uri:
         # yamllint disable-line rule:line-length
         url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launch_id }}"
         method: GET
@@ -216,7 +233,7 @@
       register: launch_update_result
 
     - name: Validate that the launch was updated with the description
-      fail:
+      ansible.builtin.fail:
         msg: >
           Input: '{{ launch_description }}'
           Launch update result: {{ launch_update_result }}
@@ -225,7 +242,7 @@
           launch_update_result.json.description != launch_description
 
     - name: Validate that the launch was updated with the correct mode
-      fail:
+      ansible.builtin.fail:
         msg: >
           Input: '{{ launch_mode }}'
           Launch update result: {{ launch_update_result }}
@@ -235,19 +252,20 @@
 
     - name: Set facts for attributes/tags differences
       vars:
-        input_tags_attrs: "{{ tags }}"
+        input_tags_attrs: "{{ launch_tags }}"
         launch_tags_attrs: "{{ launch_update_result.json.attributes }}"
-      set_fact:
+      ansible.builtin.set_fact:
         only_in_input: "{{ input_tags_attrs | difference(launch_tags_attrs) }}"
         only_in_launch: "{{ launch_tags_attrs | difference(input_tags_attrs) }}"
 
     - name: Validate that the launch was updated with all attributes
-      fail:
+      ansible.builtin.fail:
         msg: >
           Differences found between attributes/tags in input and launch.
           In input only: {{ only_in_input }}.
           In launch only: {{ only_in_launch }}.
           Launch update result: {{ launch_update_result }}"
       vars:
-        missing_list: "{{ tags | difference(launch_update_result.json.tags) }}"
+        missing_list: "{{ launch_tags |
+                          difference(launch_update_result.json.tags) }}"
       when: only_in_input != [] or only_in_launch != []
