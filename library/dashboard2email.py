@@ -130,7 +130,7 @@ def open_rp_dashboard(params=None, _browser=None):
     try:
         user_name = params['user_name']
         user_pass = user_name
-        user_token = params['token']
+        # user_token = params['token']
 
         _browser.get(params['url'])
         assert 'Report Portal' in _browser.title
@@ -145,7 +145,8 @@ def open_rp_dashboard(params=None, _browser=None):
             _browser.find_element_by_partial_link_text('DFG Opendaylight OSP13 HA standard deployment')
 
         except Exception as ex:
-            process_exception(step='open_rp_dashboard', msg="It looks like the 'DFG Opendaylight OSP13 HA standard deployment' cannot be loaded: %s" % ex.message)
+            process_exception(step='open_rp_dashboard',
+                              msg="It looks like the 'DFG Opendaylight OSP13 HA standard deployment' cannot be loaded: %s" % ex.message)
 
         sleep(15)
 
@@ -254,7 +255,7 @@ def main():
         email_body=module.params.pop('email_body')
     )
 
-    _step("Starting with params... display: %s, url: %s, user_name: %s, token: %s, email_to: %s, email_subject: %s, email_body: %s" % \
+    _step("Starting with params... display: %s, url: %s, user_name: %s, token: %s, email_to: %s, email_subject: %s, email_body: %s" %
           (params['display'], params['url'], params['user_name'], params['token'], params['email_to'], params['email_subject'], params['email_body']))
     _step("Starting with env: %s" % env)
 

@@ -18,10 +18,9 @@
 
 
 import requests
-import sys
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.utils import *
+from ansible.module_utils.utils import get_json, save_to_file
 from lxml import etree
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
@@ -72,11 +71,13 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 ssl_verify = True
 
+
 def clear_log(string):
     allowed_chars = [9, 10, 13]
-    allowed_chars += list(range(32,128))
+    allowed_chars += list(range(32, 128))
     new_str = ''.join([c for c in string if ord(c) in allowed_chars])
     return new_str
+
 
 def get_stage_logs(base_url, steps, status):
     logs = []
@@ -94,6 +95,7 @@ def get_stage_logs(base_url, steps, status):
 
     return log_obj
 
+
 def create_test_suite(base_url):
     response = get_json(f'{base_url}/wfapi/describe', ssl_verify)
 
@@ -105,6 +107,7 @@ def create_test_suite(base_url):
     stages = list(stage['id'] for stage in response['stages'])
 
     return suite, stages
+
 
 def create_test_case(base_url, stage_id):
     response = get_json(f'{base_url}/execution/node/{stage_id}/wfapi/describe', ssl_verify)
@@ -128,6 +131,7 @@ def create_test_case(base_url, stage_id):
 
     return case, status
 
+
 def main():
     result = {}
     module_args = dict(jenkins_domain=dict(type='str', required=True),
@@ -144,7 +148,6 @@ def main():
         build_id = module.params.pop('jenkins_job_build_id')
         xml_path = module.params.pop('xml_path')
         ssl_verify = module.params.pop('ssl_verify')
-
 
         base_url = f'{jenkins_url}/job/{job_name}/{build_id}'
 
@@ -169,6 +172,7 @@ def main():
     except Exception as ex:
         result['msg'] = ex
         module.fail_json(**result)
+
 
 if __name__ == '__main__':
     main()

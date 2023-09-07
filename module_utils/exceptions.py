@@ -19,6 +19,7 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
+
 class ConnectionError(Exception):
     def __init__(self, response):
         msg = f'HTTP{response.status_code}: {response.text}'
