@@ -31,7 +31,7 @@ def rp_attributes(
 
         key, value = attr.split(':', 1)
 
-        if value is '':
+        if value == '':
             value = value_default
 
         if len(key) > key_len:

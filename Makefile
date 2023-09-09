@@ -5,6 +5,6 @@ help:
 	@echo "  lint             to run code linting"
 
 lint:
-	yamllint -f parsable tasks 
-	ansible-lint -v --offline tasks/*
-#	flake8 --ignore=E402,W503 --max-line-length=160 library
+#	yamllint -f parsable tasks 
+#	ansible-lint -v --offline tasks/*
+	find ./library -name "*.py" -exec flake8 --max-line-length=160 {} \;

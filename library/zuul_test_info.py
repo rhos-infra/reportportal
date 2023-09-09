@@ -18,18 +18,16 @@
 
 import gzip
 import json
-import junitxml
-import os
 import requests
 import urllib.request
-import subunit
 import sys
-import xml.etree.ElementTree as ET
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.utils import *
+from ansible.module_utils.utils import (create_folders_on,
+                                        has_extension,
+                                        replace_extension,
+                                        subunit_to_xml)
 
-from lxml import etree
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from urllib.error import HTTPError
 
@@ -39,21 +37,21 @@ version_added: '2.9'
 short_description: Get Zuul job details
 description:
     - This module is responsible for retrieving the JSON manifest
-	  associated with a designated build. It then processes the JSON data,
-	  scanning for artifacts with test reults in the subunit/xml format.
-	  After locating these artifacts, the module performs a conversion
-	  from subunit to XML format. The resulting XML files are subsequently
-	  stored in a user-defined directory.
-	  Job details are collected from the Zuul server using pipeline REST API.
+      associated with a designated build. It then processes the JSON data,
+      scanning for artifacts with test reults in the subunit/xml format.
+      After locating these artifacts, the module performs a conversion
+      from subunit to XML format. The resulting XML files are subsequently
+      stored in a user-defined directory.
+      Job details are collected from the Zuul server using pipeline REST API.
 options:
     zuul_domain:
         description: URL of the Zuul server
         required: True
-        type: str 
+        type: str
     zuul_tenant:
         description: Zuul tenant
         required: True
-        type: str    
+        type: str
     zuul_job_build_id:
         description: ID of the job build
         required: True
@@ -80,8 +78,6 @@ requirements:
     - "subprocess"
     - "subunit"
     - "xml"
-
-    
 '''
 
 RETURN = '''
@@ -92,7 +88,6 @@ file_path:
 '''
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
 
 
 def get_test_results(zuul_api_url, destination_folder):
@@ -116,9 +111,9 @@ def get_test_results(zuul_api_url, destination_folder):
         sys.exit(2)
 
     def get_file_name_from(node, parent):
-        if (node.get('mimetype') != 'application/directory') and \
-           (".xml" in node['name']  or ".subunit" in node['name']) :
-            return(parent+node['name'])
+        if ((node.get('mimetype') != 'application/directory') and
+           (".xml" in node['name'] or ".subunit" in node['name'])):
+            return(parent + node['name'])
         if node.get('children'):
             for child in node.get('children'):
                     get_file_name_from(child, parent+node['name']+'/')
@@ -163,10 +158,6 @@ def get_test_results(zuul_api_url, destination_folder):
         str(test_result_files_xml))
     print("Number of subunit test result files feetched (and converted to xml): " + \
         str(test_result_files_subunit))
-    
-
-
- 
 
 
 def main():
@@ -194,6 +185,7 @@ def main():
     except Exception as ex:
         result['msg'] = ex
         module.fail_json(**result)
+
 
 if __name__ == '__main__':
     main()
