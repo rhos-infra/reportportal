@@ -144,8 +144,10 @@ expanded_exclude_paths:
     returned: always
 '''
 
+
 class NoLaunchIdException(Exception):
     pass
+
 
 def get_expanded_paths(paths):
     """
@@ -272,7 +274,7 @@ class ReportPortalPublisher:
             description=self.launch_description
         )
 
-        if service.launch_id is None:
+        if self.service.launch_id is None:
             raise NoLaunchIdException("No launch ID available.")
 
         # Iterate over XUnit test paths
@@ -406,13 +408,10 @@ class ReportPortalPublisher:
             if not isinstance(failures, list):
                 failures = [failures]
             for failure in failures:
-                failures_txt_list.append(
-                    (failure.get('@message') or failure.get('#text'))
-                    if isinstance(failure, dict) else failure
-                )
+                failures_txt_list.append((failure.get('@message') or failure.get('#text'))
+                                         if isinstance(failure, dict) else failure)
             failures_txt_list = list(filter(None, failures_txt_list))
-            failures_txt = None if not len(failures_txt_list) \
-                else "\n".join(failures_txt_list)
+            failures_txt = None if not len(failures_txt_list) else "\n".join(failures_txt_list)
             log_message = failures_txt
             attachment = None
             if self.log_last_traceback_only:
