@@ -144,8 +144,10 @@ expanded_exclude_paths:
     returned: always
 '''
 
+
 class NoLaunchIdException(Exception):
     pass
+
 
 def get_expanded_paths(paths):
     """
