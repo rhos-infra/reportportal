@@ -20,13 +20,14 @@ import os
 import requests
 import subprocess
 
-try: 
+try:
     from ansible.module_utils.exceptions import ConnectionError
-except:
+except ImportError:
     from .exceptions import ConnectionError
-    
+
 from datetime import datetime
 from lxml import etree
+
 
 def get_json(url, is_verified):
     """
@@ -41,11 +42,12 @@ def get_json(url, is_verified):
 
     Returns:
         dict: A dictionary containing the JSON data from the response.
-    """    
+    """
     response = requests.get(url, verify=is_verified)
     if response.status_code != 200:
         raise ConnectionError(response)
     return response.json()
+
 
 def convert_date_to_sec(date_string, date_format):
     """
@@ -65,7 +67,7 @@ def convert_date_to_sec(date_string, date_format):
 
     Returns:
         str: A string containing the number of seconds since the Unix epoch.
-    """ 
+    """
     # Parse the string into a datetime object
     dt_object = datetime.strptime(date_string, date_format)
 
@@ -93,6 +95,7 @@ def create_folders_on(file_path):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
+
 def save_to_file(xml_doc, xml_path):
     """
     Save XML document in a form of ElementTree object to a file.
@@ -117,6 +120,7 @@ def save_to_file(xml_doc, xml_path):
     # Return the path to the saved XML file
     return xml_path
 
+
 def has_extension(file_name, extension):
     """
     Check if a file name has a specific extension.
@@ -130,6 +134,7 @@ def has_extension(file_name, extension):
     """
     return file_name.endswith(extension)
 
+
 def replace_extension(filename, old_extension, new_extension):
     """
     Replace the extension of a filename if it matches the old extension.
@@ -142,7 +147,7 @@ def replace_extension(filename, old_extension, new_extension):
     Returns:
         str or None: The modified filename with the new extension, or None
                      if the old extension does not match the current extension
-    """ 
+    """
     base_name, ext = os.path.splitext(filename)
 
     if ext == old_extension:
@@ -151,6 +156,7 @@ def replace_extension(filename, old_extension, new_extension):
 
     return None
 
+
 def subunit_to_xml(subunit_file_path, xml_file_path):
     """
     Converts a subunit file to XML format using subunit2junitxml tool.
@@ -158,7 +164,7 @@ def subunit_to_xml(subunit_file_path, xml_file_path):
     Args:
         subunit_file_path (str): subunit_file_path Path to the input subunit file.
         xml_file_path (str): Path to the output XML file.
-    """    
+    """
     create_folders_on(xml_file_path)
 
     command = f'subunit2junitxml < {subunit_file_path} > {xml_file_path}'
@@ -169,23 +175,23 @@ def subunit_to_xml(subunit_file_path, xml_file_path):
         print("Conversion successful\n" + completed_process.stdout)
     else:
         print("Error: Conversion failed\n" + completed_process.stderr)
-        
-     
+
+
 def find_existing_path(path_pattern):
     """
     Splits the input path pattern by "/" and iterates through the parts,
     gradually building a potential path by joining the existing path parts.
     It checks at each step if the potential path exists using os.path.exists.
-    
+
     Args:
         path_pattern (str): path pattern. E.g.
            /projects/reportportal/tmp/reportportal-update/**/*.xml
 
     Returns:
         str or None: If a non-existing path part is encountered, the function
-        stops and  returns the existing path. If no existing path is found, it returns None.    
-    """  
-    
+        stops and  returns the existing path. If no existing path is found, it returns None.
+    """
+
     # Split the path pattern using "/"
     path_parts = path_pattern.split("/")
 
