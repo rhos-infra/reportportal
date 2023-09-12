@@ -10,9 +10,9 @@
 # TODO(aopincar): This include should be completely removed (only API
 # import should be supported)
 - name: Import results to ReportPortal
-  include: import/main.yml
+  ansible.builtin.include_tasks: import/main.yml
   when: import_launch
 
 - name: Import results to ReportPortal using archive
-  include: import/api_import.yml
+  ansible.builtin.include_tasks: import/api_import.yml
   when: api_import_launch

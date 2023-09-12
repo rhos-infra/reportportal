@@ -5,5 +5,5 @@ help:
 	@echo "  lint             to run code linting"
 
 lint:
-	yamllint -f parsable tasks 
-
+	yamllint -f parsable tasks
+	ansible-lint -v --offline tasks/*

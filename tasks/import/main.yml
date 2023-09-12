@@ -22,7 +22,7 @@
     other.deployment.results.path
 
 - name: Set Jenkins job name
-  set_fact:
+  ansible.builtin.set_fact:
     job_name: "{{ other.jenkins.job.name }}"
   when: >
     other.get('jenkins', {}).get('job', {}).name is defined and
@@ -33,7 +33,7 @@
     zuul_domain: "{{ other.zuul.domain }}"
     zuul_tenant: "{{ other.zuul.tenant }}"
     zuul_job_build_id: "{{ other.zuul.build.uuid }}"
-    zuul_api_path_template: "{{other.zuul.job_info_path_template}}"
+    zuul_api_path_template: "{{ other.zuul.job_info_path_template }}"
     output_xml_file: "{{ other.deployment.results.path }}"
   when:
     (ci_server | default('Jenkins')) == 'Zuul'
@@ -43,7 +43,7 @@
     zuul_domain: "{{ other.zuul.domain }}"
     zuul_tenant: "{{ other.zuul.tenant }}"
     zuul_job_build_id: "{{ other.zuul.build.uuid }}"
-    zuul_api_path_template: "{{other.zuul.job_info_path_template}}"
+    zuul_api_path_template: "{{ other.zuul.job_info_path_template }}"
     output_xml_folder: "{{ other.deployment.results.path |
                            regex_replace('(/[^/]+)$', '') }}"
   when: >
@@ -52,14 +52,13 @@
     other.zuul.fetch_test_results
 
 - name: Set Zuul job name
-  set_fact:
+  ansible.builtin.set_fact:
     job_name: "{{ other.zuul.job.name }}"
   when: >
     other.get('zuul', {}).get('job', {}).name is defined and
     other.zuul.job.name
 
-- ansible.builtin.meta: end_play
-- name: print vars
+- name: Print vars
   ansible.builtin.debug:
     msg:
       - "url: {{ reportportal_url }}"
@@ -67,9 +66,9 @@
       - "ssl_verify: {{ ssl_verify | bool }}"
       - "ignore_skipped_tests: {{ ignore_skipped_tests | bool }}"
       - "project_name: {{ project }}"
-      - "launch_name: {{ other.launch.altname|default(false) |
-                         ternary (other.launch.altname, job_name) }}"
-      - "launch_tags: {{ tags }}"
+      - "launch_name: {{ other.launch.altname | default(false) |
+                         ternary(other.launch.altname, job_name) }}"
+      - "launch_tags: {{ launch_tags }}"
       - "launch_description: {{ launch_description }}"
       - "launch_start_time: {{ launch_start_time | default(omit) }}"
       - "launch_end_time: {{ launch_end_time | default(omit) }}"
@@ -79,16 +78,16 @@
       - "tests_exclude_paths: {{ archive_exclude_path }}"
       - "threads: {{ threads }}"
 
-- name: import tests to Reportportal version 5
+- name: Import tests to Reportportal version 5
   reportportal_api:
     url: "{{ reportportal_url }}"
     token: "{{ reportportal_token }}"
     ssl_verify: "{{ ssl_verify | bool }}"
     ignore_skipped_tests: "{{ ignore_skipped_tests | bool }}"
     project_name: "{{ project }}"
-    launch_name: "{{ other.launch.altname| default(false) |
-                     ternary (other.launch.altname, job_name) }}"
-    launch_tags: "{{ tags }}"
+    launch_name: "{{ other.launch.altname | default(false) |
+                     ternary(other.launch.altname, job_name) }}"
+    launch_tags: "{{ launch_tags }}"
     launch_description: "{{ launch_description }}"
     launch_start_time: "{{ launch_start_time | default(omit) }}"
     launch_end_time: "{{ launch_end_time | default(omit) }}"
@@ -101,19 +100,21 @@
   ignore_errors: true
   register: import_results
 
-- debug:
+- name: Print import_results
+  ansible.builtin.debug:
     var: import_results
 
-- fail:
+- name: Fail if reporportal import failed
+  ansible.builtin.fail:
     msg: Import tests to Reportportal failed
   when: import_results.failed
 
-- name: set launch UUID
-  set_fact:
+- name: Set launch UUID
+  ansible.builtin.set_fact:
     launch_uuid: "{{ import_results.launch_id }}"
 
-- name: verify upload succeeded
-  uri:
+- name: Verify upload succeeded
+  ansible.builtin.uri:
     url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launch_uuid }}"
     method: GET
     validate_certs: "{{ ssl_verify | bool }}"
@@ -129,14 +130,16 @@
     - other.launch.ids.dir
   block:
     - name: Creates a directory for the launch ID files
-      file:
+      ansible.builtin.file:
         path: "{{ other.launch.ids.dir }}"
         state: directory
+        mode: "0644"
 
     - name: Writes launch ID & UUID to files
-      copy:
+      ansible.builtin.copy:
         content: "{{ item.content }}"
         dest: "{{ item.path }}"
+        mode: "0644"
       with_items:
         - {path: "{{ other.launch.ids.dir }}/id",
            content: "{{ launch_result.json.id }}"}
