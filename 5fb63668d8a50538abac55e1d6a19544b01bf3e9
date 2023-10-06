@@ -46,6 +46,30 @@
       },
       "revId": "5fb63668d8a50538abac55e1d6a19544b01bf3e9",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "caf80d93_fd805399",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 1019223
+      },
+      "writtenOn": "2023-10-06T14:01:41Z",
+      "side": 1,
+      "message": "ok, so once \u0027tests_passed\u0027 gets set to False (if it ever does in the loop) then it will always be False and the return will be False, correct?",
+      "parentUuid": "205ada66_505bffca",
+      "range": {
+        "startLine": 273,
+        "startChar": 8,
+        "endLine": 273,
+        "endChar": 20
+      },
+      "revId": "5fb63668d8a50538abac55e1d6a19544b01bf3e9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
