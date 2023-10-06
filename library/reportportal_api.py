@@ -265,6 +265,7 @@ class ReportPortalPublisher:
     def publish_tests(self):
         """
         Publish results of test xml file
+        Returns the overal status (True/False)
         """
         # Start Reportportal launch
         self.service.start_launch(
@@ -273,10 +274,10 @@ class ReportPortalPublisher:
             attributes=self.launch_attrs,
             description=self.launch_description
         )
-
         if self.service.launch_id is None:
             raise NoLaunchIdException("No launch ID available.")
 
+        tests_passed = True
         # Iterate over XUnit test paths
         for test_path in self.expanded_paths:
             # open the XUnit file and parse to xml object
@@ -294,15 +295,19 @@ class ReportPortalPublisher:
 
                 # publish all test suites
                 for test_suite in test_suites:
-                    self.publish_test_suite(test_suite)
+                    suite_status = self.publish_test_suite(test_suite)
+                    tests_passed = tests_passed and (suite_status == 'PASSED')
             else:
                 # publish single test suite
-                self.publish_test_suite(data.get('testsuite'))
+                tests_passed = test_passed and (
+                        self.publish_test_suite(data.get('testsuite')) == 'PASSED')
+        return tests_passed
 
     def publish_test_suite(self, test_suite):
         """
         Publish results of test suite xml file
         :param test_suite: Test suite to publish
+        :returns: suite status (PASSED of FAILED)
         """
         # get test cases from xml
         test_cases = test_suite.get("testcase", [])
@@ -347,6 +352,7 @@ class ReportPortalPublisher:
             item_id,
             end_time=end_time,
             status=status)
+        return status
 
     def get_test_case_name(self, case, limit=255):
         """
@@ -541,7 +547,7 @@ def main():
             fixed_start_time = str(int(launch_start_time) - 1000)
             publisher.launch_start_time = fixed_start_time
 
-        publisher.publish_tests()
+        status = 'PASSED' if publisher.publish_tests() else 'FAILED'
 
         result['expanded_paths'] = expanded_paths
         result['expanded_exclude_paths'] = expanded_exclude_paths
@@ -552,7 +558,7 @@ def main():
             launch_end_time = str(int(time.time() * 1000))
 
         # Finish launch.
-        service.finish_launch(end_time=launch_end_time)
+        service.finish_launch(end_time=launch_end_time, status=status)
         service.terminate()
 
         module.exit_json(**result)
