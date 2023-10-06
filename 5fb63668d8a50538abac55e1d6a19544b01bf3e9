@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d5842a3d_d675fddc",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 1019223
+      },
+      "writtenOn": "2023-10-06T13:15:52Z",
+      "side": 1,
+      "message": "Should tests_passed initially be set to True?  I was thinking False.  What is the reasoning behind setting it to True initially?",
+      "range": {
+        "startLine": 273,
+        "startChar": 8,
+        "endLine": 273,
+        "endChar": 20
+      },
+      "revId": "5fb63668d8a50538abac55e1d6a19544b01bf3e9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
