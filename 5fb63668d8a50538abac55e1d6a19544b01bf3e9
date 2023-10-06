@@ -22,6 +22,30 @@
       },
       "revId": "5fb63668d8a50538abac55e1d6a19544b01bf3e9",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "205ada66_505bffca",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 1016110
+      },
+      "writtenOn": "2023-10-06T13:45:11Z",
+      "side": 1,
+      "message": "I suspect it\u0027s because it is passed through and AND operator later:\ntests_passed \u003d tests_passed and (suite_status \u003d\u003d \u0027PASSED\u0027)\n\nso it needs to be true.\n\nWhich means it will report as passed in the special case when no tests are executed.",
+      "parentUuid": "d5842a3d_d675fddc",
+      "range": {
+        "startLine": 273,
+        "startChar": 8,
+        "endLine": 273,
+        "endChar": 20
+      },
+      "revId": "5fb63668d8a50538abac55e1d6a19544b01bf3e9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
