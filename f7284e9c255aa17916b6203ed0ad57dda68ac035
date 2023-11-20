@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1439c37a_133c1310",
+        "filename": "Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1020638
+      },
+      "writtenOn": "2023-11-20T04:21:47Z",
+      "side": 1,
+      "message": "nit: whitespace and extra lines can be removed.",
+      "revId": "f7284e9c255aa17916b6203ed0ad57dda68ac035",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7aac430d_29762623",
+        "filename": "tasks/dashboard2email/main.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1020638
+      },
+      "writtenOn": "2023-11-20T04:21:47Z",
+      "side": 1,
+      "message": "Can we have it defined in vars?",
+      "revId": "f7284e9c255aa17916b6203ed0ad57dda68ac035",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
