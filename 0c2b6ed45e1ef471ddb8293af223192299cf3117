@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0d60ba9a_223fd64e",
+        "filename": "Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1020638
+      },
+      "writtenOn": "2023-11-20T04:26:04Z",
+      "side": 1,
+      "message": "whitespace at the end would need to be removed.",
+      "revId": "0c2b6ed45e1ef471ddb8293af223192299cf3117",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ae833a39_eadf88b3",
+        "filename": "library/dashboard2email.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 1020638
+      },
+      "writtenOn": "2023-11-20T04:26:04Z",
+      "side": 1,
+      "message": "If we are not using `user_token` variable in this method, I believe we can safely remove it instead of commenting it.",
+      "range": {
+        "startLine": 133,
+        "startChar": 8,
+        "endLine": 133,
+        "endChar": 9
+      },
+      "revId": "0c2b6ed45e1ef471ddb8293af223192299cf3117",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
