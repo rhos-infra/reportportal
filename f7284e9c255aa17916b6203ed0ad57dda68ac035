@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e909bc85_6f5af6a3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1004057
+      },
+      "writtenOn": "2023-12-05T21:22:45Z",
+      "side": 1,
+      "message": "@davidsa@openu.ac.il\nPlease make sure to resolve comments in a different change",
+      "revId": "f7284e9c255aa17916b6203ed0ad57dda68ac035",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1439c37a_133c1310",
