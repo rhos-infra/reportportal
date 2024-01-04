@@ -10,6 +10,7 @@ venv:
 	python3 -m venv $(VENV_DIR)
 	. $(VENV_DIR)/bin/activate
 	pip install flake8
+	pip install --upgrade ansible ansible-lint
 
 
 .PHONY: venv

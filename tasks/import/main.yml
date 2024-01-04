@@ -133,7 +133,7 @@
       ansible.builtin.file:
         path: "{{ other.launch.ids.dir }}"
         state: directory
-        mode: "0644"
+        mode: "0755"
 
     - name: Writes launch ID & UUID to files
       ansible.builtin.copy:
