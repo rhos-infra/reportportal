@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0bf0998b_28e0e390",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1005097
+      },
+      "writtenOn": "2024-01-05T13:34:44Z",
+      "side": 1,
+      "message": "Rebuilding the commit_msg to be more readable, less polluting git history and without timestamps.",
+      "revId": "f2f58534e4491311d08421c5cf6fd45bc89f4394",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
