@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eef8ef7c_04de77f8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2024-01-05T12:33:28Z",
+      "side": 1,
+      "message": "Verified:\nhttps://rhos-ci-jenkins.lab.eng.tlv2.redhat.com/job/reportportal-update/70998/",
+      "revId": "72c79057554adef9e4cd1e2530d2f0ead02b74c6",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
