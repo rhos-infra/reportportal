@@ -1,4 +1,39 @@
 {
-  "comments": [],
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0b304965_ad3dfd63",
+        "filename": "tasks/import/api_import.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1014339
+      },
+      "writtenOn": "2024-01-08T08:47:03Z",
+      "side": 1,
+      "message": "this collection is not installed automatically with ansible-2.9 infrared requirement. Also last compatible version of community.general is 4.8.11 with ansible-2.9",
+      "revId": "4db18d281e3d01f12bbeb9900cc5e6ec67fc29a2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3583a241_8fae50a4",
+        "filename": "tasks/import/api_import.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1014339
+      },
+      "writtenOn": "2024-01-08T08:47:03Z",
+      "side": 1,
+      "message": "infrared still pins to ansble-2.9 so this needs to be kept as per comment, why this was changed?",
+      "revId": "4db18d281e3d01f12bbeb9900cc5e6ec67fc29a2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ],
   "submitRequirementResults": []
 }
