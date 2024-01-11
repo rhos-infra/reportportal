@@ -18,6 +18,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ef507763_da2cd7d8",
+        "filename": "tasks/import/api_import.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1006664
+      },
+      "writtenOn": "2024-01-11T18:03:36Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "0b304965_ad3dfd63",
+      "revId": "4db18d281e3d01f12bbeb9900cc5e6ec67fc29a2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3583a241_8fae50a4",
@@ -31,6 +49,24 @@
       "writtenOn": "2024-01-08T08:47:03Z",
       "side": 1,
       "message": "infrared still pins to ansble-2.9 so this needs to be kept as per comment, why this was changed?",
+      "revId": "4db18d281e3d01f12bbeb9900cc5e6ec67fc29a2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ae9f1e42_e89dce75",
+        "filename": "tasks/import/api_import.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1006664
+      },
+      "writtenOn": "2024-01-11T18:03:36Z",
+      "side": 1,
+      "message": "I\u0027d suggest then to use\n\"ansible-galaxy collection install community.general:4.8.11\" command in a job that is still using pinned 2.9 ansible\nThis will install version 4.8.11 of the community.general collection, ensuring compatibility with Ansible 2.9.",
+      "parentUuid": "3583a241_8fae50a4",
       "revId": "4db18d281e3d01f12bbeb9900cc5e6ec67fc29a2",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
