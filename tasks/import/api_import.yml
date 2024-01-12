@@ -4,8 +4,8 @@
     archive_dest_file: "{{ archive_dest_path }}/{{ jenkins_job_name }}.zip"
     launch_mode: "{{ other.launch.mode }}"
 
-- name: Archive XML result files
-  community.general.archive:
+- name: Archive XML result files # noqa fqcn[action-core]
+  archive:
     path: "{{ archive_import_path }}"
     dest: "{{ archive_dest_file }}"
     exclude_path: "{{ archive_exclude_path }}"
@@ -93,38 +93,39 @@
     # The 'command' module should be replaced with 'uri' once the Ansible
     # version be bumped to >= 2.10.0 in InfraRed requirements.
     # DON'T DISABLE WARNINGS(!)
-    # - name: Upload test results to ReportPortal using the curl command
-    #  command: "curl -X POST \
-    #            {{ reportportal_url }}/api/v1/{{ project }}/launch/import \
-    #            --header 'Content-Type: multipart/form-data' \
-    #            --header 'Accept: application/json' \
-    #            --header 'Authorization: bearer {{ reportportal_token }}' \
-    #            --header 'Cache-Control: no-cache' \
-    #            -F file=@{{ archive_dest_file }} \
-    #            {{ (ssl_verify | bool) | ternary('', '--insecure') }}"
-    #  register: curl_cmd
+    - name: Upload test results to ReportPortal using the curl command  # noqa command-instead-of-module
+      ansible.builtin.command: "curl -X POST \
+                               {{ reportportal_url }}/api/v1/{{ project }}/launch/import \
+                               --header 'Content-Type: multipart/form-data' \
+                               --header 'Accept: application/json' \
+                               --header 'Authorization: bearer {{ reportportal_token }}' \
+                               --header 'Cache-Control: no-cache' \
+                               -F file=@{{ archive_dest_file }} \
+                               {{ (ssl_verify | bool) | ternary('', '--insecure') }}"
+      register: curl_cmd
+      changed_when: true
 
-    # - name: Fail when curl returned code != 0
-    #  fail:
-    #    msg: "{{ curl_cmd }}"
-    #  when: curl_cmd.rc != 0
+    - name: Fail when curl returned code != 0
+      ansible.builtin.fail:
+        msg: "{{ curl_cmd }}"
+      when: curl_cmd.rc != 0
 
-    - name: Upload test results to ReportPortal
-      ansible.builtin.uri:
-        url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/import"
-        method: POST
-        status_code: [200, 201]
-        validate_certs: "{{ (ssl_verify | bool) |
-                            ternary('', '--insecure') }}"
-        timeout: "{{ (other.socket | default({})).timeout | default(omit) }}"
-        headers:
-          Accept: "application/json"
-          Authorization: "bearer {{ reportportal_token }}"
-          Cache-Control: "no-cache"
-          Content-Type: "multipart/form-data"
-        body_format: form-multipart
-        body:
-          file_param_name: "@{{ archive_dest_file }}"
+    # - name: Upload test results to ReportPortal
+    #  ansible.builtin.uri:
+    #    url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/import"
+    #    method: POST
+    #    status_code: [200, 201]
+    #    validate_certs: "{{ (ssl_verify | bool) |
+    #                        ternary('', '--insecure') }}"
+    #    timeout: "{{ (other.socket | default({})).timeout | default(omit) }}"
+    #    headers:
+    #      Accept: "application/json"
+    #      Authorization: "bearer {{ reportportal_token }}"
+    #      Cache-Control: "no-cache"
+    #      Content-Type: "multipart/form-data"
+    #    body_format: form-multipart
+    #    body:
+    #      file_param_name: "@{{ archive_dest_file }}"
 
     - name: Perform post import validations
       when: other.post.validations
