@@ -69,6 +69,24 @@
       "parentUuid": "3583a241_8fae50a4",
       "revId": "4db18d281e3d01f12bbeb9900cc5e6ec67fc29a2",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a235c535_ff5a6b41",
+        "filename": "tasks/import/api_import.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1014339
+      },
+      "writtenOn": "2024-01-12T05:41:21Z",
+      "side": 1,
+      "message": "yes possibly can workaround the community general part but this report task also needs to be kept as infrared pins to 2.9. I think we can relax the ansible lint to get these task work with current infrared pins, let me push a change for that.",
+      "parentUuid": "ae9f1e42_e89dce75",
+      "revId": "4db18d281e3d01f12bbeb9900cc5e6ec67fc29a2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ],
   "submitRequirementResults": []
