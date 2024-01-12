@@ -87,6 +87,24 @@
       "parentUuid": "ae9f1e42_e89dce75",
       "revId": "4db18d281e3d01f12bbeb9900cc5e6ec67fc29a2",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "89f8dbb9_b5df5887",
+        "filename": "tasks/import/api_import.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1014339
+      },
+      "writtenOn": "2024-01-12T05:48:32Z",
+      "side": 1,
+      "message": "pushed https://review.gerrithub.io/c/rhos-infra/reportportal/+/1174567",
+      "parentUuid": "a235c535_ff5a6b41",
+      "revId": "4db18d281e3d01f12bbeb9900cc5e6ec67fc29a2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ],
   "submitRequirementResults": []
