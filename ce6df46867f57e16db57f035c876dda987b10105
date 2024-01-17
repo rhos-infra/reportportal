@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ce6d081_8363d7a7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2024-01-17T10:48:26Z",
+      "side": 1,
+      "message": "https://rhos-ci-staging-jenkins.lab.eng.tlv2.redhat.com/job/reportportal-update/24/",
+      "revId": "ce6df46867f57e16db57f035c876dda987b10105",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
