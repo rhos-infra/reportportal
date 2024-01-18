@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a8308031_5342d0e3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2024-01-18T09:50:37Z",
+      "side": 1,
+      "message": "Verified on the staging environment for both cases: FAILED and PASSED",
+      "revId": "3ddae0259fd73a1abdf1c42c92076043952f6f6f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
