@@ -33,6 +33,23 @@
       "message": "It looks generally like an improvement, but I guess Waldemar and/or Tuvya need to provide their vote",
       "revId": "3ddae0259fd73a1abdf1c42c92076043952f6f6f",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "732f5f4b_49e650b7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1010634
+      },
+      "writtenOn": "2024-01-18T13:06:39Z",
+      "side": 1,
+      "message": "I, for one, prefer to assume failure unless proven otherwise (the very non-humane but very safe approach against false positives - better to have the report saying failure (if anything goes wrong, reference: \"set -o errexit\" in bash) cause that at least catches someone\u0027s attention opposite to the \u0027success\u0027 status which would not make anybody look)\n\n... but there may be other things at play here and I don\u0027t want to block if this change actually fixes something and takes into account more than just simple \u0027better fail and false succeed\u0027 approach\n\nyou can also convince me ;-)",
+      "revId": "3ddae0259fd73a1abdf1c42c92076043952f6f6f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
