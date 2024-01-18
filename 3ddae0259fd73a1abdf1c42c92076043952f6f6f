@@ -16,6 +16,23 @@
       "message": "Verified on the staging environment for both cases: FAILED and PASSED",
       "revId": "3ddae0259fd73a1abdf1c42c92076043952f6f6f",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aaa0eb44_862fc904",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1016110
+      },
+      "writtenOn": "2024-01-18T11:41:47Z",
+      "side": 1,
+      "message": "It looks generally like an improvement, but I guess Waldemar and/or Tuvya need to provide their vote",
+      "revId": "3ddae0259fd73a1abdf1c42c92076043952f6f6f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }

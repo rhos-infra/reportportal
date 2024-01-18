@@ -16,6 +16,23 @@
       "message": "https://rhos-ci-staging-jenkins.lab.eng.tlv2.redhat.com/job/reportportal-update/24/",
       "revId": "ce6df46867f57e16db57f035c876dda987b10105",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "441d12ce_f580c1ce",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 1016110
+      },
+      "writtenOn": "2024-01-18T11:41:47Z",
+      "side": 1,
+      "message": "As explained in the previous comments, I understand the need for this, because we are going to AND this value with new conditions. But can we have",
+      "revId": "ce6df46867f57e16db57f035c876dda987b10105",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
