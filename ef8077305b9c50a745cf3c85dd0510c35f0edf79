@@ -16,6 +16,23 @@
       "message": "Verified on staging environment.",
       "revId": "ef8077305b9c50a745cf3c85dd0510c35f0edf79",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "07b24626_ea779ecd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1010634
+      },
+      "writtenOn": "2024-01-19T14:03:59Z",
+      "side": 1,
+      "message": "we had a chat with Jiri and it seems like a limitation in the RP itself, to fix and have run status inclue individual test statuses would be way more work by the looks of things (it may be still required if we go with report portal for nextgen tho)",
+      "revId": "ef8077305b9c50a745cf3c85dd0510c35f0edf79",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
