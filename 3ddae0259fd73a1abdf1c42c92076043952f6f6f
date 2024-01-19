@@ -70,6 +70,23 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "509adc6b_f94d17a8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2024-01-19T09:35:37Z",
+      "side": 1,
+      "message": "Thank for the comments Dariusz.",
+      "revId": "3ddae0259fd73a1abdf1c42c92076043952f6f6f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "694681db_0a5e3b0c",
@@ -83,6 +100,30 @@
       "writtenOn": "2024-01-18T22:26:48Z",
       "side": 1,
       "message": "typo: overall",
+      "range": {
+        "startLine": 268,
+        "startChar": 20,
+        "endLine": 268,
+        "endChar": 26
+      },
+      "revId": "3ddae0259fd73a1abdf1c42c92076043952f6f6f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f619dbc8_d28df42d",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2024-01-19T09:35:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "694681db_0a5e3b0c",
       "range": {
         "startLine": 268,
         "startChar": 20,
@@ -112,6 +153,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "8604be0f_5c4d540d",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2024-01-19T09:35:37Z",
+      "side": 1,
+      "message": "If there is no failure the launch should have the status PASSED.",
+      "parentUuid": "8aaaedef_00bbb9e7",
+      "revId": "3ddae0259fd73a1abdf1c42c92076043952f6f6f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "93b90d15_e6b9d792",
         "filename": "library/reportportal_api.py",
         "patchSetId": 6
@@ -123,6 +182,30 @@
       "writtenOn": "2024-01-18T22:26:48Z",
       "side": 1,
       "message": "typo: \"or\"",
+      "range": {
+        "startLine": 310,
+        "startChar": 39,
+        "endLine": 310,
+        "endChar": 41
+      },
+      "revId": "3ddae0259fd73a1abdf1c42c92076043952f6f6f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f292ee3f_ad23016c",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2024-01-19T09:35:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "93b90d15_e6b9d792",
       "range": {
         "startLine": 310,
         "startChar": 39,
@@ -146,6 +229,30 @@
       "writtenOn": "2024-01-18T22:26:48Z",
       "side": 1,
       "message": "I know you didn\u0027t write it, but if you\u0027re on it, could you fix the typo as well? \"failutes\"?",
+      "range": {
+        "startLine": 346,
+        "startChar": 8,
+        "endLine": 346,
+        "endChar": 23
+      },
+      "revId": "3ddae0259fd73a1abdf1c42c92076043952f6f6f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "404a87c3_aef778a5",
+        "filename": "library/reportportal_api.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 1020803
+      },
+      "writtenOn": "2024-01-19T09:35:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "00fcdedb_5025adad",
       "range": {
         "startLine": 346,
         "startChar": 8,
