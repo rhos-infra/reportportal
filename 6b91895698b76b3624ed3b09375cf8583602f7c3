@@ -16,6 +16,23 @@
       "message": "please be more specific next time and mention the details of what is incompatible (for whoever will be reading the git log in the future to understand)\nppl usually don\u0027t read gerrit for the changes, but git log quite often\n\nFTR: the form_multipart of body_format was added in ansible 2.10 hence it\u0027s currently not supported in the ansible 2.9 that infrared uses\n\nI\u0027ll add +1 verified as I can\u0027t see any gate jobs running for it - please keep an eye on this change after it\u0027s merged so",
       "revId": "6b91895698b76b3624ed3b09375cf8583602f7c3",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ee6d5d2_068ae58f",
+        "filename": "tasks/import/api_import.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1007990
+      },
+      "writtenOn": "2024-01-23T22:57:40Z",
+      "side": 1,
+      "message": "My university email address was used to include me as a reviewer, and I missed this update. Two issues can be noted here:\n\na) Ansible linter check gates were not activated for this modification.\nb) A suitable remedy would be, as we talked about with @ykarel@redhat.com in a chat a week ago, to include # noqa: XYZ for the task.",
+      "revId": "6b91895698b76b3624ed3b09375cf8583602f7c3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ],
   "submitRequirementResults": []
