@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d9c42973_96f96045",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1010634
+      },
+      "writtenOn": "2024-01-23T16:24:29Z",
+      "side": 1,
+      "message": "please be more specific next time and mention the details of what is incompatible (for whoever will be reading the git log in the future to understand)\nppl usually don\u0027t read gerrit for the changes, but git log quite often\n\nFTR: the form_multipart of body_format was added in ansible 2.10 hence it\u0027s currently not supported in the ansible 2.9 that infrared uses\n\nI\u0027ll add +1 verified as I can\u0027t see any gate jobs running for it - please keep an eye on this change after it\u0027s merged so",
+      "revId": "6b91895698b76b3624ed3b09375cf8583602f7c3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
